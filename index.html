@@ -532,7 +532,7 @@ const coinMeta={USDT:{full:'Tether',cls:'usdt',letter:'T'},BTC:{full:'Bitcoin',c
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800);}
 function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#appContent .page, #authPages .page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   if(['assetsPage','depositPage','depositAddressPage','withdrawPage','historyPage'].includes(id)) document.querySelector('.nav-btn[data-page="assetsPage"]').classList.add('active');
