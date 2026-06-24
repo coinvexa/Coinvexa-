@@ -10,6 +10,8 @@
   [data-theme="light"]{ --bg:#f0f2f5; --panel:#ffffff; --panel-2:#f5f7fa; --line:#e1e4e8; --ink:#1a1a2e; --ink-dim:#6b7280; --green:#059669; --red:#dc2626; --accent:#2563eb; --gold:#d97706; --shadow:0 2px 12px rgba(0,0,0,.1); }
   body{ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; transition:background .2s,color .2s; }
   .hidden{ display:none !important; }
+  .page{ display:none; }
+  .page.active{ display:block; }
   .flex{ display:flex; gap:8px; flex-wrap:wrap; }
   .flex-between{ display:flex; justify-content:space-between; align-items:center; }
   .topbar{ display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:var(--panel); border-bottom:1px solid var(--line); }
@@ -230,7 +232,7 @@
       <div class="auth-footer">Don't have an account? <a href="#" onclick="showPage('signupPage')">Sign up</a></div>
     </div></div>
   </div>
-  <div id="signupPage" class="page hidden">
+  <div id="signupPage" class="page">
     <div class="auth-wrap"><div class="auth-card">
       <div class="auth-title">Create your account</div>
       <div class="auth-sub">Sign up to start using CoinVexa</div>
@@ -273,7 +275,7 @@
     <div class="section-title"><span>Your Assets</span></div>
     <div class="asset-list" id="assetList"></div>
   </div>
-  <div id="p2pPage" class="page hidden" style="padding-bottom:80px;">
+  <div id="p2pPage" class="page" style="padding-bottom:80px;">
     <div class="p2p-tabs">
       <div class="p2p-tab active" data-side="buy" onclick="switchP2PTab('buy')">Buy</div>
       <div class="p2p-tab" data-side="sell" onclick="switchP2PTab('sell')">Sell</div>
@@ -303,7 +305,7 @@
     </div>
     <div id="offerList" style="margin-top:10px;"></div>
   </div>
-  <div id="createOfferPage" class="page hidden" style="padding-bottom:80px;">
+  <div id="createOfferPage" class="page" style="padding-bottom:80px;">
     <div class="subheader"><div class="back-btn" onclick="showPage('p2pPage')">←</div><div class="title">Create P2P Offer</div></div>
     <div id="kycRequiredMsg" class="warning-note hidden"><span>⚠️</span><span>You must complete KYC verification before creating P2P offers.</span></div>
     <div class="form-card" id="createOfferForm">
@@ -338,7 +340,7 @@
       <button class="btn-primary-full" onclick="submitOffer()">Post Offer</button>
     </div>
   </div>
-  <div id="orderPage" class="page hidden" style="padding-bottom:80px;">
+  <div id="orderPage" class="page" style="padding-bottom:80px;">
     <div class="subheader"><div class="back-btn" onclick="showPage('p2pPage')">←</div><div class="title" id="orderTitle">Order Chat</div><div id="orderIdDisplay" style="font-size:11px;color:var(--ink-dim);"></div></div>
     <div class="order-summary">
       <div class="top-row">
@@ -362,7 +364,7 @@
     <div class="order-actions hidden" id="sellerActionsBar"><button class="btn-dispute" onclick="disputeOrder()">Dispute</button><button class="btn-release" onclick="releaseFunds()">Release Funds</button></div>
     <div class="chat-input-row"><input type="text" placeholder="Type a message…" id="chatInput" onkeypress="if(event.key==='Enter')sendChat()"><button class="chat-send" onclick="sendChat()">➤</button></div>
   </div>
-  <div id="depositPage" class="page hidden" style="padding-bottom:80px;">
+  <div id="depositPage" class="page" style="padding-bottom:80px;">
     <div class="subheader"><div class="back-btn" onclick="showPage('assetsPage')">←</div><div class="title">Deposit</div></div>
     <div class="shield-note"><span>🛡️</span><span>Only send matching coin and network. Wrong network = permanent loss of funds.</span></div>
     <div class="section-title"><span>Select Coin</span></div>
@@ -374,7 +376,7 @@
       <div onclick="openDepositAddress('TRX')" style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;cursor:pointer;"><div class="coin-icon trx">X</div><div style="flex:1;"><b>TRX</b><div style="font-size:11px;color:var(--ink-dim);">Tron · TRC20</div></div><span>›</span></div>
     </div>
   </div>
-  <div id="depositAddressPage" class="page hidden" style="padding-bottom:80px;">
+  <div id="depositAddressPage" class="page" style="padding-bottom:80px;">
     <div class="subheader"><div class="back-btn" onclick="showPage('depositPage')">←</div><div class="title">Deposit <span id="depTitleCoin">USDT</span></div></div>
     <div class="form-card">
       <label class="field-label">Network</label>
@@ -398,7 +400,7 @@
     <div class="section-title"><span>My Deposit Requests</span></div>
     <div id="myDepositRequests" style="padding:0 16px 20px;"></div>
   </div>
-  <div id="withdrawPage" class="page hidden" style="padding-bottom:80px;">
+  <div id="withdrawPage" class="page" style="padding-bottom:80px;">
     <div class="subheader"><div class="back-btn" onclick="showPage('assetsPage')">←</div><div class="title">Withdraw</div></div>
     <div class="warning-note"><span>⚠️</span><span>Withdrawals require admin approval. Balance frozen until approved.</span></div>
     <div class="form-card">
@@ -418,7 +420,7 @@
     <div class="section-title"><span>My Withdrawal Requests</span></div>
     <div id="myWithdrawals" style="padding:0 16px;"></div>
   </div>
-  <div id="historyPage" class="page hidden" style="padding-bottom:80px;">
+  <div id="historyPage" class="page" style="padding-bottom:80px;">
     <div class="subheader"><div class="back-btn" onclick="showPage('assetsPage')">←</div><div class="title">Transaction History</div></div>
     <div style="display:flex;gap:8px;padding:12px 16px;overflow-x:auto;">
       <div class="filter-chip active" onclick="filterHistory('all',this)">All</div>
@@ -429,11 +431,11 @@
     </div>
     <div id="historyList"></div>
   </div>
-  <div id="marketsPage" class="page hidden" style="padding-bottom:80px;">
+  <div id="marketsPage" class="page" style="padding-bottom:80px;">
     <div class="section-title"><span>Live Prices</span><span style="font-size:10px;color:var(--ink-dim);" id="marketLastUpdate"></span></div>
     <div id="marketList"></div>
   </div>
-  <div id="profilePage" class="page hidden" style="padding-bottom:80px;">
+  <div id="profilePage" class="page" style="padding-bottom:80px;">
     <div class="profile-header">
       <div class="profile-avatar" id="profileAvatar">?</div>
       <div class="profile-name" id="profileName">—</div>
@@ -450,11 +452,11 @@
       <button class="btn-danger-full" onclick="logoutConfirm()">🚪 Log Out</button>
     </div>
   </div>
-  <div id="myOffersPage" class="page hidden" style="padding-bottom:80px;">
+  <div id="myOffersPage" class="page" style="padding-bottom:80px;">
     <div class="subheader"><div class="back-btn" onclick="showPage('profilePage')">←</div><div class="title">My P2P Offers</div></div>
     <div id="myOffersList" style="margin-top:10px;padding:0 16px;"></div>
   </div>
-  <div id="kycPage" class="page hidden" style="padding-bottom:80px;">
+  <div id="kycPage" class="page" style="padding-bottom:80px;">
     <div class="subheader"><div class="back-btn" onclick="showPage('profilePage')">←</div><div class="title">Identity Verification</div></div>
     <div class="form-card">
       <div id="kycStatus" style="margin-bottom:14px;font-size:13px;color:var(--ink-dim);"></div>
