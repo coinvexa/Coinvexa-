@@ -751,8 +751,14 @@ async function submitOffer(){
   const instructions=document.getElementById('offerInstructions').value.trim();
   if(!price||!amount||!minOrder||!maxOrder||!paymentMethods.length){alert('Fill all fields.');return;}
   if(minOrder>maxOrder){alert('Min cannot exceed Max.');return;}
-  if(currentOfferType==='sell'&&amount>(userData.balances[coin]||0)){alert('Insufficient '+coin+' balance.');return;}
+  if(currentOfferType==='sell'&&amount>(userData.balances[coin]||0)){alert('Insufficient '+coin+' balance. You have '+(userData.balances[coin]||0)+' '+coin);return;}
   if(!confirm('Post this '+currentOfferType.toUpperCase()+' offer?'))return;
+  // Lock seller balance in escrow
+  if(currentOfferType==='sell'){
+    userData.balances[coin]-=amount;
+    await saveUserData();
+    renderAssets();
+  }
   const name=currentUser.displayName||currentUser.email.split('@')[0];
   await db.collection('p2pOffers').add({userId:currentUser.uid,merchantName:name,kycVerified:true,type:currentOfferType,coin,currency,price,amount,minOrder,maxOrder,paymentMethods,instructions,active:true,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
   showToast('✅ Offer posted!');showPage('p2pPage');
@@ -818,9 +824,66 @@ function subscribeToChat(orderDocId){
 }
 async function sendChat(){const input=document.getElementById('chatInput');const text=input.value.trim();if(!text||!currentOrderId)return;const name=currentUser.displayName||currentUser.email.split('@')[0];await db.collection('p2pOrders').doc(currentOrderId).collection('messages').add({text,senderId:currentUser.uid,senderName:name,type:'chat',timestamp:firebase.firestore.FieldValue.serverTimestamp()});input.value='';}
 async function markPaid(){if(!currentOrderId||!confirm('Confirm you have sent the payment?'))return;await db.collection('p2pOrders').doc(currentOrderId).update({status:'paid'});await db.collection('p2pOrders').doc(currentOrderId).collection('messages').add({text:'✅ Buyer marked payment as sent. Seller please confirm.',type:'system',senderId:'system',timestamp:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('orderStatus').textContent='Paid';document.getElementById('orderStatus').className='order-status paid';document.getElementById('buyerActionsBar').classList.add('hidden');}
-async function releaseFunds(){if(!currentOrderId||!confirm('Confirm payment received and release funds?'))return;await db.collection('p2pOrders').doc(currentOrderId).update({status:'completed'});await db.collection('p2pOrders').doc(currentOrderId).collection('messages').add({text:'✅ Seller confirmed. Order completed!',type:'system',senderId:'system',timestamp:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('orderStatus').textContent='Completed';document.getElementById('orderStatus').className='order-status completed';document.getElementById('sellerActionsBar').classList.add('hidden');showToast('✅ Order completed!');}
+async function releaseFunds(){
+  if(!currentOrderId||!confirm('Confirm payment received and release funds to buyer?'))return;
+  try{
+    const orderSnap=await db.collection('p2pOrders').doc(currentOrderId).get();
+    if(!orderSnap.exists){alert('Order not found.');return;}
+    const order=orderSnap.data();
+    // Credit buyer balance
+    const buyerRef=db.collection('users').doc(order.buyerId);
+    const buyerSnap=await buyerRef.get();
+    if(buyerSnap.exists){
+      const buyerData=buyerSnap.data();
+      const buyerBalances=buyerData.balances||{};
+      buyerBalances[order.coin]=(buyerBalances[order.coin]||0)+order.amount;
+      const buyerTxns=buyerData.transactions||[];
+      buyerTxns.push({type:'P2P Buy — '+order.coin,coin:order.coin,amount:order.amount,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+      await buyerRef.update({balances:buyerBalances,transactions:buyerTxns});
+    }
+    // Add seller transaction
+    const sellerTxns=userData.transactions||[];
+    sellerTxns.push({type:'P2P Sell — '+order.coin,coin:order.coin,amount:-order.amount,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+    userData.transactions=sellerTxns;
+    await saveUserData();
+    await db.collection('p2pOrders').doc(currentOrderId).update({status:'completed'});
+    await db.collection('p2pOrders').doc(currentOrderId).collection('messages').add({text:'✅ Seller confirmed. Funds released to buyer! Order completed.',type:'system',senderId:'system',timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+    document.getElementById('orderStatus').textContent='Completed';
+    document.getElementById('orderStatus').className='order-status completed';
+    document.getElementById('sellerActionsBar').classList.add('hidden');
+    showToast('✅ Funds released to buyer!');
+    renderAssets();
+  }catch(e){alert('Error: '+e.message);}
+}
 async function disputeOrder(){if(!currentOrderId||!confirm('Open a dispute?'))return;await db.collection('p2pOrders').doc(currentOrderId).update({status:'disputed'});await db.collection('p2pOrders').doc(currentOrderId).collection('messages').add({text:'⚠️ Dispute opened. Admin will review.',type:'system',senderId:'system',timestamp:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('orderStatus').textContent='Disputed';document.getElementById('orderStatus').className='order-status disputed';}
-async function cancelOrder(){if(!currentOrderId||!confirm('Cancel this order?'))return;await db.collection('p2pOrders').doc(currentOrderId).update({status:'cancelled'});await db.collection('p2pOrders').doc(currentOrderId).collection('messages').add({text:'❌ Order cancelled.',type:'system',senderId:'system',timestamp:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('orderStatus').textContent='Cancelled';document.getElementById('orderStatus').className='order-status cancelled';document.getElementById('buyerActionsBar').classList.add('hidden');document.getElementById('sellerActionsBar').classList.add('hidden');}
+async function cancelOrder(){
+  if(!currentOrderId||!confirm('Cancel this order? Funds will be returned to seller.'))return;
+  try{
+    const orderSnap=await db.collection('p2pOrders').doc(currentOrderId).get();
+    if(orderSnap.exists){
+      const order=orderSnap.data();
+      // Return funds to seller if they were a sell offer
+      if(order.sellerId===currentUser.uid||order.buyerId===currentUser.uid){
+        const sellerRef=db.collection('users').doc(order.sellerId);
+        const sellerSnap=await sellerRef.get();
+        if(sellerSnap.exists){
+          const sellerData=sellerSnap.data();
+          const sellerBalances=sellerData.balances||{};
+          sellerBalances[order.coin]=(sellerBalances[order.coin]||0)+order.amount;
+          await sellerRef.update({balances:sellerBalances});
+        }
+      }
+    }
+    await db.collection('p2pOrders').doc(currentOrderId).update({status:'cancelled'});
+    await db.collection('p2pOrders').doc(currentOrderId).collection('messages').add({text:'❌ Order cancelled. Funds returned to seller.',type:'system',senderId:'system',timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+    document.getElementById('orderStatus').textContent='Cancelled';
+    document.getElementById('orderStatus').className='order-status cancelled';
+    document.getElementById('buyerActionsBar').classList.add('hidden');
+    document.getElementById('sellerActionsBar').classList.add('hidden');
+    showToast('Order cancelled. Funds returned.');
+    renderAssets();
+  }catch(e){alert('Error: '+e.message);}
+}
 // DEPOSIT
 function openDepositAddress(coin){
   currentDepositCoin=coin;const info=depositInfo[coin];
