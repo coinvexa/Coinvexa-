@@ -276,17 +276,22 @@
     <div class="asset-list" id="assetList"></div>
   </div>
   <div id="p2pPage" class="page" style="padding-bottom:80px;">
-    <div class="p2p-tabs">
-      <div class="p2p-tab active" data-side="buy" onclick="switchP2PTab('buy')">Buy</div>
-      <div class="p2p-tab" data-side="sell" onclick="switchP2PTab('sell')">Sell</div>
-      <div class="p2p-tab" data-side="myoffers" onclick="switchP2PTab('myoffers')">My Offers</div>
-    </div>
-    <div class="p2p-top-row">
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <select id="p2pCoinFilter" class="filter-chip active" style="border:1px solid var(--accent);color:var(--accent);background:rgba(59,130,246,.1);" onchange="loadP2POffers()">
+    <!-- Binance-style P2P Header -->
+    <div style="background:var(--panel);border-bottom:1px solid var(--line);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 0;">
+        <div style="display:flex;gap:0;">
+          <div class="p2p-tab active" data-side="buy" onclick="switchP2PTab('buy')" style="border-radius:0;border:none;border-bottom:2px solid var(--accent);background:transparent;color:var(--accent);padding:8px 20px;">Buy</div>
+          <div class="p2p-tab" data-side="sell" onclick="switchP2PTab('sell')" style="border-radius:0;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--ink-dim);padding:8px 20px;">Sell</div>
+          <div class="p2p-tab" data-side="myoffers" onclick="switchP2PTab('myoffers')" style="border-radius:0;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--ink-dim);padding:8px 20px;">My Ads</div>
+        </div>
+        <button class="create-offer-btn" onclick="showPage('createOfferPage')" style="font-size:11px;padding:6px 12px;">+ Post Ad</button>
+      </div>
+      <!-- Filters -->
+      <div style="display:flex;gap:8px;padding:10px 16px;overflow-x:auto;">
+        <select id="p2pCoinFilter" style="padding:6px 10px;border-radius:20px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-size:12px;font-weight:600;" onchange="loadP2POffers()">
           <option>USDT</option><option>BTC</option><option>ETH</option><option>SOL</option><option>TRX</option>
         </select>
-        <select id="p2pCurrencyFilter" class="filter-chip" onchange="loadP2POffers()">
+        <select id="p2pCurrencyFilter" style="padding:6px 10px;border-radius:20px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-size:12px;font-weight:600;" onchange="loadP2POffers()">
           <option value="ETB">🇪🇹 ETB</option><option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option>
           <option value="GBP">🇬🇧 GBP</option><option value="AED">🇦🇪 AED</option><option value="SAR">🇸🇦 SAR</option>
           <option value="KES">🇰🇪 KES</option><option value="NGN">🇳🇬 NGN</option><option value="EGP">🇪🇬 EGP</option>
@@ -295,24 +300,29 @@
           <option value="MAD">🇲🇦 MAD</option><option value="CNY">🇨🇳 CNY</option><option value="BRL">🇧🇷 BRL</option>
         </select>
       </div>
-      <button class="create-offer-btn" onclick="showPage('createOfferPage')">+ Create Offer</button>
+      <!-- Column headers like Binance -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:6px 16px 8px;font-size:11px;color:var(--ink-dim);font-weight:600;text-transform:uppercase;letter-spacing:.04em;">
+        <span>Advertiser</span><span style="text-align:center;">Price</span><span style="text-align:right;">Action</span>
+      </div>
     </div>
-    <div class="create-ad-box" id="createAdBox">
+    <div id="offerList" style="margin-top:0;"></div>
+    <!-- Quick sell box hidden by default -->
+    <div class="create-ad-box hidden" id="createAdBox">
       <input type="text" id="userAdName" placeholder="Your name" value="Trader">
       <input type="number" id="userAdPrice" placeholder="Price (ETB)">
       <input type="number" id="userAdAmount" placeholder="USDT amount">
       <button id="createUserSellBtn">➕ Quick Sell</button>
     </div>
-    <div id="offerList" style="margin-top:10px;"></div>
   </div>
+
   <div id="createOfferPage" class="page" style="padding-bottom:80px;">
-    <div class="subheader"><div class="back-btn" onclick="showPage('p2pPage')">←</div><div class="title">Create P2P Offer</div></div>
+    <div class="subheader"><div class="back-btn" onclick="showPage('p2pPage')">←</div><div class="title">Post New Ad</div></div>
     <div id="kycRequiredMsg" class="warning-note hidden"><span>⚠️</span><span>You must complete KYC verification before creating P2P offers.</span></div>
     <div class="form-card" id="createOfferForm">
-      <label class="field-label">Offer Type</label>
+      <label class="field-label">I want to</label>
       <div class="network-select">
-        <div class="network-opt active" id="offerTypeBuy" onclick="selectOfferType('buy')">I'm Buying</div>
-        <div class="network-opt" id="offerTypeSell" onclick="selectOfferType('sell')">I'm Selling</div>
+        <div class="network-opt active" id="offerTypeBuy" onclick="selectOfferType('buy')">Buy Crypto</div>
+        <div class="network-opt" id="offerTypeSell" onclick="selectOfferType('sell')">Sell Crypto</div>
       </div>
       <label class="field-label">Cryptocurrency</label>
       <select class="input" id="offerCoin"><option>USDT</option><option>BTC</option><option>ETH</option><option>SOL</option><option>TRX</option></select>
@@ -325,44 +335,94 @@
         <option value="GHS">🇬🇭 GHS</option><option value="TZS">🇹🇿 TZS</option><option value="MAD">🇲🇦 MAD</option>
         <option value="CNY">🇨🇳 CNY</option>
       </select>
-      <label class="field-label">Price per coin (fiat)</label>
+      <label class="field-label">Your Price (per coin in fiat)</label>
       <input type="number" class="input" id="offerPrice" placeholder="e.g. 182.40">
-      <label class="field-label">Available Amount (crypto)</label>
+      <label class="field-label">Total Amount (crypto)</label>
       <input type="number" class="input" id="offerAmount" placeholder="e.g. 500">
-      <label class="field-label">Min Order (fiat)</label>
+      <label class="field-label">Order Limit — Min (fiat)</label>
       <input type="number" class="input" id="offerMin" placeholder="e.g. 500">
-      <label class="field-label">Max Order (fiat)</label>
+      <label class="field-label">Order Limit — Max (fiat)</label>
       <input type="number" class="input" id="offerMax" placeholder="e.g. 50000">
-      <label class="field-label">Payment Methods (comma separated)</label>
-      <input type="text" class="input" id="offerPayments" placeholder="e.g. Telebirr, CBE Birr, Bank Transfer">
-      <label class="field-label">Payment Instructions / Account Details</label>
-      <textarea class="input" id="offerInstructions" rows="3" placeholder="Enter account number, name, etc..."></textarea>
-      <button class="btn-primary-full" onclick="submitOffer()">Post Offer</button>
+      <label class="field-label">Payment Methods</label>
+      <input type="text" class="input" id="offerPayments" placeholder="e.g. Telebirr, CBE Birr, Bank">
+      <label class="field-label">Payment Details / Account Info</label>
+      <textarea class="input" id="offerInstructions" rows="3" placeholder="Account number, name, instructions..."></textarea>
+      <button class="btn-primary-full" onclick="submitOffer()">✅ Post Ad</button>
     </div>
   </div>
-  <div id="orderPage" class="page" style="padding-bottom:80px;">
-    <div class="subheader"><div class="back-btn" onclick="showPage('p2pPage')">←</div><div class="title" id="orderTitle">Order Chat</div><div id="orderIdDisplay" style="font-size:11px;color:var(--ink-dim);"></div></div>
-    <div class="order-summary">
-      <div class="top-row">
-        <div><div style="font-size:11px;color:var(--ink-dim);margin-bottom:4px;" id="orderDirection">You are buying</div><div class="amount" id="orderAmt">—</div></div>
+
+  <!-- Binance-style Order Page with Chat -->
+  <div id="orderPage" class="page" style="padding-bottom:0;">
+    <!-- Order Header -->
+    <div style="background:var(--panel);border-bottom:1px solid var(--line);">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;">
+        <div class="back-btn" onclick="showPage('p2pPage')">←</div>
+        <div style="flex:1;">
+          <div style="font-size:15px;font-weight:800;" id="orderTitle">P2P Order</div>
+          <div style="font-size:11px;color:var(--ink-dim);" id="orderIdDisplay"></div>
+        </div>
         <span class="order-status pending" id="orderStatus">Pending</span>
       </div>
-      <div class="order-grid">
-        <div class="order-field"><div class="label">Price</div><div class="val" id="orderPrice">—</div></div>
-        <div class="order-field"><div class="label">Total</div><div class="val" id="orderTotal">—</div></div>
-        <div class="order-field"><div class="label">Merchant</div><div class="val" id="orderMerchant">—</div></div>
-        <div class="order-field"><div class="label">Payment</div><div class="val" id="orderPayment">—</div></div>
+    </div>
+
+    <!-- Split layout: order info top, chat bottom -->
+    <div style="display:flex;flex-direction:column;height:calc(100vh - 120px);">
+
+      <!-- Order Info Panel -->
+      <div style="background:var(--panel);border-bottom:2px solid var(--line);padding:14px 16px;">
+        <div style="font-size:11px;color:var(--ink-dim);margin-bottom:4px;" id="orderDirection">You are buying</div>
+        <div style="font-size:26px;font-weight:800;font-family:var(--mono);color:var(--green);margin-bottom:10px;" id="orderAmt">—</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+          <div style="background:var(--panel-2);border-radius:10px;padding:10px;">
+            <div style="font-size:10px;color:var(--ink-dim);text-transform:uppercase;margin-bottom:3px;">Price</div>
+            <div style="font-size:13px;font-weight:700;" id="orderPrice">—</div>
+          </div>
+          <div style="background:var(--panel-2);border-radius:10px;padding:10px;">
+            <div style="font-size:10px;color:var(--ink-dim);text-transform:uppercase;margin-bottom:3px;">Total</div>
+            <div style="font-size:13px;font-weight:700;" id="orderTotal">—</div>
+          </div>
+          <div style="background:var(--panel-2);border-radius:10px;padding:10px;">
+            <div style="font-size:10px;color:var(--ink-dim);text-transform:uppercase;margin-bottom:3px;">Merchant</div>
+            <div style="font-size:13px;font-weight:700;" id="orderMerchant">—</div>
+          </div>
+          <div style="background:var(--panel-2);border-radius:10px;padding:10px;">
+            <div style="font-size:10px;color:var(--ink-dim);text-transform:uppercase;margin-bottom:3px;">Payment</div>
+            <div style="font-size:12px;font-weight:700;" id="orderPayment">—</div>
+          </div>
+        </div>
+        <!-- Countdown -->
+        <div class="countdown hidden" id="countdownBox" style="margin:0 0 8px;"><span>Pay within</span><b id="countdownTimer">14:58</b></div>
+        <!-- Escrow notice -->
+        <div style="background:rgba(240,185,11,.08);border:1px solid rgba(240,185,11,.2);border-radius:10px;padding:8px 12px;font-size:11px;color:var(--gold);display:flex;align-items:center;gap:6px;">
+          🔒 <span id="escrowTitle">Funds secured in escrow</span>
+        </div>
+        <!-- Payment instructions -->
+        <div id="paymentInstructionsBox" style="display:none;margin-top:8px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:10px 12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px;">💳 Payment Instructions</div>
+          <div id="paymentInstructionsText" style="font-size:12px;color:var(--ink-dim);white-space:pre-wrap;line-height:1.5;"></div>
+        </div>
+      </div>
+
+      <!-- Chat Section -->
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+        <div style="padding:8px 16px;font-size:11px;font-weight:700;color:var(--ink-dim);background:var(--panel-2);border-bottom:1px solid var(--line);">💬 ORDER CHAT</div>
+        <div id="chatArea" style="flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px;"></div>
+        <!-- Chat Input -->
+        <div style="background:var(--panel);border-top:1px solid var(--line);padding:10px 16px;display:flex;gap:8px;align-items:center;">
+          <input type="text" placeholder="Message your trading partner…" id="chatInput" onkeypress="if(event.key==='Enter')sendChat()" style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:20px;padding:10px 16px;color:var(--ink);font-size:13px;outline:none;">
+          <button onclick="sendChat()" style="width:38px;height:38px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0;">➤</button>
+        </div>
+        <!-- Action Buttons -->
+        <div class="order-actions hidden" id="buyerActionsBar" style="position:relative;border-top:1px solid var(--line);">
+          <button class="btn-cancel" onclick="cancelOrder()">Cancel Order</button>
+          <button class="btn-confirm" onclick="markPaid()">✅ I've Paid</button>
+        </div>
+        <div class="order-actions hidden" id="sellerActionsBar" style="position:relative;border-top:1px solid var(--line);">
+          <button class="btn-dispute" onclick="disputeOrder()">⚠️ Dispute</button>
+          <button class="btn-release" onclick="releaseFunds()">✅ Release Funds</button>
+        </div>
       </div>
     </div>
-    <div class="countdown hidden" id="countdownBox"><span>Complete payment within</span><b id="countdownTimer">14:58</b></div>
-    <div class="escrow-box"><div class="escrow-row"><span class="escrow-icon">🔒</span><div><div class="escrow-title" id="escrowTitle">Funds held in escrow</div><div class="escrow-sub" id="escrowSub">Released once payment confirmed.</div></div></div></div>
-    <div class="form-card hidden" id="paymentInstructionsBox"><div style="font-weight:700;font-size:13px;margin-bottom:8px;">💳 Payment Instructions</div><div id="paymentInstructionsText" style="font-size:13px;color:var(--ink-dim);white-space:pre-wrap;"></div></div>
-    <div style="padding:12px 16px 4px;font-size:12px;font-weight:700;color:var(--ink-dim);">💬 LIVE CHAT</div>
-    <div class="chat-area" id="chatArea"></div>
-    <div style="height:80px;"></div>
-    <div class="order-actions hidden" id="buyerActionsBar"><button class="btn-cancel" onclick="cancelOrder()">Cancel</button><button class="btn-confirm" onclick="markPaid()">I've Paid</button></div>
-    <div class="order-actions hidden" id="sellerActionsBar"><button class="btn-dispute" onclick="disputeOrder()">Dispute</button><button class="btn-release" onclick="releaseFunds()">Release Funds</button></div>
-    <div class="chat-input-row"><input type="text" placeholder="Type a message…" id="chatInput" onkeypress="if(event.key==='Enter')sendChat()"><button class="chat-send" onclick="sendChat()">➤</button></div>
   </div>
   <div id="depositPage" class="page" style="padding-bottom:80px;">
     <div class="subheader"><div class="back-btn" onclick="showPage('assetsPage')">←</div><div class="title">Deposit</div></div>
@@ -722,11 +782,12 @@ async function loadP2POffers(){
   }catch(e){document.getElementById('offerList').innerHTML='<div class="empty-state" style="color:var(--red);">Error: '+e.message+'</div>';}
 }
 function renderOfferList(offers,side){
-  if(!offers.length){document.getElementById('offerList').innerHTML='<div class="empty-state">No offers available.<br>Be the first to create one!</div>';return;}
+  if(!offers.length){document.getElementById('offerList').innerHTML='<div class="empty-state" style="margin:20px 16px;">No offers available.<br><small>Be the first to post one!</small></div>';return;}
   document.getElementById('offerList').innerHTML=offers.map(o=>{
     const isMe=o.userId===currentUser.uid,initial=(o.merchantName||'?')[0].toUpperCase();
-    const btnCls=side==='buy'?'buy':'sell',btnLabel=side==='buy'?'Buy '+o.coin:'Sell '+o.coin;
-    return`<div class="p2p-offer"><div class="merchant-row"><div class="avatar">${initial}</div><div><div class="merchant-name">${escapeHtml(o.merchantName||'Merchant')} ${o.kycVerified?'<span class="verified-badge">KYC ✓</span>':''} ${isMe?'<span class="my-offer-badge">MY OFFER</span>':''}</div><div class="merchant-meta">${o.currency} · ${(o.paymentMethods||[]).join(', ')||'—'}</div></div></div><div class="p2p-price ${side==='buy'?'':'sell'}">${(o.price||0).toLocaleString()} ${o.currency}</div><div class="p2p-details"><span>Available: <b>${(o.amount||0).toLocaleString()} ${o.coin}</b></span><span>Limit: <b>${(o.minOrder||0).toLocaleString()}–${(o.maxOrder||0).toLocaleString()} ${o.currency}</b></span></div><div class="pay-methods">${(o.paymentMethods||[]).map(m=>`<span class="pay-chip">${m}</span>`).join('')}</div>${isMe?`<button class="offer-btn my-offer" onclick="showPage('myOffersPage')">Manage Offer</button>`:`<button class="offer-btn ${btnCls}" onclick="openOrderFromOffer('${o.id}')">${btnLabel}</button>`}</div>`;
+    const btnColor=side==='buy'?'var(--green)':`'var(--red)'`;
+    const btnText=side==='buy'?'Buy':'Sell';
+    return`<div style="background:var(--panel);border-bottom:1px solid var(--line);padding:14px 16px;"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;"><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><div style="width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;">${initial}</div><span style="font-weight:700;font-size:13px;">${escapeHtml(o.merchantName||'Merchant')}</span>${o.kycVerified?'<span style="font-size:9px;background:rgba(30,201,139,.15);color:var(--green);border-radius:4px;padding:1px 5px;font-weight:700;">KYC</span>':''} ${isMe?'<span style="font-size:9px;background:rgba(59,130,246,.15);color:var(--accent);border-radius:4px;padding:1px 5px;font-weight:700;">YOU</span>':''}</div><div style="font-size:22px;font-weight:800;font-family:var(--mono);color:${side==='buy'?'var(--green)':`'var(--red)'`};margin-bottom:4px;">${(o.price||0).toLocaleString()} <span style="font-size:13px;font-weight:600;color:var(--ink-dim);">${o.currency}</span></div><div style="font-size:11px;color:var(--ink-dim);margin-bottom:3px;">Available: <b style="color:var(--ink);">${(o.amount||0).toLocaleString()} ${o.coin}</b></div><div style="font-size:11px;color:var(--ink-dim);margin-bottom:6px;">Limit: <b style="color:var(--ink);">${(o.minOrder||0).toLocaleString()} – ${(o.maxOrder||0).toLocaleString()} ${o.currency}</b></div><div style="display:flex;gap:4px;flex-wrap:wrap;">${(o.paymentMethods||[]).map(m=>`<span style="font-size:10px;padding:2px 7px;border-radius:4px;background:var(--panel-2);color:var(--ink-dim);border:1px solid var(--line);">${m}</span>`).join('')}` </div></div><div style="flex-shrink:0;padding-top:20px;">${isMe?`<button onclick="showPage('myOffersPage')" style="padding:10px 18px;border-radius:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink-dim);font-weight:700;font-size:13px;cursor:pointer;">Manage</button>`:`<button onclick="openOrderFromOffer('${o.id}')" style="padding:10px 18px;border-radius:8px;border:none;background:${btnColor};color:${side==='buy'?'#06241a':'#fff'};font-weight:700;font-size:13px;cursor:pointer;">${btnText}</button>`}</div></div></div>`;
   }).join('');
 }
 document.getElementById('createUserSellBtn').addEventListener('click',async()=>{
