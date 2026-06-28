@@ -5,226 +5,217 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>CoinVexa</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{--bg:#0d1117;--panel:#161b22;--panel-2:#1f2630;--line:#2b3340;--ink:#e6edf3;--ink-dim:#7d8b9c;--green:#1ec98b;--red:#ef5d5d;--accent:#3b82f6;--gold:#f0b90b;--mono:'SF Mono',monospace;--shadow:0 2px 12px rgba(0,0,0,.3);}
-[data-theme="light"]{--bg:#f0f2f5;--panel:#fff;--panel-2:#f5f7fa;--line:#e1e4e8;--ink:#1a1a2e;--ink-dim:#6b7280;--green:#059669;--red:#dc2626;--accent:#2563eb;--gold:#d97706;--shadow:0 2px 12px rgba(0,0,0,.1);}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;transition:background .2s,color .2s;}
-.hidden{display:none!important;}
-.page{display:none;}
-.page.active{display:block;}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--panel);border-bottom:1px solid var(--line);}
-.brand{font-size:18px;font-weight:800;}.brand span{color:var(--accent);}
-.user-email{font-size:11px;color:var(--ink-dim);margin-top:2px;}
-.topbar-icons{display:flex;gap:14px;font-size:18px;color:var(--ink-dim);align-items:center;}
-.topbar-icons button{background:none;border:none;color:inherit;font-size:inherit;cursor:pointer;}
-.ann-banner{background:linear-gradient(135deg,rgba(240,185,11,.15),rgba(240,185,11,.05));border-bottom:1px solid rgba(240,185,11,.3);padding:10px 16px;display:flex;align-items:center;gap:12px;font-size:13px;color:var(--gold);}
-.ann-banner a{color:var(--accent);font-weight:700;text-decoration:none;}
-.ann-banner .close{cursor:pointer;color:var(--ink-dim);font-size:16px;margin-left:auto;}
-.auth-wrap{display:flex;align-items:center;justify-content:center;min-height:80vh;padding:24px 16px;}
-.auth-card{width:100%;max-width:380px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px 24px;}
-.auth-title{font-size:22px;font-weight:800;margin-bottom:4px;}
-.auth-sub{font-size:13px;color:var(--ink-dim);margin-bottom:24px;}
-.auth-err{background:rgba(239,93,93,.1);border:1px solid rgba(239,93,93,.3);color:var(--red);border-radius:10px;padding:10px 12px;font-size:12px;margin-bottom:14px;display:none;line-height:1.4;}
-.auth-err.show{display:block;}
-.auth-ok{background:rgba(30,201,139,.1);border:1px solid rgba(30,201,139,.3);color:var(--green);border-radius:10px;padding:10px 12px;font-size:12px;margin-bottom:14px;display:none;line-height:1.4;}
-.auth-ok.show{display:block;}
-.field-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-dim);margin-bottom:6px;display:block;}
-.input{width:100%;padding:13px 14px;margin-bottom:14px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-size:15px;outline:none;}
-.input:focus{border-color:var(--accent);}
-.btn-primary{width:100%;padding:14px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:700;font-size:14px;cursor:pointer;}
-.btn-primary:disabled{opacity:.6;cursor:not-allowed;}
-.btn-google{width:100%;padding:13px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-weight:700;font-size:14px;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;}
-.divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--ink-dim);font-size:12px;}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--line);}
-.auth-foot{text-align:center;font-size:13px;color:var(--ink-dim);margin-top:18px;}
-.auth-foot a{color:var(--accent);font-weight:700;text-decoration:none;}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.ref-badge{background:rgba(30,201,139,.1);border:1px solid rgba(30,201,139,.3);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--green);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
-.assets-hero{padding:18px 16px;background:linear-gradient(180deg,var(--panel) 0%,var(--bg) 100%);}
-.assets-hero .lbl{font-size:12px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
-.assets-hero .total{font-size:32px;font-weight:800;font-family:var(--mono);}
-.assets-hero .total small{font-size:16px;color:var(--ink-dim);font-weight:600;}
-.price-update{font-size:10px;color:var(--ink-dim);margin-top:2px;}
-.action-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:14px 16px 4px;}
-.action-btn{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 6px;text-align:center;font-size:11px;font-weight:600;color:var(--ink);cursor:pointer;}
-.action-btn .icon{font-size:18px;display:block;margin-bottom:4px;}
-.sec-title{display:flex;justify-content:space-between;align-items:center;padding:18px 16px 8px;font-size:14px;font-weight:700;}
-.asset-list{padding:0 16px;}
-.asset-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);}
-.asset-row:last-child{border-bottom:none;}
-.coin-icon{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
-.coin-icon.usdt{background:#1a4d3d;color:#1ec98b;}
-.coin-icon.btc{background:#3a2c10;color:#f0b90b;}
-.coin-icon.eth{background:#1c2840;color:#7fa8ff;}
-.coin-icon.sol{background:#1a2a3a;color:#9945FF;}
-.coin-icon.trx{background:#2c1a3a;color:#c98bf0;}
-.asset-info{flex:1;min-width:0;}
-.asset-info .name{font-weight:700;font-size:14px;}
-.asset-info .full{font-size:11px;color:var(--ink-dim);}
-.asset-vals{text-align:right;}
-.asset-vals .amt{font-family:var(--mono);font-weight:700;font-size:14px;}
-.asset-vals .usd{font-size:11px;color:var(--ink-dim);}
-.p2p-header{background:var(--panel);border-bottom:1px solid var(--line);}
-.p2p-tabs{display:flex;padding:0 16px;}
-.p2p-tab{padding:12px 20px;font-size:14px;font-weight:700;color:var(--ink-dim);cursor:pointer;border-bottom:2px solid transparent;}
-.p2p-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-.p2p-filters{display:flex;gap:8px;padding:10px 16px;overflow-x:auto;}
-.p2p-filters select{padding:6px 10px;border-radius:20px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-size:12px;font-weight:600;outline:none;}
-.p2p-col-header{display:grid;grid-template-columns:1fr auto;padding:6px 16px 8px;font-size:11px;color:var(--ink-dim);font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
-.post-ad-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;}
-.offer-card{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 16px;}
-.offer-merchant{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
-.offer-avatar{width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;}
-.offer-name{font-weight:700;font-size:13px;}
-.kyc-tag{font-size:9px;background:rgba(30,201,139,.15);color:var(--green);border-radius:4px;padding:1px 5px;font-weight:700;}
-.you-tag{font-size:9px;background:rgba(59,130,246,.15);color:var(--accent);border-radius:4px;padding:1px 5px;font-weight:700;}
-.offer-price-big{font-size:22px;font-weight:800;font-family:var(--mono);margin-bottom:4px;}
-.offer-price-big.buy-color{color:var(--green);}
-.offer-price-big.sell-color{color:var(--red);}
-.offer-meta{font-size:11px;color:var(--ink-dim);margin-bottom:3px;}
-.offer-meta b{color:var(--ink);}
-.offer-methods{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
-.method-tag{font-size:10px;padding:2px 7px;border-radius:4px;background:var(--panel-2);color:var(--ink-dim);border:1px solid var(--line);}
-.buy-btn{padding:10px 18px;border-radius:8px;border:none;background:var(--green);color:#06241a;font-weight:700;font-size:13px;cursor:pointer;}
-.sell-btn{padding:10px 18px;border-radius:8px;border:none;background:var(--red);color:#fff;font-weight:700;font-size:13px;cursor:pointer;}
-.manage-btn{padding:10px 18px;border-radius:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink-dim);font-weight:700;font-size:13px;cursor:pointer;}
-.order-header{background:var(--panel);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;gap:12px;}
-.back-btn{width:32px;height:32px;border-radius:50%;background:var(--panel-2);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--ink);cursor:pointer;flex-shrink:0;}
-.order-status-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;text-transform:uppercase;}
-.status-pending{background:rgba(240,185,11,.15);color:var(--gold);}
-.status-paid{background:rgba(59,130,246,.15);color:var(--accent);}
-.status-completed{background:rgba(30,201,139,.15);color:var(--green);}
-.status-cancelled,.status-disputed{background:rgba(239,93,93,.15);color:var(--red);}
-.order-info{background:var(--panel);border-bottom:2px solid var(--line);padding:14px 16px;}
-.order-amount{font-size:26px;font-weight:800;font-family:var(--mono);color:var(--green);margin-bottom:10px;}
-.order-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
-.order-field{background:var(--panel-2);border-radius:10px;padding:10px;}
-.order-field .fl{font-size:10px;color:var(--ink-dim);text-transform:uppercase;margin-bottom:3px;}
-.order-field .fv{font-size:13px;font-weight:700;}
-.countdown{background:rgba(240,185,11,.1);border:1px solid rgba(240,185,11,.3);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--gold);display:flex;justify-content:space-between;margin-bottom:8px;}
-.countdown b{font-family:var(--mono);font-size:14px;}
-.escrow-note{background:rgba(240,185,11,.08);border:1px solid rgba(240,185,11,.2);border-radius:10px;padding:8px 12px;font-size:11px;color:var(--gold);display:flex;align-items:center;gap:6px;}
-.pay-inst{margin-top:8px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:10px 12px;}
-.pay-inst-title{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px;}
-.pay-inst-text{font-size:12px;color:var(--ink-dim);white-space:pre-wrap;line-height:1.5;}
-.chat-section{display:flex;flex-direction:column;flex:1;overflow:hidden;}
-.chat-label{padding:8px 16px;font-size:11px;font-weight:700;color:var(--ink-dim);background:var(--panel-2);border-bottom:1px solid var(--line);}
-.chat-area{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px;min-height:150px;}
-.msg{max-width:78%;padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.4;}
-.msg.them{background:var(--panel-2);align-self:flex-start;border-bottom-left-radius:4px;}
-.msg.me{background:var(--accent);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
-.msg.sys{align-self:center;background:transparent;color:var(--ink-dim);font-size:11px;text-align:center;max-width:100%;}
-.msg-time{font-size:10px;opacity:.6;margin-top:4px;}
-.msg-sender{font-size:10px;opacity:.7;margin-bottom:2px;font-weight:600;}
-.chat-input-row{background:var(--panel);border-top:1px solid var(--line);padding:10px 16px;display:flex;gap:8px;align-items:center;}
-.chat-input-row input{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:20px;padding:10px 16px;color:var(--ink);font-size:13px;outline:none;}
-.chat-send{width:38px;height:38px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0;}
-.order-actions{background:var(--panel);border-top:1px solid var(--line);padding:12px 16px;display:flex;gap:10px;}
-.order-actions button{flex:1;padding:13px;border-radius:10px;border:none;font-weight:700;font-size:13px;cursor:pointer;}
-.btn-cancel{background:var(--panel-2);color:var(--ink-dim);border:1px solid var(--line)!important;}
-.btn-confirm{background:var(--green);color:#06241a;}
-.btn-release{background:var(--green);color:#06241a;}
-.btn-dispute{background:rgba(239,93,93,.15);color:var(--red);border:1px solid rgba(239,93,93,.3)!important;}
-.hist-item{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin:0 16px 10px;box-shadow:var(--shadow);}
-.hist-item .tr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-.hist-item .ty{font-weight:700;font-size:14px;}
-.hist-item .mt{font-size:11px;color:var(--ink-dim);}
-.hist-item .am{font-family:var(--mono);font-weight:700;font-size:15px;}
-.hist-item .am.pos{color:var(--green);}
-.hist-item .am.neg{color:var(--red);}
-.s-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;margin-top:4px;}
-.s-badge.pending{background:rgba(240,185,11,.15);color:var(--gold);}
-.s-badge.completed{background:rgba(30,201,139,.15);color:var(--green);}
-.s-badge.rejected{background:rgba(239,93,93,.15);color:var(--red);}
-.form-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 16px;box-shadow:var(--shadow);}
-.form-card input,.form-card select,.form-card textarea{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);margin-bottom:8px;font-size:14px;outline:none;}
-.form-card input:focus,.form-card select:focus,.form-card textarea:focus{border-color:var(--accent);}
-.form-card textarea{resize:vertical;}
-.net-select{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
-.net-opt{flex:1;min-width:60px;text-align:center;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);font-size:12px;font-weight:700;color:var(--ink-dim);cursor:pointer;}
-.net-opt.active{border-color:var(--accent);color:var(--accent);background:rgba(59,130,246,.1);}
-.fee-row{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-dim);padding:8px 0;border-top:1px solid var(--line);margin-top:4px;}
-.max-link{color:var(--accent);font-size:11px;font-weight:700;cursor:pointer;}
-.bal-hint{font-size:11px;color:var(--ink-dim);margin:-10px 0 14px;}
-.tx-box{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:11px;word-break:break-all;margin-bottom:8px;color:var(--ink-dim);}
-.addr-box{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:12px;word-break:break-all;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;}
-.copy-link{color:var(--accent);font-weight:700;cursor:pointer;flex-shrink:0;}
-.qr-box{display:flex;justify-content:center;padding:16px 0;}
-.shield-note{display:flex;align-items:flex-start;gap:10px;margin:14px 16px;border-radius:12px;padding:12px 14px;font-size:12px;color:var(--ink-dim);line-height:1.5;background:rgba(30,201,139,.08);border:1px solid rgba(30,201,139,.25);}
-.warn-note{display:flex;align-items:flex-start;gap:10px;margin:14px 16px;border-radius:12px;padding:12px 14px;font-size:12px;color:var(--ink-dim);line-height:1.5;background:rgba(240,185,11,.08);border:1px solid rgba(240,185,11,.25);}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--panel);border-top:1px solid var(--line);display:flex;padding:6px 8px;z-index:5;}
-.nav-btn{flex:1;text-align:center;padding:8px 4px;border-radius:10px;font-size:11px;color:var(--ink-dim);font-weight:600;cursor:pointer;background:transparent;border:none;}
-.nav-btn.active{color:var(--accent);background:var(--panel-2);}
-.nav-icon{font-size:18px;display:block;margin-bottom:3px;}
-.profile-header{padding:24px 16px 16px;text-align:center;}
-.profile-avatar{width:64px;height:64px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;margin:0 auto 10px;}
-.profile-name{font-size:18px;font-weight:800;}
-.profile-email{font-size:13px;color:var(--ink-dim);margin-top:2px;}
-.kyc-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-top:8px;}
-.kyc-badge.unverified{background:rgba(240,185,11,.15);color:var(--gold);}
-.kyc-badge.pending{background:rgba(59,130,246,.15);color:var(--accent);}
-.kyc-badge.verified{background:rgba(30,201,139,.15);color:var(--green);}
-.menu-item{display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;cursor:pointer;box-shadow:var(--shadow);}
-.menu-item .left{display:flex;align-items:center;gap:12px;}
-.menu-item .icon{font-size:20px;}
-.menu-item .label{font-weight:600;font-size:14px;}
-.menu-item .sub{font-size:11px;color:var(--ink-dim);}
-.btn-danger{width:100%;padding:14px;border-radius:10px;border:1px solid rgba(239,93,93,.3);background:rgba(239,93,93,.15);color:var(--red);font-weight:700;font-size:14px;cursor:pointer;margin-top:8px;}
-.btn-approve{padding:10px 14px;border:none;border-radius:8px;background:var(--green);color:#06241a;font-weight:700;font-size:13px;cursor:pointer;flex:1;}
-.btn-reject{padding:10px 14px;border:none;border-radius:8px;background:var(--red);color:#fff;font-weight:700;font-size:13px;cursor:pointer;flex:1;}
-.admin-panel{display:none;background:var(--panel);margin:12px;border-radius:16px;padding:16px;border:2px solid var(--gold);box-shadow:var(--shadow);}
-.admin-panel.open{display:block;}
-.admin-tabs{display:flex;border-bottom:1px solid var(--line);overflow-x:auto;margin-bottom:12px;}
-.admin-tab{padding:10px 14px;font-size:13px;font-weight:700;color:var(--ink-dim);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;}
-.admin-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-.admin-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.admin-stat{background:var(--panel-2);border-radius:12px;padding:12px;}
-.admin-stat .lbl{font-size:11px;color:var(--ink-dim);text-transform:uppercase;}
-.admin-stat .val{font-size:20px;font-weight:800;font-family:var(--mono);}
-.req-card{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;}
-.req-card .usr{font-size:12px;color:var(--ink-dim);margin-bottom:4px;}
-.req-card .top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
-.req-card .amt{font-size:16px;font-weight:800;font-family:var(--mono);}
-.req-card .amt.pos{color:var(--green);}
-.req-card .amt.neg{color:var(--red);}
-.badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;}
-.badge.pending{background:rgba(240,185,11,.15);color:var(--gold);}
-.badge.approved{background:rgba(30,201,139,.15);color:var(--green);}
-.badge.rejected{background:rgba(239,93,93,.15);color:var(--red);}
-.toast{display:none;position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);padding:12px 24px;border-radius:40px;font-weight:600;font-size:14px;box-shadow:var(--shadow);z-index:200;max-width:90%;text-align:center;color:var(--ink);}
-.toast.show{display:block;animation:fadeIn .2s;}
-@keyframes fadeIn{from{opacity:0;transform:translate(-50%,6px);}to{opacity:1;transform:translate(-50%,0);}}
-.empty{text-align:center;padding:40px 20px;color:var(--ink-dim);}
-.subheader{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--panel);border-bottom:1px solid var(--line);}
-.subheader .title{font-size:16px;font-weight:700;flex:1;}
-.filter-chip{flex-shrink:0;font-size:12px;padding:6px 12px;border-radius:20px;background:var(--panel-2);border:1px solid var(--line);color:var(--ink-dim);font-weight:600;cursor:pointer;}
-.filter-chip.active{background:rgba(59,130,246,.15);border-color:var(--accent);color:var(--accent);}
-@media(max-width:400px){.assets-hero .total{font-size:24px;}.action-row{grid-template-columns:1fr 1fr;}}
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{ --bg:#0d1117; --panel:#161b22; --panel-2:#1f2630; --line:#2b3340; --ink:#e6edf3; --ink-dim:#7d8b9c; --green:#1ec98b; --red:#ef5d5d; --accent:#3b82f6; --gold:#f0b90b; --mono:'SF Mono','Roboto Mono',monospace; --shadow:0 2px 12px rgba(0,0,0,.3); }
+  [data-theme="light"]{ --bg:#f0f2f5; --panel:#ffffff; --panel-2:#f5f7fa; --line:#e1e4e8; --ink:#1a1a2e; --ink-dim:#6b7280; --green:#059669; --red:#dc2626; --accent:#2563eb; --gold:#d97706; --shadow:0 2px 12px rgba(0,0,0,.1); }
+  body{ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; transition:background .2s,color .2s; }
+  .hidden{ display:none !important; }
+  .page{ display:none; }
+  .page.active{ display:block; }
+  .flex{ display:flex; gap:8px; flex-wrap:wrap; }
+  .flex-between{ display:flex; justify-content:space-between; align-items:center; }
+  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:var(--panel); border-bottom:1px solid var(--line); }
+  .brand{ font-size:18px; font-weight:800; } .brand span{ color:var(--accent); }
+  .user-email{ font-size:11px; color:var(--ink-dim); margin-top:2px; }
+  .topbar-icons{ display:flex; gap:14px; font-size:18px; color:var(--ink-dim); align-items:center; }
+  .topbar-icons button{ background:none; border:none; color:inherit; font-size:inherit; cursor:pointer; }
+  .announcement-banner{ background:linear-gradient(135deg,rgba(240,185,11,.15),rgba(240,185,11,.05)); border-bottom:1px solid rgba(240,185,11,.3); padding:10px 16px; display:flex; align-items:center; gap:12px; font-size:13px; color:var(--gold); }
+  .announcement-banner a{ color:var(--accent); font-weight:700; text-decoration:none; }
+  .announcement-banner .close{ cursor:pointer; color:var(--ink-dim); font-size:16px; margin-left:auto; }
+  .auth-wrap{ display:flex; align-items:center; justify-content:center; min-height:80vh; padding:24px 16px; }
+  .auth-card{ width:100%; max-width:380px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:28px 24px; }
+  .auth-title{ font-size:22px; font-weight:800; margin-bottom:4px; }
+  .auth-sub{ font-size:13px; color:var(--ink-dim); margin-bottom:24px; }
+  .auth-error{ background:rgba(239,93,93,.1); border:1px solid rgba(239,93,93,.3); color:var(--red); border-radius:10px; padding:10px 12px; font-size:12px; margin-bottom:14px; display:none; line-height:1.4; }
+  .auth-error.visible{ display:block; }
+  .auth-status{ background:rgba(30,201,139,.1); border:1px solid rgba(30,201,139,.3); color:var(--green); border-radius:10px; padding:10px 12px; font-size:12px; margin-bottom:14px; display:none; line-height:1.4; }
+  .auth-status.visible{ display:block; }
+  .field-label{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-dim); margin-bottom:6px; display:block; }
+  .input{ width:100%; padding:13px 14px; margin-bottom:14px; border-radius:10px; border:1px solid var(--line); background:var(--panel-2); color:var(--ink); font-size:15px; outline:none; }
+  .input:focus{ border-color:var(--accent); }
+  .btn-primary-full{ width:100%; padding:14px; border-radius:10px; border:none; background:var(--accent); color:#fff; font-weight:700; font-size:14px; cursor:pointer; }
+  .btn-primary-full:disabled{ opacity:.6; cursor:not-allowed; }
+  .btn-google{ width:100%; padding:13px; border-radius:10px; border:1px solid var(--line); background:var(--panel-2); color:var(--ink); font-weight:700; font-size:14px; cursor:pointer; margin-top:10px; display:flex; align-items:center; justify-content:center; gap:10px; }
+  .divider{ display:flex; align-items:center; gap:10px; margin:16px 0; color:var(--ink-dim); font-size:12px; }
+  .divider::before,.divider::after{ content:''; flex:1; height:1px; background:var(--line); }
+  .auth-footer{ text-align:center; font-size:13px; color:var(--ink-dim); margin-top:18px; }
+  .auth-footer a{ color:var(--accent); font-weight:700; text-decoration:none; }
+  .spinner{ display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:6px; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .ref-badge{ background:rgba(30,201,139,.1); border:1px solid rgba(30,201,139,.3); border-radius:8px; padding:8px 12px; font-size:12px; color:var(--green); margin-bottom:14px; display:flex; align-items:center; gap:6px; }
+  .assets-hero{ padding:18px 16px; background:linear-gradient(180deg,var(--panel) 0%,var(--bg) 100%); }
+  .assets-hero .label{ font-size:12px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
+  .assets-hero .total{ font-size:32px; font-weight:800; font-family:var(--mono); }
+  .assets-hero .total small{ font-size:16px; color:var(--ink-dim); font-weight:600; }
+  .price-update{ font-size:10px; color:var(--ink-dim); margin-top:2px; }
+  .action-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:14px 16px 4px; }
+  .action-btn{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 6px; text-align:center; font-size:11px; font-weight:600; color:var(--ink); cursor:pointer; }
+  .action-btn .icon{ font-size:18px; display:block; margin-bottom:4px; }
+  .section-title{ display:flex; justify-content:space-between; align-items:center; padding:18px 16px 8px; font-size:14px; font-weight:700; }
+  .asset-list{ padding:0 16px; }
+  .asset-row{ display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .asset-row:last-child{ border-bottom:none; }
+  .coin-icon{ width:36px; height:36px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; }
+  .coin-icon.usdt{ background:#1a4d3d; color:#1ec98b; } .coin-icon.btc{ background:#3a2c10; color:#f0b90b; }
+  .coin-icon.eth{ background:#1c2840; color:#7fa8ff; } .coin-icon.sol{ background:#1a2a3a; color:#9945FF; }
+  .coin-icon.trx{ background:#2c1a3a; color:#c98bf0; }
+  .asset-info{ flex:1; min-width:0; } .asset-info .name{ font-weight:700; font-size:14px; } .asset-info .full{ font-size:11px; color:var(--ink-dim); }
+  .asset-values{ text-align:right; } .asset-values .amt{ font-family:var(--mono); font-weight:700; font-size:14px; } .asset-values .usd{ font-size:11px; color:var(--ink-dim); }
+  .p2p-tabs{ display:flex; gap:8px; padding:14px 16px 0; }
+  .p2p-tab{ flex:1; text-align:center; padding:10px; border-radius:10px; font-size:13px; font-weight:700; background:var(--panel); border:1px solid var(--line); color:var(--ink-dim); cursor:pointer; }
+  .p2p-tab.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .p2p-top-row{ display:flex; align-items:center; justify-content:space-between; padding:10px 16px 0; flex-wrap:wrap; gap:8px; }
+  .filter-chip{ flex-shrink:0; font-size:12px; padding:6px 12px; border-radius:20px; background:var(--panel-2); border:1px solid var(--line); color:var(--ink-dim); font-weight:600; cursor:pointer; }
+  .filter-chip.active{ background:rgba(59,130,246,.15); border-color:var(--accent); color:var(--accent); }
+  .p2p-offer{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px; margin:0 16px 10px; box-shadow:var(--shadow); }
+  .p2p-offer .merchant-row{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .avatar{ width:30px; height:30px; border-radius:50%; background:var(--panel-2); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:var(--accent); }
+  .merchant-name{ font-weight:700; font-size:13px; } .merchant-meta{ font-size:11px; color:var(--ink-dim); }
+  .verified-badge{ font-size:9px; background:rgba(30,201,139,.15); color:var(--green); border-radius:5px; padding:2px 5px; font-weight:700; margin-left:4px; }
+  .my-offer-badge{ font-size:9px; background:rgba(59,130,246,.15); color:var(--accent); border-radius:5px; padding:2px 5px; font-weight:700; margin-left:4px; }
+  .p2p-price{ font-size:22px; font-weight:800; font-family:var(--mono); color:var(--green); margin:8px 0 2px; }
+  .p2p-price.sell{ color:var(--red); }
+  .p2p-details{ display:flex; justify-content:space-between; font-size:12px; color:var(--ink-dim); margin-bottom:10px; }
+  .p2p-details b{ color:var(--ink); }
+  .pay-methods{ display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap; }
+  .pay-chip{ font-size:10px; padding:3px 8px; border-radius:6px; background:var(--panel-2); color:var(--ink-dim); border:1px solid var(--line); }
+  .offer-btn{ width:100%; padding:11px; border-radius:10px; border:none; font-weight:700; font-size:13px; cursor:pointer; }
+  .offer-btn.buy{ background:var(--green); color:#06241a; } .offer-btn.sell{ background:var(--red); color:#fff; }
+  .offer-btn.my-offer{ background:var(--panel-2); color:var(--ink-dim); border:1px solid var(--line); }
+  .create-offer-btn{ background:var(--accent); color:#fff; border:none; border-radius:10px; padding:8px 14px; font-size:12px; font-weight:700; cursor:pointer; }
+  .create-ad-box{ background:var(--panel); border:1px dashed var(--line); border-radius:14px; padding:14px 16px; margin:12px 16px 0; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .create-ad-box input{ flex:1; min-width:60px; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--panel-2); color:var(--ink); font-size:13px; outline:none; }
+  .create-ad-box button{ background:var(--green); border:none; padding:8px 16px; border-radius:8px; font-weight:700; color:#06241a; cursor:pointer; }
+  .order-summary{ background:var(--panel); border-bottom:1px solid var(--line); padding:16px; }
+  .order-summary .top-row{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+  .order-summary .amount{ font-size:24px; font-weight:800; font-family:var(--mono); }
+  .order-status{ font-size:11px; font-weight:700; padding:4px 10px; border-radius:8px; text-transform:uppercase; }
+  .order-status.pending{ background:rgba(240,185,11,.15); color:var(--gold); }
+  .order-status.paid{ background:rgba(59,130,246,.15); color:var(--accent); }
+  .order-status.completed{ background:rgba(30,201,139,.15); color:var(--green); }
+  .order-status.cancelled,.order-status.disputed{ background:rgba(239,93,93,.15); color:var(--red); }
+  .order-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+  .order-field .label{ font-size:11px; color:var(--ink-dim); margin-bottom:2px; }
+  .order-field .val{ font-size:13px; font-weight:600; word-break:break-all; }
+  .countdown{ background:rgba(240,185,11,.1); border:1px solid rgba(240,185,11,.3); border-radius:10px; padding:10px 14px; margin:12px 16px; font-size:12px; color:var(--gold); display:flex; justify-content:space-between; }
+  .countdown b{ font-family:var(--mono); font-size:14px; }
+  .chat-area{ padding:12px 16px; display:flex; flex-direction:column; gap:10px; min-height:200px; }
+  .msg{ max-width:78%; padding:10px 12px; border-radius:12px; font-size:13px; line-height:1.4; }
+  .msg.them{ background:var(--panel-2); align-self:flex-start; border-bottom-left-radius:4px; }
+  .msg.me{ background:var(--accent); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
+  .msg.system{ align-self:center; background:transparent; color:var(--ink-dim); font-size:11px; text-align:center; max-width:100%; }
+  .msg-time{ font-size:10px; opacity:.6; margin-top:4px; }
+  .msg-sender{ font-size:10px; opacity:.7; margin-bottom:2px; font-weight:600; }
+  .order-actions{ position:fixed; bottom:0; left:0; right:0; background:var(--panel); border-top:1px solid var(--line); padding:12px 16px; display:flex; gap:10px; z-index:5; }
+  .order-actions button{ flex:1; padding:13px; border-radius:10px; border:none; font-weight:700; font-size:13px; cursor:pointer; }
+  .btn-confirm,.btn-release{ background:var(--green); color:#06241a; }
+  .btn-cancel{ background:var(--panel-2); color:var(--ink-dim); border:1px solid var(--line); }
+  .btn-dispute{ background:rgba(239,93,93,.15); color:var(--red); border:1px solid rgba(239,93,93,.3); }
+  .chat-input-row{ position:fixed; bottom:0; left:0; right:0; background:var(--panel); border-top:1px solid var(--line); padding:10px 16px; display:flex; gap:10px; z-index:5; }
+  .chat-input-row input{ flex:1; background:var(--panel-2); border:1px solid var(--line); border-radius:20px; padding:10px 16px; color:var(--ink); font-size:13px; outline:none; }
+  .chat-send{ width:40px; height:40px; border-radius:50%; background:var(--accent); border:none; color:#fff; font-size:16px; cursor:pointer; flex-shrink:0; }
+  .escrow-box{ margin:0 16px 12px; border-radius:14px; border:1px solid rgba(240,185,11,.3); background:rgba(240,185,11,.06); padding:14px; }
+  .escrow-row{ display:flex; gap:10px; align-items:flex-start; }
+  .escrow-icon{ font-size:20px; flex-shrink:0; }
+  .escrow-title{ font-weight:700; font-size:13px; color:var(--gold); }
+  .escrow-sub{ font-size:12px; color:var(--ink-dim); margin-top:3px; line-height:1.4; }
+  .history-item{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px; margin:0 16px 10px; box-shadow:var(--shadow); }
+  .history-item .top-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .history-item .type{ font-weight:700; font-size:14px; }
+  .history-item .meta{ font-size:11px; color:var(--ink-dim); }
+  .history-item .amt{ font-family:var(--mono); font-weight:700; font-size:15px; }
+  .history-item .amt.pos{ color:var(--green); } .history-item .amt.neg{ color:var(--red); }
+  .status-badge{ display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; margin-top:4px; }
+  .status-badge.pending{ background:rgba(240,185,11,.15); color:var(--gold); }
+  .status-badge.completed{ background:rgba(30,201,139,.15); color:var(--green); }
+  .status-badge.rejected{ background:rgba(239,93,93,.15); color:var(--red); }
+  .form-card{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; margin:14px 16px; box-shadow:var(--shadow); }
+  .form-card input,.form-card select,.form-card textarea{ width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); background:var(--panel-2); color:var(--ink); margin-bottom:8px; font-size:14px; outline:none; }
+  .form-card textarea{ resize:vertical; }
+  .form-card input:focus,.form-card select:focus,.form-card textarea:focus{ border-color:var(--accent); }
+  .btn-group{ display:flex; gap:8px; flex-wrap:wrap; }
+  .btn-approve{ padding:10px 14px; border:none; border-radius:8px; background:var(--green); color:#06241a; font-weight:700; font-size:13px; cursor:pointer; flex:1; }
+  .btn-reject{ padding:10px 14px; border:none; border-radius:8px; background:var(--red); color:#fff; font-weight:700; font-size:13px; cursor:pointer; flex:1; }
+  .btn-danger-full{ width:100%; padding:14px; border-radius:10px; border:1px solid rgba(239,93,93,.3); background:rgba(239,93,93,.15); color:var(--red); font-weight:700; font-size:14px; cursor:pointer; margin-top:8px; }
+  .network-select{ display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+  .network-opt{ flex:1; min-width:60px; text-align:center; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--panel-2); font-size:12px; font-weight:700; color:var(--ink-dim); cursor:pointer; }
+  .network-opt.active{ border-color:var(--accent); color:var(--accent); background:rgba(59,130,246,.1); }
+  .fee-row{ display:flex; justify-content:space-between; font-size:12px; color:var(--ink-dim); padding:8px 0; border-top:1px solid var(--line); margin-top:4px; }
+  .max-link{ color:var(--accent); font-size:11px; font-weight:700; cursor:pointer; }
+  .balance-hint{ font-size:11px; color:var(--ink-dim); margin:-10px 0 14px; }
+  .tx-hash-box{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-family:var(--mono); font-size:11px; word-break:break-all; margin-bottom:8px; color:var(--ink-dim); }
+  .addr-box{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-family:var(--mono); font-size:12px; word-break:break-all; display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px; }
+  .copy-link{ color:var(--accent); font-weight:700; cursor:pointer; flex-shrink:0; }
+  .qr-box{ display:flex; justify-content:center; padding:16px 0; }
+  .shield-note,.warning-note{ display:flex; align-items:flex-start; gap:10px; margin:14px 16px; border-radius:12px; padding:12px 14px; font-size:12px; color:var(--ink-dim); line-height:1.5; }
+  .shield-note{ background:rgba(30,201,139,.08); border:1px solid rgba(30,201,139,.25); }
+  .warning-note{ background:rgba(240,185,11,.08); border:1px solid rgba(240,185,11,.25); }
+  .bottom-nav{ position:fixed; bottom:0; left:0; right:0; background:var(--panel); border-top:1px solid var(--line); display:flex; padding:6px 8px; z-index:5; }
+  .nav-btn{ flex:1; text-align:center; padding:8px 4px; border-radius:10px; font-size:11px; color:var(--ink-dim); font-weight:600; cursor:pointer; background:transparent; border:none; }
+  .nav-btn.active{ color:var(--accent); background:var(--panel-2); }
+  .nav-icon{ font-size:18px; display:block; margin-bottom:3px; }
+  .profile-header{ padding:24px 16px 16px; text-align:center; }
+  .profile-avatar{ width:64px; height:64px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:800; color:#fff; margin:0 auto 10px; }
+  .profile-name{ font-size:18px; font-weight:800; } .profile-email-text{ font-size:13px; color:var(--ink-dim); margin-top:2px; }
+  .kyc-badge{ display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700; margin-top:8px; }
+  .kyc-badge.unverified{ background:rgba(240,185,11,.15); color:var(--gold); }
+  .kyc-badge.pending{ background:rgba(59,130,246,.15); color:var(--accent); }
+  .kyc-badge.verified{ background:rgba(30,201,139,.15); color:var(--green); }
+  .profile-menu-item{ display:flex; align-items:center; justify-content:space-between; padding:14px; background:var(--panel); border:1px solid var(--line); border-radius:14px; margin-bottom:10px; cursor:pointer; box-shadow:var(--shadow); }
+  .profile-menu-item .left{ display:flex; align-items:center; gap:12px; }
+  .profile-menu-item .icon{ font-size:20px; }
+  .profile-menu-item .label{ font-weight:600; font-size:14px; }
+  .profile-menu-item .sub{ font-size:11px; color:var(--ink-dim); }
+  .theme-toggle{ background:var(--panel-2); border:1px solid var(--line); border-radius:20px; padding:4px 10px; font-size:14px; cursor:pointer; color:var(--ink); }
+  .admin-panel{ display:none; background:var(--panel); margin:12px; border-radius:16px; padding:16px; border:2px solid var(--gold); box-shadow:var(--shadow); }
+  .admin-panel.open{ display:block; }
+  .admin-tabs{ display:flex; gap:0; border-bottom:1px solid var(--line); overflow-x:auto; margin-bottom:12px; }
+  .admin-tab{ padding:10px 14px; font-size:13px; font-weight:700; color:var(--ink-dim); cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; }
+  .admin-tab.active{ color:var(--accent); border-bottom-color:var(--accent); }
+  .admin-stats{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .admin-stat{ background:var(--panel-2); border-radius:12px; padding:12px; }
+  .admin-stat .label{ font-size:11px; color:var(--ink-dim); text-transform:uppercase; }
+  .admin-stat .value{ font-size:20px; font-weight:800; font-family:var(--mono); }
+  .admin-request-card{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; }
+  .admin-request-card .top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
+  .admin-request-card .user{ font-size:12px; color:var(--ink-dim); margin-bottom:4px; }
+  .admin-request-card .amount{ font-size:16px; font-weight:800; font-family:var(--mono); }
+  .admin-request-card .amount.pos{ color:var(--green); } .admin-request-card .amount.neg{ color:var(--red); }
+  .badge{ font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; }
+  .badge.pending{ background:rgba(240,185,11,.15); color:var(--gold); }
+  .badge.approved{ background:rgba(30,201,139,.15); color:var(--green); }
+  .badge.rejected{ background:rgba(239,93,93,.15); color:var(--red); }
+  .toast{ display:none; position:fixed; bottom:100px; left:50%; transform:translateX(-50%); background:var(--panel); border:1px solid var(--line); padding:12px 24px; border-radius:40px; font-weight:600; font-size:14px; box-shadow:var(--shadow); z-index:200; max-width:90%; text-align:center; color:var(--ink); }
+  .toast.show{ display:block; animation:fadeIn .2s; }
+  @keyframes fadeIn{ from{ opacity:0; transform:translate(-50%,6px); } to{ opacity:1; transform:translate(-50%,0); } }
+  .empty-state{ text-align:center; padding:40px 20px; color:var(--ink-dim); background:var(--panel); border-radius:14px; }
+  .subheader{ display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--panel); border-bottom:1px solid var(--line); }
+  .subheader .title{ font-size:16px; font-weight:700; flex:1; }
+  .back-btn{ width:32px; height:32px; border-radius:50%; background:var(--panel-2); display:flex; align-items:center; justify-content:center; font-size:16px; color:var(--ink); cursor:pointer; flex-shrink:0; }
+  .page{ display:none; } .page.active{ display:block; }
+  @media(max-width:400px){ .assets-hero .total{ font-size:24px; } .action-row{ grid-template-columns:1fr 1fr; } }
 </style>
 </head>
 <body>
 <div class="topbar" id="topbar">
-  <div><div class="brand">Coin<span>Vexa</span></div><div class="user-email" id="userEmail"></div></div>
+  <div><div class="brand">Coin<span>Vexa</span></div><div class="user-email" id="userEmailDisplay"></div></div>
   <div class="topbar-icons">
-    <button onclick="toggleTheme()" id="themeBtn">🌙</button>
+    <button onclick="toggleTheme()" id="themeToggle">🌙</button>
     <span id="logoutBtn" style="cursor:pointer;">🚪</span>
   </div>
 </div>
-<div id="annBanner" class="ann-banner hidden">
-  <span id="bannerText">🚀 Welcome!</span>
+<div id="announcementBanner" class="announcement-banner hidden">
+  <span id="bannerText">🚀 Welcome to CoinVexa!</span>
   <a id="bannerLink" href="#" target="_blank" style="display:none;">Learn more</a>
   <span class="close" onclick="this.parentElement.style.display='none'">✕</span>
 </div>
-
-<!-- AUTH -->
 <div id="authPages">
   <div id="loginPage" class="page active">
     <div class="auth-wrap"><div class="auth-card">
       <div class="auth-title">Welcome back</div>
-      <div class="auth-sub">Log in to CoinVexa</div>
-      <div class="auth-err" id="loginErr"></div>
-      <div class="auth-ok" id="loginOk"></div>
+      <div class="auth-sub">Log in to your CoinVexa account</div>
+      <div class="auth-error" id="loginError"></div>
+      <div class="auth-status" id="loginStatus"></div>
       <button class="btn-google" id="loginGoogleBtn">
         <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.8 6C12.3 13 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 6.9-10 6.9-17z"/><path fill="#FBBC05" d="M10.4 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.7l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-6.3 0-11.6-4.2-13.5-10l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>
         Continue with Google
@@ -236,19 +227,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <label class="field-label">Password</label>
         <input type="password" class="input" id="loginPassword" placeholder="••••••••" required>
         <a href="#" id="forgotLink" style="display:block;font-size:12px;color:var(--accent);font-weight:600;text-decoration:none;margin:-6px 0 14px;text-align:right;">Forgot password?</a>
-        <button type="submit" class="btn-primary" id="loginBtn"><span class="spinner hidden" id="loginSpinner"></span>Log In</button>
+        <button type="submit" class="btn-primary-full" id="loginBtn"><span class="spinner hidden" id="loginSpinner"></span>Log In</button>
       </form>
-      <div class="auth-foot">No account? <a href="#" onclick="showPage('signupPage')">Sign up</a></div>
+      <div class="auth-footer">Don't have an account? <a href="#" onclick="showPage('signupPage')">Sign up</a></div>
     </div></div>
   </div>
-
   <div id="signupPage" class="page">
     <div class="auth-wrap"><div class="auth-card">
-      <div class="auth-title">Create account</div>
-      <div class="auth-sub">Join CoinVexa today</div>
-      <div id="refBadge" class="ref-badge hidden">🎁 Referred! You both get +5 USDT on signup.</div>
-      <div class="auth-err" id="signupErr"></div>
-      <div class="auth-ok" id="signupOk"></div>
+      <div class="auth-title">Create your account</div>
+      <div class="auth-sub">Sign up to start using CoinVexa</div>
+      <div id="signupRefInfo" class="ref-badge hidden">🎁 You were referred! You both get +5 USDT on signup.</div>
+      <div class="auth-error" id="signupError"></div>
+      <div class="auth-status" id="signupStatus"></div>
       <button class="btn-google" id="signupGoogleBtn">
         <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.8 6C12.3 13 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 6.9-10 6.9-17z"/><path fill="#FBBC05" d="M10.4 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.7l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-6.3 0-11.6-4.2-13.5-10l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>
         Continue with Google
@@ -259,22 +249,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <input type="email" class="input" id="signupEmail" placeholder="you@example.com" required>
         <label class="field-label">Password</label>
         <input type="password" class="input" id="signupPassword" placeholder="At least 6 characters" required>
+        <div style="font-size:11px;color:var(--ink-dim);margin:-10px 0 14px;">Use at least 6 characters.</div>
         <label class="field-label">Confirm Password</label>
         <input type="password" class="input" id="signupConfirm" placeholder="••••••••" required>
-        <button type="submit" class="btn-primary" id="signupBtn"><span class="spinner hidden" id="signupSpinner"></span>Sign Up</button>
+        <button type="submit" class="btn-primary-full" id="signupBtn"><span class="spinner hidden" id="signupSpinner"></span>Sign Up</button>
       </form>
-      <div class="auth-foot">Have account? <a href="#" onclick="showPage('loginPage')">Log in</a></div>
+      <div class="auth-footer">Already have an account? <a href="#" onclick="showPage('loginPage')">Log in</a></div>
     </div></div>
   </div>
 </div>
-
-<!-- APP -->
 <div id="appContent" class="hidden">
-
   <div id="assetsPage" class="page active" style="padding-bottom:80px;">
     <div class="assets-hero">
-      <div class="lbl">Total Balance</div>
-      <div class="total" id="totalBal">0.00 <small>USDT</small></div>
+      <div class="label">Total Balance</div>
+      <div class="total" id="totalBalance">0.00 <small>USDT</small></div>
       <div style="font-size:13px;color:var(--ink-dim);margin-top:4px;">Your CoinVexa wallet</div>
       <div class="price-update" id="priceUpdate">Loading prices…</div>
     </div>
@@ -284,25 +272,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="action-btn" onclick="showPage('p2pPage')"><span class="icon">🤝</span>P2P</div>
       <div class="action-btn" onclick="showPage('historyPage')"><span class="icon">📋</span>History</div>
     </div>
-    <div class="sec-title"><span>Your Assets</span></div>
+    <div class="section-title"><span>Your Assets</span></div>
     <div class="asset-list" id="assetList"></div>
   </div>
-
   <div id="p2pPage" class="page" style="padding-bottom:80px;">
-    <div class="p2p-header">
+    <!-- Binance-style P2P Header -->
+    <div style="background:var(--panel);border-bottom:1px solid var(--line);">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 0;">
-        <div class="p2p-tabs">
-          <div class="p2p-tab active" onclick="switchP2PTab('buy',this)">Buy</div>
-          <div class="p2p-tab" onclick="switchP2PTab('sell',this)">Sell</div>
-          <div class="p2p-tab" onclick="switchP2PTab('myoffers',this)">My Ads</div>
+        <div style="display:flex;gap:0;">
+          <div class="p2p-tab active" data-side="buy" onclick="switchP2PTab('buy')" style="border-radius:0;border:none;border-bottom:2px solid var(--accent);background:transparent;color:var(--accent);padding:8px 20px;">Buy</div>
+          <div class="p2p-tab" data-side="sell" onclick="switchP2PTab('sell')" style="border-radius:0;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--ink-dim);padding:8px 20px;">Sell</div>
+          <div class="p2p-tab" data-side="myoffers" onclick="switchP2PTab('myoffers')" style="border-radius:0;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--ink-dim);padding:8px 20px;">My Ads</div>
         </div>
-        <button class="post-ad-btn" onclick="showPage('createOfferPage')">+ Post Ad</button>
+        <button class="create-offer-btn" onclick="showPage('createOfferPage')" style="font-size:11px;padding:6px 12px;">+ Post Ad</button>
       </div>
-      <div class="p2p-filters">
-        <select id="p2pCoin" onchange="loadOffers()">
+      <!-- Filters -->
+      <div style="display:flex;gap:8px;padding:10px 16px;overflow-x:auto;">
+        <select id="p2pCoinFilter" style="padding:6px 10px;border-radius:20px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-size:12px;font-weight:600;" onchange="loadP2POffers()">
           <option>USDT</option><option>BTC</option><option>ETH</option><option>SOL</option><option>TRX</option>
         </select>
-        <select id="p2pCurrency" onchange="loadOffers()">
+        <select id="p2pCurrencyFilter" style="padding:6px 10px;border-radius:20px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-size:12px;font-weight:600;" onchange="loadP2POffers()">
           <option value="ETB">🇪🇹 ETB</option><option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option>
           <option value="GBP">🇬🇧 GBP</option><option value="AED">🇦🇪 AED</option><option value="SAR">🇸🇦 SAR</option>
           <option value="KES">🇰🇪 KES</option><option value="NGN">🇳🇬 NGN</option><option value="EGP">🇪🇬 EGP</option>
@@ -311,214 +300,246 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
           <option value="MAD">🇲🇦 MAD</option><option value="CNY">🇨🇳 CNY</option><option value="BRL">🇧🇷 BRL</option>
         </select>
       </div>
+      <!-- Column headers like Binance -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:6px 16px 8px;font-size:11px;color:var(--ink-dim);font-weight:600;text-transform:uppercase;letter-spacing:.04em;">
+        <span>Advertiser</span><span style="text-align:center;">Price</span><span style="text-align:right;">Action</span>
+      </div>
     </div>
-    <div id="offerList"></div>
+    <div id="offerList" style="margin-top:0;"></div>
+    <!-- Quick sell box hidden by default -->
+    <div class="create-ad-box hidden" id="createAdBox">
+      <input type="text" id="userAdName" placeholder="Your name" value="Trader">
+      <input type="number" id="userAdPrice" placeholder="Price (ETB)">
+      <input type="number" id="userAdAmount" placeholder="USDT amount">
+      <button id="createUserSellBtn">➕ Quick Sell</button>
+    </div>
   </div>
 
   <div id="createOfferPage" class="page" style="padding-bottom:80px;">
     <div class="subheader"><div class="back-btn" onclick="showPage('p2pPage')">←</div><div class="title">Post New Ad</div></div>
-    <div id="kycMsg" class="warn-note hidden"><span>⚠️</span><span>Complete KYC first to post offers.</span></div>
-    <div class="form-card" id="offerForm">
+    <div id="kycRequiredMsg" class="warning-note hidden"><span>⚠️</span><span>You must complete KYC verification before creating P2P offers.</span></div>
+    <div class="form-card" id="createOfferForm">
       <label class="field-label">I want to</label>
-      <div class="net-select">
-        <div class="net-opt active" id="offerBuyBtn" onclick="setOfferType('buy')">Buy Crypto</div>
-        <div class="net-opt" id="offerSellBtn" onclick="setOfferType('sell')">Sell Crypto</div>
+      <div class="network-select">
+        <div class="network-opt active" id="offerTypeBuy" onclick="selectOfferType('buy')">Buy Crypto</div>
+        <div class="network-opt" id="offerTypeSell" onclick="selectOfferType('sell')">Sell Crypto</div>
       </div>
       <label class="field-label">Cryptocurrency</label>
       <select class="input" id="offerCoin"><option>USDT</option><option>BTC</option><option>ETH</option><option>SOL</option><option>TRX</option></select>
       <label class="field-label">Fiat Currency</label>
-      <select class="input" id="offerFiat">
+      <select class="input" id="offerCurrency">
         <option value="ETB">🇪🇹 ETB</option><option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option>
         <option value="GBP">🇬🇧 GBP</option><option value="AED">🇦🇪 AED</option><option value="SAR">🇸🇦 SAR</option>
         <option value="KES">🇰🇪 KES</option><option value="NGN">🇳🇬 NGN</option><option value="TRY">🇹🇷 TRY</option>
         <option value="INR">🇮🇳 INR</option><option value="PKR">🇵🇰 PKR</option><option value="BRL">🇧🇷 BRL</option>
-        <option value="GHS">🇬🇭 GHS</option><option value="TZS">🇹🇿 TZS</option><option value="MAD">🇲🇦 MAD</option><option value="CNY">🇨🇳 CNY</option>
+        <option value="GHS">🇬🇭 GHS</option><option value="TZS">🇹🇿 TZS</option><option value="MAD">🇲🇦 MAD</option>
+        <option value="CNY">🇨🇳 CNY</option>
       </select>
-      <label class="field-label">Price per coin (fiat)</label>
+      <label class="field-label">Your Price (per coin in fiat)</label>
       <input type="number" class="input" id="offerPrice" placeholder="e.g. 182.40">
       <label class="field-label">Total Amount (crypto)</label>
       <input type="number" class="input" id="offerAmount" placeholder="e.g. 500">
-      <label class="field-label">Min Order (fiat)</label>
+      <label class="field-label">Order Limit — Min (fiat)</label>
       <input type="number" class="input" id="offerMin" placeholder="e.g. 500">
-      <label class="field-label">Max Order (fiat)</label>
+      <label class="field-label">Order Limit — Max (fiat)</label>
       <input type="number" class="input" id="offerMax" placeholder="e.g. 50000">
-      <label class="field-label">Payment Methods (comma separated)</label>
-      <input type="text" class="input" id="offerPayments" placeholder="e.g. Telebirr, CBE, Bank">
-      <label class="field-label">Payment Details</label>
-      <textarea class="input" id="offerInstructions" rows="3" placeholder="Account number, name..."></textarea>
-      <button class="btn-primary" onclick="postOffer()">✅ Post Ad</button>
+      <label class="field-label">Payment Methods</label>
+      <input type="text" class="input" id="offerPayments" placeholder="e.g. Telebirr, CBE Birr, Bank">
+      <label class="field-label">Payment Details / Account Info</label>
+      <textarea class="input" id="offerInstructions" rows="3" placeholder="Account number, name, instructions..."></textarea>
+      <button class="btn-primary-full" onclick="submitOffer()">✅ Post Ad</button>
     </div>
   </div>
 
-  <!-- ORDER PAGE — Binance style with integrated chat -->
-  <div id="orderPage" class="page" style="height:100vh;display:none;flex-direction:column;padding-bottom:0;">
-    <div class="order-header">
-      <div class="back-btn" onclick="leaveOrder()">←</div>
-      <div style="flex:1;">
-        <div style="font-size:15px;font-weight:800;" id="orderTitle">P2P Order</div>
-        <div style="font-size:11px;color:var(--ink-dim);" id="orderRef"></div>
-      </div>
-      <span class="order-status-badge status-pending" id="orderStatusBadge">Pending</span>
-    </div>
-    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;">
-      <div class="order-info">
-        <div style="font-size:11px;color:var(--ink-dim);margin-bottom:4px;" id="orderDir">You are buying</div>
-        <div class="order-amount" id="orderAmt">—</div>
-        <div class="order-grid">
-          <div class="order-field"><div class="fl">Price</div><div class="fv" id="orderPrice">—</div></div>
-          <div class="order-field"><div class="fl">Total</div><div class="fv" id="orderTotal">—</div></div>
-          <div class="order-field"><div class="fl">Merchant</div><div class="fv" id="orderMerchant">—</div></div>
-          <div class="order-field"><div class="fl">Payment</div><div class="fv" id="orderPayment">—</div></div>
+  <!-- Binance-style Order Page with Chat -->
+  <div id="orderPage" class="page" style="padding-bottom:0;">
+    <!-- Order Header -->
+    <div style="background:var(--panel);border-bottom:1px solid var(--line);">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;">
+        <div class="back-btn" onclick="showPage('p2pPage')">←</div>
+        <div style="flex:1;">
+          <div style="font-size:15px;font-weight:800;" id="orderTitle">P2P Order</div>
+          <div style="font-size:11px;color:var(--ink-dim);" id="orderIdDisplay"></div>
         </div>
-        <div class="countdown hidden" id="countdownBox"><span>Pay within</span><b id="countdownTimer">14:58</b></div>
-        <div class="escrow-note">🔒 <span id="escrowTitle">Funds secured in escrow</span></div>
-        <div id="payInstBox" style="display:none;" class="pay-inst">
-          <div class="pay-inst-title">💳 Payment Instructions</div>
-          <div class="pay-inst-text" id="payInstText"></div>
+        <span class="order-status pending" id="orderStatus">Pending</span>
+      </div>
+    </div>
+
+    <!-- Split layout: order info top, chat bottom -->
+    <div style="display:flex;flex-direction:column;height:calc(100vh - 120px);">
+
+      <!-- Order Info Panel -->
+      <div style="background:var(--panel);border-bottom:2px solid var(--line);padding:14px 16px;">
+        <div style="font-size:11px;color:var(--ink-dim);margin-bottom:4px;" id="orderDirection">You are buying</div>
+        <div style="font-size:26px;font-weight:800;font-family:var(--mono);color:var(--green);margin-bottom:10px;" id="orderAmt">—</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+          <div style="background:var(--panel-2);border-radius:10px;padding:10px;">
+            <div style="font-size:10px;color:var(--ink-dim);text-transform:uppercase;margin-bottom:3px;">Price</div>
+            <div style="font-size:13px;font-weight:700;" id="orderPrice">—</div>
+          </div>
+          <div style="background:var(--panel-2);border-radius:10px;padding:10px;">
+            <div style="font-size:10px;color:var(--ink-dim);text-transform:uppercase;margin-bottom:3px;">Total</div>
+            <div style="font-size:13px;font-weight:700;" id="orderTotal">—</div>
+          </div>
+          <div style="background:var(--panel-2);border-radius:10px;padding:10px;">
+            <div style="font-size:10px;color:var(--ink-dim);text-transform:uppercase;margin-bottom:3px;">Merchant</div>
+            <div style="font-size:13px;font-weight:700;" id="orderMerchant">—</div>
+          </div>
+          <div style="background:var(--panel-2);border-radius:10px;padding:10px;">
+            <div style="font-size:10px;color:var(--ink-dim);text-transform:uppercase;margin-bottom:3px;">Payment</div>
+            <div style="font-size:12px;font-weight:700;" id="orderPayment">—</div>
+          </div>
+        </div>
+        <!-- Countdown -->
+        <div class="countdown hidden" id="countdownBox" style="margin:0 0 8px;"><span>Pay within</span><b id="countdownTimer">14:58</b></div>
+        <!-- Escrow notice -->
+        <div style="background:rgba(240,185,11,.08);border:1px solid rgba(240,185,11,.2);border-radius:10px;padding:8px 12px;font-size:11px;color:var(--gold);display:flex;align-items:center;gap:6px;">
+          🔒 <span id="escrowTitle">Funds secured in escrow</span>
+        </div>
+        <!-- Payment instructions -->
+        <div id="paymentInstructionsBox" style="display:none;margin-top:8px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:10px 12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px;">💳 Payment Instructions</div>
+          <div id="paymentInstructionsText" style="font-size:12px;color:var(--ink-dim);white-space:pre-wrap;line-height:1.5;"></div>
         </div>
       </div>
-      <div class="chat-label">💬 ORDER CHAT</div>
-      <div class="chat-area" id="chatArea"></div>
-    </div>
-    <div class="chat-input-row">
-      <input type="text" placeholder="Message your partner…" id="chatInput" onkeypress="if(event.key==='Enter')sendChat()">
-      <button class="chat-send" onclick="sendChat()">➤</button>
-    </div>
-    <div class="order-actions hidden" id="buyerBar">
-      <button class="btn-cancel" onclick="cancelOrder()">Cancel</button>
-      <button class="btn-confirm" onclick="markPaid()">✅ I've Paid</button>
-    </div>
-    <div class="order-actions hidden" id="sellerBar">
-      <button class="btn-dispute" onclick="disputeOrder()">⚠️ Dispute</button>
-      <button class="btn-release" onclick="releaseFunds()">✅ Release Funds</button>
+
+      <!-- Chat Section -->
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+        <div style="padding:8px 16px;font-size:11px;font-weight:700;color:var(--ink-dim);background:var(--panel-2);border-bottom:1px solid var(--line);">💬 ORDER CHAT</div>
+        <div id="chatArea" style="flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px;"></div>
+        <!-- Chat Input -->
+        <div style="background:var(--panel);border-top:1px solid var(--line);padding:10px 16px;display:flex;gap:8px;align-items:center;">
+          <input type="text" placeholder="Message your trading partner…" id="chatInput" onkeypress="if(event.key==='Enter')sendChat()" style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:20px;padding:10px 16px;color:var(--ink);font-size:13px;outline:none;">
+          <button onclick="sendChat()" style="width:38px;height:38px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0;">➤</button>
+        </div>
+        <!-- Action Buttons -->
+        <div class="order-actions hidden" id="buyerActionsBar" style="position:relative;border-top:1px solid var(--line);">
+          <button class="btn-cancel" onclick="cancelOrder()">Cancel Order</button>
+          <button class="btn-confirm" onclick="markPaid()">✅ I've Paid</button>
+        </div>
+        <div class="order-actions hidden" id="sellerActionsBar" style="position:relative;border-top:1px solid var(--line);">
+          <button class="btn-dispute" onclick="disputeOrder()">⚠️ Dispute</button>
+          <button class="btn-release" onclick="releaseFunds()">✅ Release Funds</button>
+        </div>
+      </div>
     </div>
   </div>
-
   <div id="depositPage" class="page" style="padding-bottom:80px;">
     <div class="subheader"><div class="back-btn" onclick="showPage('assetsPage')">←</div><div class="title">Deposit</div></div>
-    <div class="shield-note"><span>🛡️</span><span>Only send matching coin and network. Wrong network = permanent loss.</span></div>
-    <div class="sec-title"><span>Select Coin</span></div>
+    <div class="shield-note"><span>🛡️</span><span>Only send matching coin and network. Wrong network = permanent loss of funds.</span></div>
+    <div class="section-title"><span>Select Coin</span></div>
     <div style="padding:0 16px;">
-      <div onclick="openDep('USDT')" style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;cursor:pointer;"><div class="coin-icon usdt">T</div><div style="flex:1;"><b>USDT</b><div style="font-size:11px;color:var(--ink-dim);">Tether · TRC20</div></div><span>›</span></div>
-      <div onclick="openDep('BTC')" style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;cursor:pointer;"><div class="coin-icon btc">B</div><div style="flex:1;"><b>BTC</b><div style="font-size:11px;color:var(--ink-dim);">Bitcoin · BTC</div></div><span>›</span></div>
-      <div onclick="openDep('ETH')" style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;cursor:pointer;"><div class="coin-icon eth">E</div><div style="flex:1;"><b>ETH</b><div style="font-size:11px;color:var(--ink-dim);">Ethereum · ERC20</div></div><span>›</span></div>
-      <div onclick="openDep('SOL')" style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;cursor:pointer;"><div class="coin-icon sol">S</div><div style="flex:1;"><b>SOL</b><div style="font-size:11px;color:var(--ink-dim);">Solana · SOL</div></div><span>›</span></div>
-      <div onclick="openDep('TRX')" style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;cursor:pointer;"><div class="coin-icon trx">X</div><div style="flex:1;"><b>TRX</b><div style="font-size:11px;color:var(--ink-dim);">Tron · TRC20</div></div><span>›</span></div>
+      <div onclick="openDepositAddress('USDT')" style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;cursor:pointer;"><div class="coin-icon usdt">T</div><div style="flex:1;"><b>USDT</b><div style="font-size:11px;color:var(--ink-dim);">Tether · TRC20</div></div><span>›</span></div>
+      <div onclick="openDepositAddress('BTC')" style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;cursor:pointer;"><div class="coin-icon btc">B</div><div style="flex:1;"><b>BTC</b><div style="font-size:11px;color:var(--ink-dim);">Bitcoin · BTC Network</div></div><span>›</span></div>
+      <div onclick="openDepositAddress('ETH')" style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;cursor:pointer;"><div class="coin-icon eth">E</div><div style="flex:1;"><b>ETH</b><div style="font-size:11px;color:var(--ink-dim);">Ethereum · ERC20</div></div><span>›</span></div>
+      <div onclick="openDepositAddress('SOL')" style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;cursor:pointer;"><div class="coin-icon sol">S</div><div style="flex:1;"><b>SOL</b><div style="font-size:11px;color:var(--ink-dim);">Solana · SOL Network</div></div><span>›</span></div>
+      <div onclick="openDepositAddress('TRX')" style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;cursor:pointer;"><div class="coin-icon trx">X</div><div style="flex:1;"><b>TRX</b><div style="font-size:11px;color:var(--ink-dim);">Tron · TRC20</div></div><span>›</span></div>
     </div>
   </div>
-
-  <div id="depositAddrPage" class="page" style="padding-bottom:80px;">
-    <div class="subheader"><div class="back-btn" onclick="showPage('depositPage')">←</div><div class="title">Deposit <span id="depCoin">USDT</span></div></div>
+  <div id="depositAddressPage" class="page" style="padding-bottom:80px;">
+    <div class="subheader"><div class="back-btn" onclick="showPage('depositPage')">←</div><div class="title">Deposit <span id="depTitleCoin">USDT</span></div></div>
     <div class="form-card">
       <label class="field-label">Network</label>
-      <div style="font-size:13px;font-weight:600;margin-bottom:14px;" id="depNetwork"></div>
-      <div class="qr-box"><div id="qrCode" style="background:#fff;padding:12px;border-radius:12px;display:inline-block;"></div></div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:14px;" id="depNetworkNote"></div>
+      <div class="qr-box"><div id="qrCodeDisplay" style="background:#fff;padding:12px;border-radius:12px;display:inline-block;"></div></div>
       <label class="field-label">Deposit Address</label>
-      <div class="addr-box"><span id="depAddr" style="word-break:break-all;"></span><span class="copy-link" onclick="copyAddr()">Copy</span></div>
-      <div class="fee-row" id="depMin"><span>Minimum</span><span>—</span></div>
-      <div class="fee-row" id="depArr"><span>Arrival</span><span>—</span></div>
-      <button class="btn-primary" onclick="copyAddr()">📋 Copy Address</button>
+      <div class="addr-box"><span id="depAddress" style="word-break:break-all;"></span><span class="copy-link" onclick="copyDepAddress()">Copy</span></div>
+      <div class="fee-row" id="depMinRow"><span>Minimum</span><span>—</span></div>
+      <div class="fee-row" id="depArrivalRow"><span>Arrival</span><span>—</span></div>
+      <button class="btn-primary-full" onclick="copyDepAddress()">📋 Copy Address</button>
     </div>
     <div class="form-card" style="margin-top:0;">
-      <div style="font-weight:700;font-size:14px;margin-bottom:4px;">✅ Already sent? Confirm here</div>
-      <div style="font-size:12px;color:var(--ink-dim);margin-bottom:14px;">Submit TX hash for admin verification.</div>
-      <label class="field-label">Transaction Hash</label>
-      <input type="text" class="input" id="txHash" placeholder="Paste TX hash">
+      <div style="font-weight:700;font-size:14px;margin-bottom:4px;">✅ Already sent? Confirm deposit</div>
+      <div style="font-size:12px;color:var(--ink-dim);margin-bottom:14px;">Submit your TX hash for admin verification.</div>
+      <label class="field-label">Transaction Hash / TX ID</label>
+      <input type="text" class="input" id="txHashInput" placeholder="Paste transaction hash">
       <label class="field-label">Amount Sent</label>
-      <input type="number" class="input" id="txAmt" placeholder="0.00">
-      <button class="btn-primary" onclick="submitDep()">Submit for Verification</button>
+      <input type="number" class="input" id="txAmountInput" placeholder="0.00">
+      <button class="btn-primary-full" onclick="submitDepositConfirmation()">Submit for Verification</button>
     </div>
-    <div class="sec-title"><span>My Deposit Requests</span></div>
-    <div id="myDeps" style="padding:0 16px 20px;"></div>
+    <div class="section-title"><span>My Deposit Requests</span></div>
+    <div id="myDepositRequests" style="padding:0 16px 20px;"></div>
   </div>
-
   <div id="withdrawPage" class="page" style="padding-bottom:80px;">
     <div class="subheader"><div class="back-btn" onclick="showPage('assetsPage')">←</div><div class="title">Withdraw</div></div>
-    <div class="warn-note"><span>⚠️</span><span>Requires admin approval. Balance frozen until approved.</span></div>
+    <div class="warning-note"><span>⚠️</span><span>Withdrawals require admin approval. Balance frozen until approved.</span></div>
     <div class="form-card">
       <label class="field-label">Coin</label>
-      <select class="input" id="wdCoin" onchange="updateWd()"><option>USDT</option><option>BTC</option><option>ETH</option><option>SOL</option><option>TRX</option></select>
+      <select class="input" id="wdCoin" onchange="updateWdBalance()"><option>USDT</option><option>BTC</option><option>ETH</option><option>SOL</option><option>TRX</option></select>
       <label class="field-label">Network</label>
-      <div class="net-select"><div class="net-opt active">TRC20</div><div class="net-opt">ERC20</div><div class="net-opt">BEP20</div></div>
+      <div class="network-select"><div class="network-opt active">TRC20</div><div class="network-opt">ERC20</div><div class="network-opt">BEP20</div></div>
       <label class="field-label">Withdrawal Address</label>
-      <input type="text" class="input" id="wdAddr" placeholder="Enter wallet address">
+      <input type="text" class="input" id="wdAddress" placeholder="Enter wallet address">
       <label class="field-label">Amount</label>
-      <input type="number" class="input" id="wdAmt" placeholder="0.00" oninput="updateWdReceive()">
-      <div class="bal-hint">Available: <span id="wdAvail">0.00</span> <span id="wdCoinLbl">USDT</span> <span class="max-link" onclick="setMax()">Max</span></div>
-      <div class="fee-row"><span>Network Fee</span><span>1.00 USDT</span></div>
-      <div class="fee-row"><span>You receive</span><span id="wdReceive">0.00</span></div>
-      <button class="btn-primary" onclick="submitWd()">Submit Withdrawal</button>
+      <input type="number" class="input" id="wdAmount" placeholder="0.00" oninput="updateWdReceive()">
+      <div class="balance-hint">Available: <span id="wdAvailable">0.00</span> <span id="wdCoinLabel">USDT</span> <span class="max-link" onclick="setMax()">Max</span></div>
+      <div class="fee-row"><span>Network Fee</span><span>1.00 USDT equivalent</span></div>
+      <div class="fee-row"><span>You will receive</span><span id="wdReceive">0.00</span></div>
+      <button class="btn-primary-full" onclick="submitWithdrawal()">Submit Withdrawal Request</button>
     </div>
-    <div class="sec-title"><span>My Requests</span></div>
-    <div id="myWds" style="padding:0 16px;"></div>
+    <div class="section-title"><span>My Withdrawal Requests</span></div>
+    <div id="myWithdrawals" style="padding:0 16px;"></div>
   </div>
-
   <div id="historyPage" class="page" style="padding-bottom:80px;">
     <div class="subheader"><div class="back-btn" onclick="showPage('assetsPage')">←</div><div class="title">Transaction History</div></div>
     <div style="display:flex;gap:8px;padding:12px 16px;overflow-x:auto;">
-      <div class="filter-chip active" onclick="filterHist('all',this)">All</div>
-      <div class="filter-chip" onclick="filterHist('P2P',this)">P2P</div>
-      <div class="filter-chip" onclick="filterHist('Deposit',this)">Deposits</div>
-      <div class="filter-chip" onclick="filterHist('Withdrawal',this)">Withdrawals</div>
-      <div class="filter-chip" onclick="filterHist('Referral',this)">Referral</div>
+      <div class="filter-chip active" onclick="filterHistory('all',this)">All</div>
+      <div class="filter-chip" onclick="filterHistory('P2P',this)">P2P</div>
+      <div class="filter-chip" onclick="filterHistory('Deposit',this)">Deposits</div>
+      <div class="filter-chip" onclick="filterHistory('Withdrawal',this)">Withdrawals</div>
+      <div class="filter-chip" onclick="filterHistory('Referral',this)">Referral</div>
     </div>
-    <div id="histList"></div>
+    <div id="historyList"></div>
   </div>
-
   <div id="marketsPage" class="page" style="padding-bottom:80px;">
-    <div class="sec-title"><span>Live Prices</span><span style="font-size:10px;color:var(--ink-dim);" id="mktUpdate"></span></div>
-    <div id="mktList"></div>
+    <div class="section-title"><span>Live Prices</span><span style="font-size:10px;color:var(--ink-dim);" id="marketLastUpdate"></span></div>
+    <div id="marketList"></div>
   </div>
-
   <div id="profilePage" class="page" style="padding-bottom:80px;">
     <div class="profile-header">
-      <div class="profile-avatar" id="profAvatar">?</div>
-      <div class="profile-name" id="profName">—</div>
-      <div class="profile-email" id="profEmail">—</div>
+      <div class="profile-avatar" id="profileAvatar">?</div>
+      <div class="profile-name" id="profileName">—</div>
+      <div class="profile-email-text" id="profileEmailText">—</div>
       <div class="kyc-badge unverified" id="kycBadge">⚠️ KYC Unverified</div>
     </div>
     <div style="padding:0 16px;">
-      <div class="menu-item" onclick="showPage('kycPage')"><div class="left"><span class="icon">🪪</span><div><div class="label">Identity Verification</div><div class="sub">Required for P2P & withdrawals</div></div></div><span>›</span></div>
-      <div class="menu-item" onclick="showPage('myOffersPage')"><div class="left"><span class="icon">🤝</span><div><div class="label">My P2P Ads</div><div class="sub">Manage your offers</div></div></div><span>›</span></div>
-      <div class="menu-item" onclick="copyRefLink()"><div class="left"><span class="icon">🔗</span><div><div class="label">Referral Link</div><div class="sub" id="refLinkDisplay">Tap to copy — earn +5 USDT</div></div></div><span>📋</span></div>
-      <div class="menu-item" onclick="changePwd()"><div class="left"><span class="icon">🔑</span><div><div class="label">Change Password</div><div class="sub">Send reset link</div></div></div><span>›</span></div>
-      <div class="menu-item" onclick="showPage('historyPage')"><div class="left"><span class="icon">📋</span><div><div class="label">Transaction History</div></div></div><span>›</span></div>
-      <div class="menu-item" onclick="toggleTheme()"><div class="left"><span class="icon" id="themeIcon">🌙</span><div><div class="label">Dark / Light Mode</div><div class="sub" id="themeSub">Dark</div></div></div><span>›</span></div>
-      <button class="btn-danger" onclick="doLogout()">🚪 Log Out</button>
+      <div class="profile-menu-item" onclick="showPage('kycPage')"><div class="left"><span class="icon">🪪</span><div><div class="label">Identity Verification (KYC)</div><div class="sub">Required for P2P & withdrawals</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="showPage('myOffersPage')"><div class="left"><span class="icon">🤝</span><div><div class="label">My P2P Offers</div><div class="sub">Manage your offers</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="copyReferralLink()"><div class="left"><span class="icon">🔗</span><div><div class="label">Referral Link</div><div class="sub" id="referralLinkDisplay">Tap to copy — earn +5 USDT per referral</div></div></div><span>📋</span></div>
+      <div class="profile-menu-item" onclick="changePassword()"><div class="left"><span class="icon">🔑</span><div><div class="label">Change Password</div><div class="sub">Send reset link</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="showPage('historyPage')"><div class="left"><span class="icon">📋</span><div><div class="label">Transaction History</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="toggleTheme()"><div class="left"><span class="icon" id="themeIcon">🌙</span><div><div class="label">Dark / Light Mode</div><div class="sub" id="themeSub">Dark</div></div></div><span>›</span></div>
+      <button class="btn-danger-full" onclick="logoutConfirm()">🚪 Log Out</button>
     </div>
   </div>
-
   <div id="myOffersPage" class="page" style="padding-bottom:80px;">
-    <div class="subheader"><div class="back-btn" onclick="showPage('profilePage')">←</div><div class="title">My P2P Ads</div></div>
+    <div class="subheader"><div class="back-btn" onclick="showPage('profilePage')">←</div><div class="title">My P2P Offers</div></div>
     <div id="myOffersList" style="margin-top:10px;padding:0 16px;"></div>
   </div>
-
   <div id="kycPage" class="page" style="padding-bottom:80px;">
     <div class="subheader"><div class="back-btn" onclick="showPage('profilePage')">←</div><div class="title">Identity Verification</div></div>
     <div class="form-card">
-      <div id="kycStatusMsg" style="margin-bottom:14px;font-size:13px;color:var(--ink-dim);"></div>
+      <div id="kycStatus" style="margin-bottom:14px;font-size:13px;color:var(--ink-dim);"></div>
       <label class="field-label">Full Name</label><input type="text" class="input" id="kycName" placeholder="As on your ID">
       <label class="field-label">Country</label><input type="text" class="input" id="kycCountry" placeholder="e.g. Ethiopia">
       <label class="field-label">ID Number</label><input type="text" class="input" id="kycId" placeholder="Passport or National ID">
       <label class="field-label">Date of Birth</label><input type="date" class="input" id="kycDob">
-      <button class="btn-primary" id="kycBtn" onclick="submitKyc()">Submit for Verification</button>
+      <button class="btn-primary-full" id="kycSubmitBtn" onclick="submitKyc()">Submit for Verification</button>
     </div>
   </div>
-
-  <!-- ADMIN PANEL -->
   <div class="admin-panel" id="adminPanel">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
       <div style="color:var(--gold);font-weight:800;font-size:16px;">🛠️ Admin Control</div>
       <button onclick="toggleAdmin()" style="background:var(--panel-2);border:1px solid var(--line);padding:4px 12px;border-radius:8px;color:var(--ink);cursor:pointer;font-size:12px;">Close</button>
     </div>
     <div class="admin-tabs">
-      <div class="admin-tab active" onclick="adminTab('overview',this)">📊 Overview</div>
-      <div class="admin-tab" onclick="adminTab('withdrawals',this)">⬆️ Wd</div>
-      <div class="admin-tab" onclick="adminTab('deposits',this)">⬇️ Dep</div>
-      <div class="admin-tab" onclick="adminTab('kyc',this)">🪪 KYC</div>
-      <div class="admin-tab" onclick="adminTab('p2p',this)">🤝 P2P</div>
-      <div class="admin-tab" onclick="adminTab('users',this)">👥 Users</div>
-      <div class="admin-tab" onclick="adminTab('banner',this)">📢 Banner</div>
+      <div class="admin-tab active" onclick="switchAdminTab('overview',this)">📊 Overview</div>
+      <div class="admin-tab" onclick="switchAdminTab('withdrawals',this)">⬆️ Wd</div>
+      <div class="admin-tab" onclick="switchAdminTab('deposits',this)">⬇️ Dep</div>
+      <div class="admin-tab" onclick="switchAdminTab('kyc',this)">🪪 KYC</div>
+      <div class="admin-tab" onclick="switchAdminTab('p2p',this)">🤝 P2P</div>
+      <div class="admin-tab" onclick="switchAdminTab('users',this)">👥 Users</div>
+      <div class="admin-tab" onclick="switchAdminTab('banner',this)">📢 Banner</div>
     </div>
     <div id="adminOverview" class="admin-stats" style="padding:8px 0;"></div>
     <div id="adminWithdrawals" style="display:none;padding:8px 0;"></div>
@@ -529,687 +550,574 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div id="adminBanner" style="display:none;padding:8px 0;">
       <div class="form-card" style="margin:0;">
         <label class="field-label">Banner Text</label>
-        <input type="text" id="bannerTextInput" placeholder="Announcement text">
-        <label class="field-label">Link (optional)</label>
-        <input type="text" id="bannerLinkInput" placeholder="https://...">
-        <div style="display:flex;gap:8px;">
-          <button class="btn-approve" onclick="saveBanner(true)">✅ Show</button>
-          <button class="btn-reject" onclick="saveBanner(false)">❌ Hide</button>
+        <input type="text" id="adminBannerText" placeholder="e.g. 🚀 New feature launched!">
+        <label class="field-label">Link URL (optional)</label>
+        <input type="text" id="adminBannerLink" placeholder="https://...">
+        <div class="btn-group">
+          <button class="btn-approve" onclick="updateBanner(true)">✅ Show Banner</button>
+          <button class="btn-reject" onclick="updateBanner(false)">❌ Hide Banner</button>
         </div>
-        <div id="bannerStatus" style="margin-top:8px;font-size:12px;color:var(--ink-dim);"></div>
+        <div id="adminBannerStatus" style="margin-top:8px;font-size:12px;color:var(--ink-dim);"></div>
       </div>
     </div>
   </div>
-
 </div>
-
 <div class="bottom-nav" id="bottomNav">
-  <button class="nav-btn active" onclick="navTo('assetsPage',this)"><span class="nav-icon">💰</span>Assets</button>
-  <button class="nav-btn" onclick="navTo('p2pPage',this)"><span class="nav-icon">🤝</span>P2P</button>
-  <button class="nav-btn" onclick="navTo('marketsPage',this)"><span class="nav-icon">📊</span>Markets</button>
-  <button class="nav-btn" onclick="navTo('profilePage',this)"><span class="nav-icon">👤</span>Profile</button>
+  <button class="nav-btn active" data-page="assetsPage" onclick="navigateTo('assetsPage')"><span class="nav-icon">💰</span>Assets</button>
+  <button class="nav-btn" data-page="p2pPage" onclick="navigateTo('p2pPage')"><span class="nav-icon">🤝</span>P2P</button>
+  <button class="nav-btn" data-page="marketsPage" onclick="navigateTo('marketsPage')"><span class="nav-icon">📊</span>Markets</button>
+  <button class="nav-btn" data-page="profilePage" onclick="navigateTo('profilePage')"><span class="nav-icon">👤</span>Profile</button>
 </div>
 <div class="toast" id="toast"></div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
-// CONFIG
-const EJS_KEY='G_sC5mh9IICBy0bIf',EJS_SVC='service_vnmz4ya',EJS_DEP='template_0jmwz5h',EJS_KYC='template_qzsagp9',EJS_WD='template_qzsagp9';
-emailjs.init(EJS_KEY);
-const FB={apiKey:"AIzaSyD9_oAbItp_PGiKJNnHKa_S90CMCC1y4JU",authDomain:"coinvexa-f4c37.firebaseapp.com",projectId:"coinvexa-f4c37",storageBucket:"coinvexa-f4c37.firebasestorage.app",messagingSenderId:"514004370275",appId:"1:514004370275:web:9238feb6cb23c116780956"};
-firebase.initializeApp(FB);
-const auth=firebase.auth(),db=firebase.firestore();
-const ADMIN=['azariyahailu51@gmail.com'];
-const DEP_INFO={USDT:{net:'TRON (TRC20)',addr:'TBBnZdhgwfkKj1zNS9GEpjj58N6kLmEBip',min:'0.005 USDT',arr:'~20 confirmations'},BTC:{net:'Bitcoin (BTC)',addr:'1BoZAfu4s8VonCfYY81SmALHV3JVUVtNcJ',min:'0.00001 BTC',arr:'~1 confirmation'},ETH:{net:'Ethereum (ERC20)',addr:'0xc4338f9e5b6f290af6f4653d946308cef7625279',min:'0.00005 ETH',arr:'~6 confirmations'},SOL:{net:'Solana',addr:'4eMjgQ8LjSo4gbrBPdxGeEgmhbpo7HJSXa2PWJADX9Dc',min:'0.001 SOL',arr:'~200 confirmations'},TRX:{net:'TRON (TRC20)',addr:'TBBnZdhgwfkKj1zNS9GEpjj58N6kLmEBip',min:'1 TRX',arr:'~20 confirmations'}};
-const COINS={USDT:{full:'Tether',cls:'usdt',l:'T'},BTC:{full:'Bitcoin',cls:'btc',l:'B'},ETH:{full:'Ethereum',cls:'eth',l:'E'},SOL:{full:'Solana',cls:'sol',l:'S'},TRX:{full:'Tron',cls:'trx',l:'X'}};
-
-let CU=null,UD=null,prices={USDT:1,BTC:64800,ETH:3375,SOL:148,TRX:0.135};
-let dark=true,orderId=null,chatUnsub=null,offerType='buy',p2pTab='buy',histFilter='all',allUsers=[],depCoin='USDT',refUID=null;
-
-// HELPERS
-function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800);}
-function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-
+const EMAILJS_PUBLIC_KEY='G_sC5mh9IICBy0bIf';
+const EMAILJS_SERVICE_ID='service_vnmz4ya';
+const TEMPLATE_DEPOSIT='template_0jmwz5h';
+const TEMPLATE_KYC='template_qzsagp9';
+const TEMPLATE_WITHDRAWAL='template_qzsagp9';
+emailjs.init(EMAILJS_PUBLIC_KEY);
+const firebaseConfig={apiKey:"AIzaSyD9_oAbItp_PGiKJNnHKa_S90CMCC1y4JU",authDomain:"coinvexa-f4c37.firebaseapp.com",projectId:"coinvexa-f4c37",storageBucket:"coinvexa-f4c37.firebasestorage.app",messagingSenderId:"514004370275",appId:"1:514004370275:web:9238feb6cb23c116780956"};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
+const db=firebase.firestore();
+const ADMIN_EMAILS=['azariyahailu51@gmail.com'];
+let currentUser=null,userData=null,livePrices={USDT:1,BTC:64800,ETH:3375,SOL:148,TRX:0.135};
+let isDark=true,currentOrderId=null,chatListener=null,currentOfferType='buy',currentP2PTab='buy';
+let historyFilter='all',allUsers=[],currentDepositCoin='USDT',referrerUid=null;
+const depositInfo={USDT:{network:'TRON (TRC20)',address:'TBBnZdhgwfkKj1zNS9GEpjj58N6kLmEBip',min:'0.005 USDT',arrival:'~20 confirmations'},BTC:{network:'Bitcoin (BTC)',address:'1BoZAfu4s8VonCfYY81SmALHV3JVUVtNcJ',min:'0.00001 BTC',arrival:'~1 confirmation'},ETH:{network:'Ethereum (ERC20)',address:'0xc4338f9e5b6f290af6f4653d946308cef7625279',min:'0.00005 ETH',arrival:'~6 confirmations'},SOL:{network:'Solana (SOL)',address:'4eMjgQ8LjSo4gbrBPdxGeEgmhbpo7HJSXa2PWJADX9Dc',min:'0.001 SOL',arrival:'~200 confirmations'},TRX:{network:'TRON (TRC20)',address:'TBBnZdhgwfkKj1zNS9GEpjj58N6kLmEBip',min:'1 TRX',arrival:'~20 confirmations'}};
+const coinMeta={USDT:{full:'Tether',cls:'usdt',letter:'T'},BTC:{full:'Bitcoin',cls:'btc',letter:'B'},ETH:{full:'Ethereum',cls:'eth',letter:'E'},SOL:{full:'Solana',cls:'sol',letter:'S'},TRX:{full:'Tron',cls:'trx',letter:'X'}};
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800);}
+function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 function showPage(id){
-  document.querySelectorAll('#appContent .page,#authPages .page').forEach(p=>{p.classList.remove('active');p.style.display='none';});
-  const el=document.getElementById(id);
-  el.classList.add('active');
-  el.style.display=id==='orderPage'?'flex':'block';
-  if(id==='p2pPage') loadOffers();
-  if(id==='marketsPage'){renderMarkets();fetchPrices();}
+  document.querySelectorAll('#appContent .page, #authPages .page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(['assetsPage','depositPage','depositAddressPage','withdrawPage','historyPage'].includes(id)) document.querySelector('.nav-btn[data-page="assetsPage"]').classList.add('active');
+  else if(['p2pPage','createOfferPage','orderPage'].includes(id)) document.querySelector('.nav-btn[data-page="p2pPage"]').classList.add('active');
+  else if(id==='marketsPage') document.querySelector('.nav-btn[data-page="marketsPage"]').classList.add('active');
+  else if(['profilePage','kycPage','myOffersPage'].includes(id)) document.querySelector('.nav-btn[data-page="profilePage"]').classList.add('active');
+  if(id==='p2pPage') loadP2POffers();
+  if(id==='marketsPage'){renderMarkets();fetchLivePrices();}
   if(id==='profilePage') renderProfile();
-  if(id==='kycPage') renderKyc();
-  if(id==='historyPage') renderHist();
-  if(id==='withdrawPage'){renderWds();updateWd();}
-  if(id==='depositAddrPage') renderDeps();
-  if(id==='createOfferPage') checkKyc();
-  if(id==='myOffersPage') loadMyAds();
-  if(chatUnsub&&id!=='orderPage'){chatUnsub();chatUnsub=null;}
+  if(id==='kycPage') renderKycPage();
+  if(id==='historyPage') renderHistory();
+  if(id==='withdrawPage'){renderMyWithdrawals();updateWdBalance();}
+  if(id==='depositAddressPage') renderMyDepositRequests();
+  if(id==='createOfferPage') checkKycForOffer();
+  if(id==='myOffersPage') loadMyOffers();
+  if(chatListener&&id!=='orderPage'){chatListener();chatListener=null;}
   window.scrollTo(0,0);
 }
-
-function navTo(id,btn){
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  if(!CU)return;
+function navigateTo(p){
+  if(!currentUser) return;
   document.getElementById('appContent').classList.remove('hidden');
   document.getElementById('authPages').classList.add('hidden');
-  showPage(id);
+  showPage(p);
 }
-
-function leaveOrder(){
-  if(chatUnsub){chatUnsub();chatUnsub=null;}
-  showPage('p2pPage');
-  document.querySelector('.nav-btn:nth-child(2)').click();
-}
-
-// THEME
-function toggleTheme(){dark=!dark;document.documentElement.setAttribute('data-theme',dark?'dark':'light');document.getElementById('themeBtn').textContent=dark?'🌙':'☀️';document.getElementById('themeIcon').textContent=dark?'🌙':'☀️';document.getElementById('themeSub').textContent=dark?'Dark':'Light';localStorage.setItem('cvTheme',dark?'dark':'light');}
-if(localStorage.getItem('cvTheme')==='light'){dark=false;document.documentElement.setAttribute('data-theme','light');}
-
-// AUTH
-function authErr(id,m){const e=document.getElementById(id);e.textContent=m;e.classList.add('show');}
-function authOk(id,m){const e=document.getElementById(id);e.textContent=m;e.classList.add('show');}
-function clearErr(id){document.getElementById(id).classList.remove('show');}
-function fErr(e){switch(e.code){case'auth/email-already-in-use':return'Email already in use.';case'auth/invalid-credential':case'auth/wrong-password':case'auth/user-not-found':return'Incorrect email or password.';case'auth/weak-password':return'Password must be at least 6 characters.';case'auth/too-many-requests':return'Too many attempts. Please wait.';case'auth/popup-blocked':return'Popup blocked. Allow popups.';default:return e.message;}}
-
+function toggleTheme(){isDark=!isDark;document.documentElement.setAttribute('data-theme',isDark?'dark':'light');document.getElementById('themeToggle').textContent=isDark?'🌙':'☀️';document.getElementById('themeIcon').textContent=isDark?'🌙':'☀️';document.getElementById('themeSub').textContent=isDark?'Dark':'Light';localStorage.setItem('cvTheme',isDark?'dark':'light');}
+if(localStorage.getItem('cvTheme')==='light'){isDark=false;document.documentElement.setAttribute('data-theme','light');}
+function showAuthError(id,msg){const e=document.getElementById(id);e.textContent=msg;e.classList.add('visible');}
+function hideAuthError(id){document.getElementById(id).classList.remove('visible');}
+function showAuthStatus(id,msg){const s=document.getElementById(id);s.textContent=msg;s.classList.add('visible');}
+function friendlyAuthError(e){switch(e.code){case'auth/email-already-in-use':return'Email already in use.';case'auth/invalid-credential':case'auth/wrong-password':case'auth/user-not-found':return'Incorrect email or password.';case'auth/weak-password':return'Password must be at least 6 characters.';case'auth/too-many-requests':return'Too many attempts. Please wait.';case'auth/popup-blocked':return'Popup blocked. Allow popups and try again.';default:return e.message;}}
 auth.onAuthStateChanged(async(user)=>{
   if(user){
-    CU=user;
-    document.getElementById('userEmail').textContent=user.email;
+    currentUser=user;
+    document.getElementById('userEmailDisplay').textContent=user.email;
     document.getElementById('authPages').classList.add('hidden');
     document.getElementById('appContent').classList.remove('hidden');
     document.getElementById('bottomNav').classList.remove('hidden');
     document.getElementById('topbar').classList.remove('hidden');
-    await loadUD();
-    renderAssets();renderHist();renderProfile();fetchPrices();loadBanner();
-    if(ADMIN.includes(user.email)){document.getElementById('adminPanel').classList.add('open');loadAdmin();}
+    await loadUserData();
+    renderAssets();renderHistory();renderProfile();fetchLivePrices();loadBanner();
+    if(ADMIN_EMAILS.includes(user.email)){document.getElementById('adminPanel').classList.add('open');loadAdminData();}
     else document.getElementById('adminPanel').classList.remove('open');
   } else {
-    CU=null;UD=null;
+    currentUser=null;userData=null;
     document.getElementById('authPages').classList.remove('hidden');
     document.getElementById('appContent').classList.add('hidden');
     document.getElementById('bottomNav').classList.add('hidden');
     document.getElementById('topbar').classList.add('hidden');
-    document.getElementById('annBanner').classList.add('hidden');
+    document.getElementById('announcementBanner').classList.add('hidden');
     showPage('loginPage');
   }
 });
-
-async function loadUD(){
-  const ref=db.collection('users').doc(CU.uid);
+async function loadUserData(){
+  const ref=db.collection('users').doc(currentUser.uid);
   const snap=await ref.get();
   if(snap.exists){
-    UD=snap.data();
-    if(!UD.balances)UD.balances={USDT:0,BTC:0,ETH:0,SOL:0,TRX:0};
-    if(!UD.balances.SOL)UD.balances.SOL=0;
-    if(!UD.kyc)UD.kyc={status:'unverified'};
-    if(!UD.withdrawalRequests)UD.withdrawalRequests=[];
-    if(!UD.depositRequests)UD.depositRequests=[];
-    if(!UD.referralCode){const c=CU.uid.slice(0,6)+Math.random().toString(36).slice(2,6);await ref.update({referralCode:c});UD.referralCode=c;}
+    userData=snap.data();
+    if(!userData.balances) userData.balances={USDT:0,BTC:0,ETH:0,SOL:0,TRX:0};
+    if(!userData.balances.SOL) userData.balances.SOL=0;
+    if(!userData.kyc) userData.kyc={status:'unverified'};
+    if(!userData.withdrawalRequests) userData.withdrawalRequests=[];
+    if(!userData.depositRequests) userData.depositRequests=[];
+    if(!userData.referralCode){const code=currentUser.uid.slice(0,6)+Math.random().toString(36).slice(2,6);await ref.update({referralCode:code});userData.referralCode=code;}
   } else {
-    UD={email:CU.email,displayName:CU.displayName||'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),emailVerified:CU.emailVerified,referralCode:CU.uid.slice(0,6)+Math.random().toString(36).slice(2,6),referredBy:null,balances:{USDT:0,BTC:0,ETH:0,SOL:0,TRX:0},transactions:[],withdrawalRequests:[],depositRequests:[],kyc:{status:'unverified',name:'',country:'',idNumber:''}};
-    await ref.set(UD);
+    userData={email:currentUser.email,displayName:currentUser.displayName||'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),emailVerified:currentUser.emailVerified,referralCode:currentUser.uid.slice(0,6)+Math.random().toString(36).slice(2,6),referredBy:null,balances:{USDT:0,BTC:0,ETH:0,SOL:0,TRX:0},transactions:[],withdrawalRequests:[],depositRequests:[],kyc:{status:'unverified',name:'',country:'',idNumber:''}};
+    await ref.set(userData);
   }
 }
-
-async function saveUD(){await db.collection('users').doc(CU.uid).update({balances:UD.balances,transactions:UD.transactions,kyc:UD.kyc,withdrawalRequests:UD.withdrawalRequests,depositRequests:UD.depositRequests});}
-
-async function addTxn(type,coin,amount,status){const date=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});if(!UD.transactions)UD.transactions=[];UD.transactions.push({type,coin,amount,status,date});await saveUD();renderHist();}
-
+async function saveUserData(){await db.collection('users').doc(currentUser.uid).update({balances:userData.balances,transactions:userData.transactions,kyc:userData.kyc,withdrawalRequests:userData.withdrawalRequests,depositRequests:userData.depositRequests});}
+async function addTransaction(type,coin,amount,status){const date=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});if(!userData.transactions)userData.transactions=[];userData.transactions.push({type,coin,amount,status,date});await saveUserData();renderHistory();}
 // REFERRAL
 const refCode=new URLSearchParams(window.location.search).get('ref');
-if(refCode){db.collection('users').where('referralCode','==',refCode).limit(1).get().then(s=>{if(!s.empty){refUID=s.docs[0].id;document.getElementById('refBadge').classList.remove('hidden');}}).catch(()=>{});}
-
-async function handleRef(user){
-  const code=user.uid.slice(0,6)+Math.random().toString(36).slice(2,6);
-  const newUD={email:user.email,displayName:user.displayName||'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),emailVerified:user.emailVerified,referralCode:code,referredBy:refUID||null,balances:{USDT:refUID?5:0,BTC:0,ETH:0,SOL:0,TRX:0},transactions:[],withdrawalRequests:[],depositRequests:[],kyc:{status:'unverified',name:'',country:'',idNumber:''}};
-  if(refUID)newUD.transactions.push({type:'Referral Bonus',coin:'USDT',amount:5,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+if(refCode){db.collection('users').where('referralCode','==',refCode).limit(1).get().then(snap=>{if(!snap.empty){referrerUid=snap.docs[0].id;document.getElementById('signupRefInfo').classList.remove('hidden');}}).catch(()=>{});}
+async function handleReferral(user){
+  const newCode=user.uid.slice(0,6)+Math.random().toString(36).slice(2,6);
+  const newUD={email:user.email,displayName:user.displayName||'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),emailVerified:user.emailVerified,referralCode:newCode,referredBy:referrerUid||null,balances:{USDT:referrerUid?5:0,BTC:0,ETH:0,SOL:0,TRX:0},transactions:[],withdrawalRequests:[],depositRequests:[],kyc:{status:'unverified',name:'',country:'',idNumber:''}};
+  if(referrerUid) newUD.transactions.push({type:'Referral Bonus',coin:'USDT',amount:5,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
   const batch=db.batch();
   batch.set(db.collection('users').doc(user.uid),newUD);
-  if(refUID){
-    const rRef=db.collection('users').doc(refUID);
-    const rDoc=await rRef.get();
-    if(rDoc.exists){
-      const rTxns=rDoc.data().transactions||[];
-      rTxns.push({type:'Referral Bonus (Referrer)',coin:'USDT',amount:5,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
-      batch.update(rRef,{'balances.USDT':firebase.firestore.FieldValue.increment(5),transactions:rTxns});
+  if(referrerUid){
+    const refRef=db.collection('users').doc(referrerUid);
+    const refDoc=await refRef.get();
+    if(refDoc.exists){
+      const refTxns=refDoc.data().transactions||[];
+      refTxns.push({type:'Referral Bonus (You referred someone!)',coin:'USDT',amount:5,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+      batch.update(refRef,{'balances.USDT':firebase.firestore.FieldValue.increment(5),transactions:refTxns});
     }
   }
   await batch.commit();
 }
-
 // LOGIN
 document.getElementById('loginForm').addEventListener('submit',async(e)=>{
-  e.preventDefault();clearErr('loginErr');
-  const em=document.getElementById('loginEmail').value.trim(),pw=document.getElementById('loginPassword').value;
-  if(!em||!pw){authErr('loginErr','Fill in both fields.');return;}
+  e.preventDefault();hideAuthError('loginError');document.getElementById('loginStatus').classList.remove('visible');
+  const email=document.getElementById('loginEmail').value.trim(),pass=document.getElementById('loginPassword').value;
+  if(!email||!pass){showAuthError('loginError','Please fill in both fields.');return;}
   document.getElementById('loginBtn').disabled=true;document.getElementById('loginSpinner').classList.remove('hidden');
-  try{await auth.signInWithEmailAndPassword(em,pw);}catch(e){authErr('loginErr',fErr(e));}
+  try{await auth.signInWithEmailAndPassword(email,pass);}catch(e){showAuthError('loginError',friendlyAuthError(e));}
   document.getElementById('loginBtn').disabled=false;document.getElementById('loginSpinner').classList.add('hidden');
 });
 document.getElementById('loginGoogleBtn').addEventListener('click',async()=>{
-  try{const r=await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());const s=await db.collection('users').doc(r.user.uid).get();if(!s.exists)await handleRef(r.user);}
-  catch(e){authErr('loginErr',fErr(e));}
+  try{const r=await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());const s=await db.collection('users').doc(r.user.uid).get();if(!s.exists)await handleReferral(r.user);}
+  catch(e){showAuthError('loginError',friendlyAuthError(e));}
 });
 document.getElementById('forgotLink').addEventListener('click',async(e)=>{
-  e.preventDefault();const em=document.getElementById('loginEmail').value.trim();
-  if(!em){authErr('loginErr','Enter your email first.');return;}
-  try{await auth.sendPasswordResetEmail(em);authOk('loginOk','Reset email sent to '+em);}catch(e){authErr('loginErr',e.message);}
+  e.preventDefault();const email=document.getElementById('loginEmail').value.trim();
+  if(!email){showAuthError('loginError','Enter your email first.');return;}
+  try{await auth.sendPasswordResetEmail(email);showAuthStatus('loginStatus','Reset email sent to '+email);}catch(e){showAuthError('loginError',e.message);}
 });
-
 // SIGNUP
 document.getElementById('signupForm').addEventListener('submit',async(e)=>{
-  e.preventDefault();clearErr('signupErr');
-  const em=document.getElementById('signupEmail').value.trim(),pw=document.getElementById('signupPassword').value,cf=document.getElementById('signupConfirm').value;
-  if(!em||!pw||!cf){authErr('signupErr','Fill all fields.');return;}
-  if(pw.length<6){authErr('signupErr','Password min 6 characters.');return;}
-  if(pw!==cf){authErr('signupErr','Passwords do not match.');return;}
+  e.preventDefault();hideAuthError('signupError');document.getElementById('signupStatus').classList.remove('visible');
+  const email=document.getElementById('signupEmail').value.trim(),pass=document.getElementById('signupPassword').value,confirm=document.getElementById('signupConfirm').value;
+  if(!email||!pass||!confirm){showAuthError('signupError','Please fill in all fields.');return;}
+  if(pass.length<6){showAuthError('signupError','Password must be at least 6 characters.');return;}
+  if(pass!==confirm){showAuthError('signupError','Passwords do not match.');return;}
   document.getElementById('signupBtn').disabled=true;document.getElementById('signupSpinner').classList.remove('hidden');
-  try{const c=await auth.createUserWithEmailAndPassword(em,pw);await c.user.sendEmailVerification();await handleRef(c.user);authOk('signupOk','✅ Account created! Verify email then log in.');setTimeout(()=>{auth.signOut();showPage('loginPage');},3500);}
-  catch(e){authErr('signupErr',fErr(e));}
+  try{const cred=await auth.createUserWithEmailAndPassword(email,pass);await cred.user.sendEmailVerification();await handleReferral(cred.user);showAuthStatus('signupStatus','✅ Account created! Check your email to verify, then log in.');setTimeout(()=>{auth.signOut();showPage('loginPage');},3500);}
+  catch(e){showAuthError('signupError',friendlyAuthError(e));}
   document.getElementById('signupBtn').disabled=false;document.getElementById('signupSpinner').classList.add('hidden');
 });
 document.getElementById('signupGoogleBtn').addEventListener('click',async()=>{
-  try{const r=await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());const s=await db.collection('users').doc(r.user.uid).get();if(!s.exists)await handleRef(r.user);}
-  catch(e){authErr('signupErr',fErr(e));}
+  try{const r=await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());const s=await db.collection('users').doc(r.user.uid).get();if(!s.exists)await handleReferral(r.user);}
+  catch(e){showAuthError('signupError',friendlyAuthError(e));}
 });
-
-document.getElementById('logoutBtn').addEventListener('click',doLogout);
-function doLogout(){if(confirm('Log out?'))auth.signOut();}
-function changePwd(){if(!confirm('Send reset to '+CU.email+'?'))return;auth.sendPasswordResetEmail(CU.email).then(()=>toast('Reset sent!')).catch(e=>toast(e.message));}
-
+document.getElementById('logoutBtn').addEventListener('click',logoutConfirm);
+function logoutConfirm(){if(confirm('Log out of CoinVexa?'))auth.signOut();}
+function changePassword(){if(!confirm('Send password reset link to '+currentUser.email+'?'))return;auth.sendPasswordResetEmail(currentUser.email).then(()=>showToast('Reset email sent!')).catch(e=>showToast(e.message));}
 // PRICES
-async function fetchPrices(){
-  try{const r=await fetch('https://api.coincap.io/v2/assets?ids=bitcoin,ethereum,solana,tron,tether&limit=5');const d=await r.json();
-  if(d&&d.data){d.data.forEach(a=>{const p=parseFloat(a.priceUsd);if(a.id==='bitcoin')prices.BTC=p;if(a.id==='ethereum')prices.ETH=p;if(a.id==='solana')prices.SOL=p;if(a.id==='tron')prices.TRX=p;if(a.id==='tether')prices.USDT=p||1;});}
+async function fetchLivePrices(){
+  try{const res=await fetch('https://api.coincap.io/v2/assets?ids=bitcoin,ethereum,solana,tron,tether&limit=5');const data=await res.json();
+  if(data&&data.data){data.data.forEach(a=>{const p=parseFloat(a.priceUsd);if(a.id==='bitcoin')livePrices.BTC=p;if(a.id==='ethereum')livePrices.ETH=p;if(a.id==='solana')livePrices.SOL=p;if(a.id==='tron')livePrices.TRX=p;if(a.id==='tether')livePrices.USDT=p||1;});}
   document.getElementById('priceUpdate').textContent='Live · '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
   catch(e){document.getElementById('priceUpdate').textContent='Cached prices';}
   renderAssets();renderMarkets();
 }
-
 function renderAssets(){
-  if(!UD)return;
-  const b=UD.balances;let tot=0;
-  Object.keys(b).forEach(c=>{tot+=(b[c]||0)*(prices[c]||0);});
-  document.getElementById('totalBal').innerHTML=tot.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+' <small>USDT</small>';
-  document.getElementById('assetList').innerHTML=Object.keys(COINS).map(coin=>{
-    const a=b[coin]||0,u=a*(prices[coin]||0),m=COINS[coin];
-    return '<div class="asset-row"><div class="coin-icon '+m.cls+'">'+m.l+'</div><div class="asset-info"><div class="name">'+coin+'</div><div class="full">'+m.full+' · $'+((prices[coin]||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}))+'</div></div><div class="asset-vals"><div class="amt">'+a.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:coin==='BTC'?6:2})+'</div><div class="usd">≈ $'+u.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</div></div></div>';
-  }).join('');
-  updateWd();
+  if(!userData)return;const b=userData.balances;let total=0;
+  Object.keys(b).forEach(c=>{total+=(b[c]||0)*(livePrices[c]||0);});
+  document.getElementById('totalBalance').innerHTML=total.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+' <small>USDT</small>';
+  document.getElementById('assetList').innerHTML=Object.keys(coinMeta).map(coin=>{const amt=b[coin]||0,usd=amt*(livePrices[coin]||0),m=coinMeta[coin];return`<div class="asset-row"><div class="coin-icon ${m.cls}">${m.letter}</div><div class="asset-info"><div class="name">${coin}</div><div class="full">${m.full} · $${(livePrices[coin]||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div><div class="asset-values"><div class="amt">${amt.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:coin==='BTC'?6:2})}</div><div class="usd">≈ $${usd.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div></div>`;}).join('');
+  updateWdBalance();
 }
-
 function renderMarkets(){
-  const coins=[{c:'BTC',n:'Bitcoin',ch:'+2.4%',pos:true},{c:'ETH',n:'Ethereum',ch:'+1.8%',pos:true},{c:'SOL',n:'Solana',ch:'+3.1%',pos:true},{c:'TRX',n:'Tron',ch:'-0.5%',pos:false},{c:'USDT',n:'Tether',ch:'0.00%',pos:true}];
-  document.getElementById('mktList').innerHTML=coins.map(x=>{const m=COINS[x.c],p=prices[x.c]||0;return '<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel);"><div class="coin-icon '+m.cls+'" style="flex-shrink:0;">'+m.l+'</div><div style="flex:1;"><div style="font-weight:700;font-size:14px;">'+x.n+'</div><div style="font-size:11px;color:var(--ink-dim);">'+x.c+'</div></div><div style="text-align:right;"><div style="font-family:var(--mono);font-weight:700;font-size:14px;">$'+p.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:x.c==='BTC'?0:2})+'</div><div style="font-size:11px;font-weight:600;color:'+(x.pos?'var(--green)':'var(--red)')+';">'+x.ch+'</div></div></div>';}).join('');
-  document.getElementById('mktUpdate').textContent='via CoinCap';
+  const coins=[{coin:'BTC',name:'Bitcoin',change:'+2.4%',pos:true},{coin:'ETH',name:'Ethereum',change:'+1.8%',pos:true},{coin:'SOL',name:'Solana',change:'+3.1%',pos:true},{coin:'TRX',name:'Tron',change:'-0.5%',pos:false},{coin:'USDT',name:'Tether',change:'0.00%',pos:true}];
+  document.getElementById('marketList').innerHTML=coins.map(c=>{const m=coinMeta[c.coin],price=livePrices[c.coin]||0;return`<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel);"><div class="coin-icon ${m.cls}" style="flex-shrink:0;">${m.letter}</div><div style="flex:1;"><div style="font-weight:700;font-size:14px;">${c.name}</div><div style="font-size:11px;color:var(--ink-dim);">${c.coin}</div></div><div style="text-align:right;"><div style="font-family:var(--mono);font-weight:700;font-size:14px;">$${price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:c.coin==='BTC'?0:2})}</div><div style="font-size:11px;font-weight:600;color:${c.pos?'var(--green)':'var(--red)'};">${c.change}</div></div></div>`;}).join('');
+  document.getElementById('marketLastUpdate').textContent='via CoinCap';
 }
-
 function renderProfile(){
-  if(!CU)return;
-  const n=CU.displayName||CU.email.split('@')[0];
-  document.getElementById('profAvatar').textContent=n[0].toUpperCase();
-  document.getElementById('profName').textContent=n;
-  document.getElementById('profEmail').textContent=CU.email;
-  const kyc=UD?.kyc||{status:'unverified'};
-  const b=document.getElementById('kycBadge');
-  if(kyc.status==='verified'){b.className='kyc-badge verified';b.textContent='✅ KYC Verified';}
-  else if(kyc.status==='pending'){b.className='kyc-badge pending';b.textContent='🔄 KYC Pending';}
-  else{b.className='kyc-badge unverified';b.textContent='⚠️ KYC Unverified';}
-  const code=UD?.referralCode||CU.uid.slice(0,6);
-  document.getElementById('refLinkDisplay').textContent=window.location.origin+'?ref='+code;
+  if(!currentUser)return;const name=currentUser.displayName||currentUser.email.split('@')[0];
+  document.getElementById('profileAvatar').textContent=name[0].toUpperCase();
+  document.getElementById('profileName').textContent=name;
+  document.getElementById('profileEmailText').textContent=currentUser.email;
+  const kyc=userData?.kyc||{status:'unverified'};const badge=document.getElementById('kycBadge');
+  if(kyc.status==='verified'){badge.className='kyc-badge verified';badge.textContent='✅ KYC Verified';}
+  else if(kyc.status==='pending'){badge.className='kyc-badge pending';badge.textContent='🔄 KYC Pending';}
+  else{badge.className='kyc-badge unverified';badge.textContent='⚠️ KYC Unverified';}
+  const code=userData?.referralCode||currentUser.uid.slice(0,6);
+  document.getElementById('referralLinkDisplay').textContent=window.location.origin+'?ref='+code;
 }
-
-function copyRefLink(){const c=UD?.referralCode||CU.uid.slice(0,6);const l=window.location.origin+'?ref='+c;navigator.clipboard?.writeText(l).then(()=>toast('✅ Referral link copied!')).catch(()=>prompt('Copy:',l));}
-
-function filterHist(t,el){histFilter=t;document.querySelectorAll('#historyPage .filter-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderHist();}
-function renderHist(){
-  if(!UD)return;
-  let txns=(UD.transactions||[]).slice().reverse();
-  if(histFilter!=='all')txns=txns.filter(t=>t.type.includes(histFilter));
-  const el=document.getElementById('histList');
-  if(!txns.length){el.innerHTML='<div class="empty">No transactions yet.</div>';return;}
-  el.innerHTML=txns.map(tx=>{const pos=tx.amount>0;const cls=tx.status==='Completed'?'completed':tx.status==='Rejected'?'rejected':'pending';return '<div class="hist-item"><div class="tr"><span class="ty">'+tx.type+'</span><span class="am '+(pos?'pos':'neg')+'">'+(pos?'+':'')+Math.abs(tx.amount).toFixed(4)+' '+tx.coin+'</span></div><div class="mt">'+tx.date+'</div><span class="s-badge '+cls+'">'+tx.status+'</span></div>';}).join('');
+function copyReferralLink(){const code=userData?.referralCode||currentUser.uid.slice(0,6);const link=window.location.origin+'?ref='+code;navigator.clipboard?.writeText(link).then(()=>showToast('✅ Referral link copied!')).catch(()=>prompt('Copy your referral link:',link));}
+function filterHistory(type,el){historyFilter=type;document.querySelectorAll('#historyPage .filter-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderHistory();}
+function renderHistory(){
+  if(!userData)return;let txns=(userData.transactions||[]).slice().reverse();
+  if(historyFilter!=='all')txns=txns.filter(t=>t.type.includes(historyFilter));
+  const list=document.getElementById('historyList');
+  if(!txns.length){list.innerHTML='<div class="empty-state">No transactions yet.</div>';return;}
+  list.innerHTML=txns.map(tx=>{const isPos=tx.amount>0;const cls=tx.status==='Completed'?'completed':tx.status==='Rejected'?'rejected':'pending';return`<div class="history-item"><div class="top-row"><span class="type">${tx.type}</span><span class="amt ${isPos?'pos':'neg'}">${isPos?'+':''}${Math.abs(tx.amount).toFixed(4)} ${tx.coin}</span></div><div class="meta">${tx.date}</div><span class="status-badge ${cls}">${tx.status}</span></div>`;}).join('');
 }
-
 // P2P
-function switchP2PTab(tab,el){
-  p2pTab=tab;
-  document.querySelectorAll('.p2p-tab').forEach(t=>{t.classList.remove('active');t.style.borderBottomColor='transparent';t.style.color='var(--ink-dim)';});
-  el.classList.add('active');el.style.borderBottomColor='var(--accent)';el.style.color='var(--accent)';
-  if(tab==='myoffers'){loadMyAds();return;}
-  loadOffers();
+function switchP2PTab(tab){
+  currentP2PTab=tab;
+  document.querySelectorAll('.p2p-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector(`.p2p-tab[data-side="${tab}"]`).classList.add('active');
+  document.getElementById('createAdBox').style.display=(tab==='buy')?'flex':'none';
+  if(tab==='myoffers'){loadMyOffers();return;}
+  loadP2POffers();
 }
-
-async function loadOffers(){
-  const coin=document.getElementById('p2pCoin').value;
-  const currency=document.getElementById('p2pCurrency').value;
-  if(p2pTab==='myoffers'){loadMyAds();return;}
-  document.getElementById('offerList').innerHTML='<div class="empty">Loading offers…</div>';
+async function loadP2POffers(){
+  const coin=document.getElementById('p2pCoinFilter').value,currency=document.getElementById('p2pCurrencyFilter').value,tab=currentP2PTab;
+  if(tab==='myoffers'){loadMyOffers();return;}
+  document.getElementById('offerList').innerHTML='<div style="text-align:center;padding:30px;color:var(--ink-dim);">Loading offers…</div>';
   try{
-    const snap=await db.collection('p2pOffers').where('coin','==',coin).where('currency','==',currency).where('type','==',p2pTab==='buy'?'sell':'buy').where('active','==',true).orderBy('createdAt','desc').limit(20).get();
-    renderOffers(snap.docs.map(d=>({id:d.id,...d.data()})),p2pTab);
-  }catch(e){document.getElementById('offerList').innerHTML='<div class="empty" style="color:var(--red);">Error: '+e.message+'</div>';}
+    const snap=await db.collection('p2pOffers').where('coin','==',coin).where('currency','==',currency).where('type','==',tab==='buy'?'sell':'buy').where('active','==',true).orderBy('createdAt','desc').limit(20).get();
+    renderOfferList(snap.docs.map(d=>({id:d.id,...d.data()})),tab);
+  }catch(e){document.getElementById('offerList').innerHTML='<div class="empty-state" style="color:var(--red);">Error: '+e.message+'</div>';}
 }
-
-function renderOffers(offers,side){
-  if(!offers.length){document.getElementById('offerList').innerHTML='<div class="empty">No offers yet.<br>Be the first to post one!</div>';return;}
+function renderOfferList(offers,side){
+  if(!offers.length){document.getElementById('offerList').innerHTML='<div class="empty-state" style="margin:20px 16px;">No offers available.<br><small>Be the first to post one!</small></div>';return;}
   document.getElementById('offerList').innerHTML=offers.map(o=>{
-    const isMe=o.userId===CU.uid;
-    const init=(o.merchantName||'?')[0].toUpperCase();
-    const priceColor=side==='buy'?'var(--green)':'var(--red)';
-    const btn=isMe
-      ?'<button class="manage-btn" onclick="showPage('myOffersPage')">Manage</button>'
-      :(side==='buy'
-        ?'<button class="buy-btn" onclick="startOrder(''+o.id+'')">Buy</button>'
-        :'<button class="sell-btn" onclick="startOrder(''+o.id+'')">Sell</button>');
-    return '<div class="offer-card"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;"><div style="flex:1;min-width:0;"><div class="offer-merchant"><div class="offer-avatar">'+init+'</div><span class="offer-name">'+esc(o.merchantName||'Merchant')+'</span>'+(o.kycVerified?'<span class="kyc-tag">KYC</span>':'')+(isMe?'<span class="you-tag">YOU</span>':'')+'</div><div class="offer-price-big '+(side==='buy'?'buy-color':'sell-color')+'">'+((o.price||0).toLocaleString())+' <span style="font-size:13px;font-weight:600;color:var(--ink-dim);">'+o.currency+'</span></div><div class="offer-meta">Available: <b>'+(o.amount||0).toLocaleString()+' '+o.coin+'</b></div><div class="offer-meta">Limit: <b>'+(o.minOrder||0).toLocaleString()+' – '+(o.maxOrder||0).toLocaleString()+' '+o.currency+'</b></div><div class="offer-methods">'+(o.paymentMethods||[]).map(m=>'<span class="method-tag">'+m+'</span>').join('')+'</div></div><div style="flex-shrink:0;padding-top:24px;">'+btn+'</div></div></div>';
+    const isMe=o.userId===currentUser.uid,initial=(o.merchantName||'?')[0].toUpperCase();
+    const btnColor=side==='buy'?'var(--green)':'var(--red)';
+    const btnText=side==='buy'?'Buy':'Sell';
+    return`<div style="background:var(--panel);border-bottom:1px solid var(--line);padding:14px 16px;"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;"><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><div style="width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;">${initial}</div><span style="font-weight:700;font-size:13px;">${escapeHtml(o.merchantName||'Merchant')}</span>${o.kycVerified?'<span style="font-size:9px;background:rgba(30,201,139,.15);color:var(--green);border-radius:4px;padding:1px 5px;font-weight:700;">KYC</span>':''} ${isMe?'<span style="font-size:9px;background:rgba(59,130,246,.15);color:var(--accent);border-radius:4px;padding:1px 5px;font-weight:700;">YOU</span>':''}</div><div style="font-size:22px;font-weight:800;font-family:var(--mono);color:${side==='buy'?'var(--green)':'var(--red)'};margin-bottom:4px;">${(o.price||0).toLocaleString()} <span style="font-size:13px;font-weight:600;color:var(--ink-dim);">${o.currency}</span></div><div style="font-size:11px;color:var(--ink-dim);margin-bottom:3px;">Available: <b style="color:var(--ink);">${(o.amount||0).toLocaleString()} ${o.coin}</b></div><div style="font-size:11px;color:var(--ink-dim);margin-bottom:6px;">Limit: <b style="color:var(--ink);">${(o.minOrder||0).toLocaleString()} – ${(o.maxOrder||0).toLocaleString()} ${o.currency}</b></div><div style="display:flex;gap:4px;flex-wrap:wrap;">${(o.paymentMethods||[]).map(m=>`<span style="font-size:10px;padding:2px 7px;border-radius:4px;background:var(--panel-2);color:var(--ink-dim);border:1px solid var(--line);">${m}</span>`).join('')}` </div></div><div style="flex-shrink:0;padding-top:20px;">${isMe?`<button onclick="showPage('myOffersPage')" style="padding:10px 18px;border-radius:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink-dim);font-weight:700;font-size:13px;cursor:pointer;">Manage</button>`:`<button onclick="openOrderFromOffer('${o.id}')" style="padding:10px 18px;border-radius:8px;border:none;background:${btnColor};color:${side==='buy'?'#06241a':'#fff'};font-weight:700;font-size:13px;cursor:pointer;">${btnText}</button>`}</div></div></div>`;
   }).join('');
 }
-
-// OFFER TYPE
-function setOfferType(type){
-  offerType=type;
-  document.getElementById('offerBuyBtn').classList.toggle('active',type==='buy');
-  document.getElementById('offerSellBtn').classList.toggle('active',type==='sell');
-}
-
-function checkKyc(){
-  const kyc=UD?.kyc||{};
-  if(kyc.status!=='verified'){document.getElementById('kycMsg').classList.remove('hidden');document.getElementById('offerForm').style.display='none';}
-  else{document.getElementById('kycMsg').classList.add('hidden');document.getElementById('offerForm').style.display='block';}
-}
-
-async function postOffer(){
-  const kyc=UD?.kyc||{};if(kyc.status!=='verified'){alert('KYC required.');return;}
-  const coin=document.getElementById('offerCoin').value;
-  const currency=document.getElementById('offerFiat').value;
-  const price=parseFloat(document.getElementById('offerPrice').value);
-  const amount=parseFloat(document.getElementById('offerAmount').value);
-  const minOrder=parseFloat(document.getElementById('offerMin').value);
-  const maxOrder=parseFloat(document.getElementById('offerMax').value);
-  const methods=document.getElementById('offerPayments').value.split(',').map(s=>s.trim()).filter(Boolean);
-  const inst=document.getElementById('offerInstructions').value.trim();
-  if(!price||!amount||!minOrder||!maxOrder||!methods.length){alert('Fill all fields.');return;}
+document.getElementById('createUserSellBtn').addEventListener('click',async()=>{
+  const name=document.getElementById('userAdName').value.trim()||'Trader';
+  const price=parseFloat(document.getElementById('userAdPrice').value),amount=parseFloat(document.getElementById('userAdAmount').value);
+  if(!price||!amount||amount<=0){showToast('Enter valid price and amount');return;}
+  const bal=userData?.balances?.USDT||0;if(amount>bal){showToast('❌ Insufficient USDT. You have '+bal.toFixed(2));return;}
+  userData.balances.USDT-=amount;await saveUserData();
+  await db.collection('p2pOffers').add({userId:currentUser.uid,merchantName:name,kycVerified:userData.kyc?.status==='verified',type:'sell',coin:'USDT',currency:'ETB',price,amount,minOrder:1,maxOrder:9999999,paymentMethods:['Bank'],instructions:'',active:true,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  showToast('✅ Listed '+amount+' USDT at '+price+' ETB!');
+  document.getElementById('userAdPrice').value='';document.getElementById('userAdAmount').value='';
+  renderAssets();loadP2POffers();
+});
+function selectOfferType(type){currentOfferType=type;document.getElementById('offerTypeBuy').classList.toggle('active',type==='buy');document.getElementById('offerTypeSell').classList.toggle('active',type==='sell');}
+function checkKycForOffer(){const kyc=userData?.kyc||{};const msg=document.getElementById('kycRequiredMsg');const form=document.getElementById('createOfferForm');if(kyc.status!=='verified'){msg.classList.remove('hidden');form.classList.add('hidden');}else{msg.classList.add('hidden');form.classList.remove('hidden');}}
+async function submitOffer(){
+  const kyc=userData?.kyc||{};if(kyc.status!=='verified'){alert('KYC required.');return;}
+  const coin=document.getElementById('offerCoin').value,currency=document.getElementById('offerCurrency').value;
+  const price=parseFloat(document.getElementById('offerPrice').value),amount=parseFloat(document.getElementById('offerAmount').value);
+  const minOrder=parseFloat(document.getElementById('offerMin').value),maxOrder=parseFloat(document.getElementById('offerMax').value);
+  const paymentMethods=document.getElementById('offerPayments').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const instructions=document.getElementById('offerInstructions').value.trim();
+  if(!price||!amount||!minOrder||!maxOrder||!paymentMethods.length){alert('Fill all fields.');return;}
   if(minOrder>maxOrder){alert('Min cannot exceed Max.');return;}
-  if(offerType==='sell'){
-    const bal=UD.balances[coin]||0;
-    if(amount>bal){alert('Insufficient '+coin+'. You have '+bal);return;}
-    UD.balances[coin]-=amount;
-    await saveUD();renderAssets();
+  if(currentOfferType==='sell'&&amount>(userData.balances[coin]||0)){alert('Insufficient '+coin+' balance. You have '+(userData.balances[coin]||0)+' '+coin);return;}
+  if(!confirm('Post this '+currentOfferType.toUpperCase()+' offer?'))return;
+  // Lock seller balance in escrow
+  if(currentOfferType==='sell'){
+    userData.balances[coin]-=amount;
+    await saveUserData();
+    renderAssets();
   }
-  if(!confirm('Post this '+offerType.toUpperCase()+' offer?'))return;
-  const name=CU.displayName||CU.email.split('@')[0];
-  await db.collection('p2pOffers').add({userId:CU.uid,merchantName:name,kycVerified:true,type:offerType,coin,currency,price,amount,minOrder,maxOrder,paymentMethods:methods,instructions:inst,active:true,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-  toast('✅ Ad posted!');showPage('p2pPage');
+  const name=currentUser.displayName||currentUser.email.split('@')[0];
+  await db.collection('p2pOffers').add({userId:currentUser.uid,merchantName:name,kycVerified:true,type:currentOfferType,coin,currency,price,amount,minOrder,maxOrder,paymentMethods,instructions,active:true,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  showToast('✅ Offer posted!');showPage('p2pPage');
 }
-
-async function loadMyAds(){
-  const el=document.getElementById('myOffersList')||document.getElementById('offerList');
-  if(!el)return;
+async function loadMyOffers(){
+  const el=document.getElementById('myOffersList');if(!el)return;
   try{
-    const snap=await db.collection('p2pOffers').where('userId','==',CU.uid).orderBy('createdAt','desc').get();
-    const ads=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(!ads.length){el.innerHTML='<div class="empty">No ads yet.</div>';return;}
-    el.innerHTML=ads.map(a=>'<div style="background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div><span style="font-weight:700;padding:3px 10px;border-radius:6px;font-size:11px;background:'+(a.type==='buy'?'rgba(30,201,139,.15)':'rgba(239,93,93,.15)')+';color:'+(a.type==='buy'?'var(--green)':'var(--red)')+';">'+a.type.toUpperCase()+'</span> <span style="font-size:13px;font-weight:600;">'+a.coin+'/'+a.currency+'</span></div><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:'+(a.active?'rgba(30,201,139,.15)':'rgba(239,93,93,.15)')+';color:'+(a.active?'var(--green)':'var(--red)')+';">'+(a.active?'ACTIVE':'PAUSED')+'</span></div><div style="font-size:13px;margin-bottom:4px;">Price: <b>'+((a.price||0).toLocaleString())+' '+a.currency+'</b> · Amount: <b>'+a.amount+' '+a.coin+'</b></div><div style="font-size:12px;color:var(--ink-dim);margin-bottom:10px;">Limit: '+((a.minOrder||0).toLocaleString())+' – '+((a.maxOrder||0).toLocaleString())+' '+a.currency+'</div><div style="display:flex;gap:8px;"><button onclick="toggleAd(''+a.id+'','+(!a.active)+')" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-weight:700;font-size:12px;cursor:pointer;">'+(a.active?'⏸ Pause':'▶ Activate')+'</button><button onclick="deleteAd(''+a.id+'')" style="flex:1;padding:8px;border-radius:8px;border:none;background:rgba(239,93,93,.15);color:var(--red);font-weight:700;font-size:12px;cursor:pointer;">🗑 Delete</button></div></div>').join('');
-  }catch(e){el.innerHTML='<div class="empty" style="color:var(--red);">Error: '+e.message+'</div>';}
+    const snap=await db.collection('p2pOffers').where('userId','==',currentUser.uid).orderBy('createdAt','desc').get();
+    const offers=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!offers.length){el.innerHTML='<div class="empty-state">No offers yet.</div>';return;}
+    el.innerHTML=offers.map(o=>`<div style="background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div><span style="font-weight:700;padding:3px 10px;border-radius:6px;font-size:11px;background:${o.type==='buy'?'rgba(30,201,139,.15)':'rgba(239,93,93,.15)'};color:${o.type==='buy'?'var(--green)':'var(--red)'};">${o.type.toUpperCase()}</span> <span style="font-size:13px;font-weight:600;">${o.coin}/${o.currency}</span></div><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:${o.active?'rgba(30,201,139,.15)':'rgba(239,93,93,.15)'};color:${o.active?'var(--green)':'var(--red)'};">${o.active?'ACTIVE':'PAUSED'}</span></div><div style="font-size:13px;margin-bottom:4px;">Price: <b>${(o.price||0).toLocaleString()} ${o.currency}</b> · Amount: <b>${o.amount} ${o.coin}</b></div><div style="font-size:12px;color:var(--ink-dim);margin-bottom:10px;">Limit: ${(o.minOrder||0).toLocaleString()}–${(o.maxOrder||0).toLocaleString()} ${o.currency}</div><div style="display:flex;gap:8px;"><button onclick="toggleOffer('${o.id}',${!o.active})" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-weight:700;font-size:12px;cursor:pointer;">${o.active?'⏸ Pause':'▶ Activate'}</button><button onclick="deleteOffer('${o.id}')" style="flex:1;padding:8px;border-radius:8px;border:none;background:rgba(239,93,93,.15);color:var(--red);font-weight:700;font-size:12px;cursor:pointer;">🗑 Delete</button></div></div>`).join('');
+  }catch(e){el.innerHTML='<div class="empty-state" style="color:var(--red);">Error: '+e.message+'</div>';}
 }
-
-async function toggleAd(id,active){await db.collection('p2pOffers').doc(id).update({active});loadMyAds();toast(active?'Ad activated':'Ad paused');}
-async function deleteAd(id){if(!confirm('Delete?'))return;await db.collection('p2pOffers').doc(id).delete();loadMyAds();}
-
-// ORDER CHAT
-async function startOrder(offerId){
+async function toggleOffer(id,active){await db.collection('p2pOffers').doc(id).update({active});loadMyOffers();showToast(active?'Offer activated':'Offer paused');}
+async function deleteOffer(id){if(!confirm('Delete this offer?'))return;await db.collection('p2pOffers').doc(id).delete();loadMyOffers();showToast('Offer deleted');}
+async function openOrderFromOffer(offerId){
   try{
-    const snap=await db.collection('p2pOffers').doc(offerId).get();
-    if(!snap.exists){alert('Offer no longer available.');return;}
-    const o={id:snap.id,...snap.data()};
-    if(o.userId===CU.uid){alert('Cannot trade your own offer.');return;}
-    const amt=prompt('How much '+o.coin+' to '+(o.type==='sell'?'buy':'sell')+'?
-Available: '+o.amount+' '+o.coin+'
-Price: '+o.price+' '+o.currency);
-    if(!amt)return;
-    const amount=parseFloat(amt);
-    if(!amount||amount<=0||amount>o.amount){alert('Invalid amount.');return;}
-    const total=amount*o.price;
-    if(total<o.minOrder||total>o.maxOrder){alert('Total '+total.toLocaleString()+' '+o.currency+' outside limits.');return;}
-    const isBuyer=o.type==='sell';
-    const ref=await db.collection('p2pOrders').add({orderId:'CV'+Date.now().toString().slice(-6),offerId,buyerId:isBuyer?CU.uid:o.userId,sellerId:isBuyer?o.userId:CU.uid,buyerEmail:isBuyer?CU.email:(o.merchantName||'Seller'),sellerEmail:isBuyer?(o.merchantName||'Seller'):CU.email,coin:o.coin,currency:o.currency,price:o.price,amount,total,paymentMethods:o.paymentMethods,instructions:o.instructions||'',status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-    openOrder(ref.id,isBuyer?'buyer':'seller',o,amount,total);
+    const offerSnap=await db.collection('p2pOffers').doc(offerId).get();
+    if(!offerSnap.exists){alert('Offer no longer available.');return;}
+    const offer={id:offerSnap.id,...offerSnap.data()};
+    if(offer.userId===currentUser.uid){alert('You cannot trade with your own offer.');return;}
+    const cryptoAmount=prompt('How much '+offer.coin+' do you want to '+(offer.type==='sell'?'buy':'sell')+'?\nAvailable: '+offer.amount+' '+offer.coin+'\nPrice: '+offer.price+' '+offer.currency);
+    if(!cryptoAmount)return;
+    const amount=parseFloat(cryptoAmount);
+    if(!amount||amount<=0||amount>offer.amount){alert('Invalid amount.');return;}
+    const total=amount*offer.price;
+    if(total<offer.minOrder||total>offer.maxOrder){alert('Total '+total.toLocaleString()+' '+offer.currency+' is outside the limit.');return;}
+    const isBuyer=offer.type==='sell';
+    const orderRef=await db.collection('p2pOrders').add({orderId:'CV'+Date.now().toString().slice(-6),offerId,buyerId:isBuyer?currentUser.uid:offer.userId,sellerId:isBuyer?offer.userId:currentUser.uid,buyerEmail:isBuyer?currentUser.email:(offer.merchantName||'Seller'),sellerEmail:isBuyer?(offer.merchantName||'Seller'):currentUser.email,coin:offer.coin,currency:offer.currency,price:offer.price,amount,total,paymentMethods:offer.paymentMethods,instructions:offer.instructions||'',status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    openOrderChat(orderRef.id,isBuyer?'buyer':'seller',offer,amount,total);
   }catch(e){alert('Error: '+e.message);}
 }
-
-function openOrder(docId,role,offer,amount,total){
-  orderId=docId;
-  document.getElementById('orderTitle').textContent='P2P Order';
-  document.getElementById('orderRef').textContent='#'+docId.slice(-6).toUpperCase();
-  document.getElementById('orderDir').textContent=role==='buyer'?'You are buying':'You are selling';
-  document.getElementById('orderAmt').textContent=amount.toFixed(4)+' '+(offer?.coin||'');
-  document.getElementById('orderAmt').style.color=role==='buyer'?'var(--green)':'var(--red)';
-  document.getElementById('orderPrice').textContent=(offer?.price||0).toLocaleString()+' '+(offer?.currency||'');
-  document.getElementById('orderTotal').textContent=(total||0).toLocaleString()+' '+(offer?.currency||'');
-  document.getElementById('orderMerchant').textContent=role==='buyer'?(offer?.merchantName||'Seller'):(offer?.merchantName||'Buyer');
-  document.getElementById('orderPayment').textContent=(offer?.paymentMethods||[]).join(', ')||'—';
-  document.getElementById('orderStatusBadge').textContent='Pending';
-  document.getElementById('orderStatusBadge').className='order-status-badge status-pending';
-  document.getElementById('escrowTitle').textContent=amount+' '+(offer?.coin||'')+' in escrow';
+function openOrderChat(orderDocId,role,offerData,amount,total){
+  currentOrderId=orderDocId;
+  document.getElementById('orderTitle').textContent='Order Chat';
+  document.getElementById('orderIdDisplay').textContent='#'+orderDocId.slice(-6).toUpperCase();
+  document.getElementById('orderDirection').textContent=role==='buyer'?'You are buying':'You are selling';
+  document.getElementById('orderAmt').textContent=(amount||0).toFixed(4)+' '+(offerData?.coin||'');
+  document.getElementById('orderPrice').textContent=(offerData?.price||0).toLocaleString()+' '+(offerData?.currency||'');
+  document.getElementById('orderTotal').textContent=(total||0).toLocaleString()+' '+(offerData?.currency||'');
+  document.getElementById('orderMerchant').textContent=role==='buyer'?(offerData?.merchantName||'Seller'):(offerData?.merchantName||'Buyer');
+  document.getElementById('orderPayment').textContent=(offerData?.paymentMethods||[]).join(', ')||'—';
+  document.getElementById('orderStatus').textContent='Pending';document.getElementById('orderStatus').className='order-status pending';
+  document.getElementById('escrowTitle').textContent=amount+' '+(offerData?.coin||'')+' held in escrow';
+  document.getElementById('escrowTitle').textContent=role==='buyer'?'Funds secured in escrow — will be released after you pay':'Funds secured in escrow — release after payment confirmed';
   if(role==='buyer'){
     document.getElementById('countdownBox').classList.remove('hidden');
     startCountdown();
-    document.getElementById('buyerBar').classList.remove('hidden');
-    document.getElementById('sellerBar').classList.add('hidden');
-    if(offer?.instructions){document.getElementById('payInstBox').style.display='block';document.getElementById('payInstText').textContent=offer.instructions;}
-    else document.getElementById('payInstBox').style.display='none';
+    document.getElementById('buyerActionsBar').classList.remove('hidden');
+    document.getElementById('sellerActionsBar').classList.add('hidden');
+    if(offerData?.instructions){
+      document.getElementById('paymentInstructionsBox').style.display='block';
+      document.getElementById('paymentInstructionsText').textContent=offerData.instructions;
+    } else {
+      document.getElementById('paymentInstructionsBox').style.display='none';
+    }
   } else {
     document.getElementById('countdownBox').classList.add('hidden');
-    document.getElementById('sellerBar').classList.remove('hidden');
-    document.getElementById('buyerBar').classList.add('hidden');
-    document.getElementById('payInstBox').style.display='none';
+    document.getElementById('sellerActionsBar').classList.remove('hidden');
+    document.getElementById('buyerActionsBar').classList.add('hidden');
+    document.getElementById('paymentInstructionsBox').style.display='none';
   }
-  showPage('orderPage');
-  startChat(docId);
+  showPage('orderPage');subscribeToChat(orderDocId);
 }
-
-let countInt;
-function startCountdown(){clearInterval(countInt);let s=14*60+58;const el=document.getElementById('countdownTimer');countInt=setInterval(()=>{s--;if(s<=0){clearInterval(countInt);s=0;}el.textContent=Math.floor(s/60)+':'+(s%60).toString().padStart(2,'0');},1000);}
-
-function startChat(docId){
-  if(chatUnsub)chatUnsub();
-  const area=document.getElementById('chatArea');
-  area.innerHTML='<div class="msg sys">Order started · Chat with your partner</div>';
-  chatUnsub=db.collection('p2pOrders').doc(docId).collection('messages').orderBy('timestamp','asc').onSnapshot(snap=>{
+let countdownInterval;
+function startCountdown(){clearInterval(countdownInterval);let s=14*60+58;const el=document.getElementById('countdownTimer');countdownInterval=setInterval(()=>{s--;if(s<=0){clearInterval(countdownInterval);s=0;}el.textContent=Math.floor(s/60)+':'+(s%60).toString().padStart(2,'0');},1000);}
+function subscribeToChat(orderDocId){
+  if(chatListener)chatListener();
+  const chatArea=document.getElementById('chatArea');chatArea.innerHTML='<div class="msg system">Order started · Chat with your trading partner</div>';
+  chatListener=db.collection('p2pOrders').doc(orderDocId).collection('messages').orderBy('timestamp','asc').onSnapshot(snap=>{
     snap.docChanges().filter(c=>c.type==='added').forEach(c=>{
-      const m=c.doc.data(),isMe=m.senderId===CU.uid;
-      if(m.type==='system'){area.insertAdjacentHTML('beforeend','<div class="msg sys">'+esc(m.text)+'</div>');}
-      else{area.insertAdjacentHTML('beforeend','<div class="msg '+(isMe?'me':'them')+'"><div class="msg-sender">'+(isMe?'You':esc(m.senderName||'Partner'))+'</div>'+esc(m.text)+'<div class="msg-time">'+(m.timestamp?.toDate?m.timestamp.toDate().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'')+' </div></div>');}
-      area.scrollTop=area.scrollHeight;
+      const msg=c.doc.data(),isMe=msg.senderId===currentUser.uid;
+      if(msg.type==='system'){chatArea.insertAdjacentHTML('beforeend','<div class="msg system">'+escapeHtml(msg.text)+'</div>');}
+      else{chatArea.insertAdjacentHTML('beforeend','<div class="msg '+(isMe?'me':'them')+'"><div class="msg-sender">'+(isMe?'You':escapeHtml(msg.senderName||'Partner'))+'</div>'+escapeHtml(msg.text)+'<div class="msg-time">'+(msg.timestamp?.toDate?msg.timestamp.toDate().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'')+' </div></div>');}
+      chatArea.scrollTop=chatArea.scrollHeight;
     });
   });
 }
-
-async function sendChat(){
-  const inp=document.getElementById('chatInput');const txt=inp.value.trim();
-  if(!txt||!orderId)return;
-  const name=CU.displayName||CU.email.split('@')[0];
-  await db.collection('p2pOrders').doc(orderId).collection('messages').add({text:txt,senderId:CU.uid,senderName:name,type:'chat',timestamp:firebase.firestore.FieldValue.serverTimestamp()});
-  inp.value='';
-}
-
-async function sysMsg(txt){await db.collection('p2pOrders').doc(orderId).collection('messages').add({text:txt,type:'system',senderId:'system',timestamp:firebase.firestore.FieldValue.serverTimestamp()});}
-
-async function markPaid(){
-  if(!orderId||!confirm('Confirm you sent payment?'))return;
-  await db.collection('p2pOrders').doc(orderId).update({status:'paid'});
-  await sysMsg('✅ Buyer marked as paid. Seller please confirm.');
-  document.getElementById('orderStatusBadge').textContent='Paid';
-  document.getElementById('orderStatusBadge').className='order-status-badge status-paid';
-  document.getElementById('buyerBar').classList.add('hidden');
-}
-
+async function sendChat(){const input=document.getElementById('chatInput');const text=input.value.trim();if(!text||!currentOrderId)return;const name=currentUser.displayName||currentUser.email.split('@')[0];await db.collection('p2pOrders').doc(currentOrderId).collection('messages').add({text,senderId:currentUser.uid,senderName:name,type:'chat',timestamp:firebase.firestore.FieldValue.serverTimestamp()});input.value='';}
+async function markPaid(){if(!currentOrderId||!confirm('Confirm you have sent the payment?'))return;await db.collection('p2pOrders').doc(currentOrderId).update({status:'paid'});await db.collection('p2pOrders').doc(currentOrderId).collection('messages').add({text:'✅ Buyer marked payment as sent. Seller please confirm.',type:'system',senderId:'system',timestamp:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('orderStatus').textContent='Paid';document.getElementById('orderStatus').className='order-status paid';document.getElementById('buyerActionsBar').classList.add('hidden');}
 async function releaseFunds(){
-  if(!orderId||!confirm('Confirm payment received and release funds?'))return;
+  if(!currentOrderId||!confirm('Confirm payment received and release funds to buyer?'))return;
   try{
-    const snap=await db.collection('p2pOrders').doc(orderId).get();
-    if(!snap.exists)return;
-    const order=snap.data();
-    const bRef=db.collection('users').doc(order.buyerId);
-    const bSnap=await bRef.get();
-    if(bSnap.exists){
-      const bd=bSnap.data();
-      const bals=bd.balances||{};
-      bals[order.coin]=(bals[order.coin]||0)+order.amount;
-      const txns=bd.transactions||[];
-      txns.push({type:'P2P Buy — '+order.coin,coin:order.coin,amount:order.amount,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
-      await bRef.update({balances:bals,transactions:txns});
+    const orderSnap=await db.collection('p2pOrders').doc(currentOrderId).get();
+    if(!orderSnap.exists){alert('Order not found.');return;}
+    const order=orderSnap.data();
+    // Credit buyer balance
+    const buyerRef=db.collection('users').doc(order.buyerId);
+    const buyerSnap=await buyerRef.get();
+    if(buyerSnap.exists){
+      const buyerData=buyerSnap.data();
+      const buyerBalances=buyerData.balances||{};
+      buyerBalances[order.coin]=(buyerBalances[order.coin]||0)+order.amount;
+      const buyerTxns=buyerData.transactions||[];
+      buyerTxns.push({type:'P2P Buy — '+order.coin,coin:order.coin,amount:order.amount,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+      await buyerRef.update({balances:buyerBalances,transactions:buyerTxns});
     }
-    const sTxns=UD.transactions||[];
-    sTxns.push({type:'P2P Sell — '+order.coin,coin:order.coin,amount:-order.amount,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
-    UD.transactions=sTxns;await saveUD();
-    await db.collection('p2pOrders').doc(orderId).update({status:'completed'});
-    await sysMsg('✅ Funds released! Order completed.');
-    document.getElementById('orderStatusBadge').textContent='Completed';
-    document.getElementById('orderStatusBadge').className='order-status-badge status-completed';
-    document.getElementById('sellerBar').classList.add('hidden');
-    toast('✅ Funds released to buyer!');renderAssets();
+    // Add seller transaction
+    const sellerTxns=userData.transactions||[];
+    sellerTxns.push({type:'P2P Sell — '+order.coin,coin:order.coin,amount:-order.amount,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+    userData.transactions=sellerTxns;
+    await saveUserData();
+    await db.collection('p2pOrders').doc(currentOrderId).update({status:'completed'});
+    await db.collection('p2pOrders').doc(currentOrderId).collection('messages').add({text:'✅ Seller confirmed. Funds released to buyer! Order completed.',type:'system',senderId:'system',timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+    document.getElementById('orderStatus').textContent='Completed';
+    document.getElementById('orderStatus').className='order-status completed';
+    document.getElementById('sellerActionsBar').classList.add('hidden');
+    showToast('✅ Funds released to buyer!');
+    renderAssets();
   }catch(e){alert('Error: '+e.message);}
 }
-
-async function disputeOrder(){
-  if(!orderId||!confirm('Open dispute?'))return;
-  await db.collection('p2pOrders').doc(orderId).update({status:'disputed'});
-  await sysMsg('⚠️ Dispute opened. Admin will review.');
-  document.getElementById('orderStatusBadge').textContent='Disputed';
-  document.getElementById('orderStatusBadge').className='order-status-badge status-disputed';
-}
-
+async function disputeOrder(){if(!currentOrderId||!confirm('Open a dispute?'))return;await db.collection('p2pOrders').doc(currentOrderId).update({status:'disputed'});await db.collection('p2pOrders').doc(currentOrderId).collection('messages').add({text:'⚠️ Dispute opened. Admin will review.',type:'system',senderId:'system',timestamp:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('orderStatus').textContent='Disputed';document.getElementById('orderStatus').className='order-status disputed';}
 async function cancelOrder(){
-  if(!orderId||!confirm('Cancel order? Funds returned to seller.'))return;
+  if(!currentOrderId||!confirm('Cancel this order? Funds will be returned to seller.'))return;
   try{
-    const snap=await db.collection('p2pOrders').doc(orderId).get();
-    if(snap.exists){
-      const order=snap.data();
-      const sRef=db.collection('users').doc(order.sellerId);
-      const sSnap=await sRef.get();
-      if(sSnap.exists){const sd=sSnap.data();const bals=sd.balances||{};bals[order.coin]=(bals[order.coin]||0)+order.amount;await sRef.update({balances:bals});}
+    const orderSnap=await db.collection('p2pOrders').doc(currentOrderId).get();
+    if(orderSnap.exists){
+      const order=orderSnap.data();
+      // Return funds to seller if they were a sell offer
+      if(order.sellerId===currentUser.uid||order.buyerId===currentUser.uid){
+        const sellerRef=db.collection('users').doc(order.sellerId);
+        const sellerSnap=await sellerRef.get();
+        if(sellerSnap.exists){
+          const sellerData=sellerSnap.data();
+          const sellerBalances=sellerData.balances||{};
+          sellerBalances[order.coin]=(sellerBalances[order.coin]||0)+order.amount;
+          await sellerRef.update({balances:sellerBalances});
+        }
+      }
     }
-    await db.collection('p2pOrders').doc(orderId).update({status:'cancelled'});
-    await sysMsg('❌ Order cancelled. Funds returned to seller.');
-    document.getElementById('orderStatusBadge').textContent='Cancelled';
-    document.getElementById('orderStatusBadge').className='order-status-badge status-cancelled';
-    document.getElementById('buyerBar').classList.add('hidden');
-    document.getElementById('sellerBar').classList.add('hidden');
-    toast('Order cancelled.');
+    await db.collection('p2pOrders').doc(currentOrderId).update({status:'cancelled'});
+    await db.collection('p2pOrders').doc(currentOrderId).collection('messages').add({text:'❌ Order cancelled. Funds returned to seller.',type:'system',senderId:'system',timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+    document.getElementById('orderStatus').textContent='Cancelled';
+    document.getElementById('orderStatus').className='order-status cancelled';
+    document.getElementById('buyerActionsBar').classList.add('hidden');
+    document.getElementById('sellerActionsBar').classList.add('hidden');
+    showToast('Order cancelled. Funds returned.');
+    renderAssets();
   }catch(e){alert('Error: '+e.message);}
 }
-
 // DEPOSIT
-function openDep(coin){
-  depCoin=coin;const info=DEP_INFO[coin];
-  document.getElementById('depCoin').textContent=coin;
-  document.getElementById('depNetwork').textContent=info.net;
-  document.getElementById('depAddr').textContent=info.addr;
-  document.getElementById('depMin').innerHTML='<span>Minimum</span><span>'+info.min+'</span>';
-  document.getElementById('depArr').innerHTML='<span>Arrival</span><span>'+info.arr+'</span>';
-  const qr=document.getElementById('qrCode');qr.innerHTML='';
-  new QRCode(qr,{text:info.addr,width:160,height:160,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
-  showPage('depositAddrPage');renderDeps();
+function openDepositAddress(coin){
+  currentDepositCoin=coin;const info=depositInfo[coin];
+  document.getElementById('depTitleCoin').textContent=coin;document.getElementById('depAddress').textContent=info.address;document.getElementById('depNetworkNote').textContent=info.network;
+  document.getElementById('depMinRow').innerHTML='<span>Minimum</span><span>'+info.min+'</span>';document.getElementById('depArrivalRow').innerHTML='<span>Arrival</span><span>'+info.arrival+'</span>';
+  const qrBox=document.getElementById('qrCodeDisplay');qrBox.innerHTML='';new QRCode(qrBox,{text:info.address,width:160,height:160,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+  showPage('depositAddressPage');renderMyDepositRequests();
 }
-function copyAddr(){navigator.clipboard?.writeText(document.getElementById('depAddr').textContent);toast('✅ Address copied!');}
-async function submitDep(){
-  const hash=document.getElementById('txHash').value.trim(),amt=parseFloat(document.getElementById('txAmt').value);
-  if(!hash){alert('Enter TX hash.');return;}if(!amt||amt<=0){alert('Enter amount.');return;}
-  if(!UD.depositRequests)UD.depositRequests=[];
-  UD.depositRequests.push({id:Date.now().toString(),coin:depCoin,amount:amt,txHash:hash,address:DEP_INFO[depCoin].addr,status:'pending',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),timestamp:new Date().toISOString()});
-  await saveUD();renderDeps();
-  document.getElementById('txHash').value='';document.getElementById('txAmt').value='';
-  toast('✅ Submitted for verification!');
+function copyDepAddress(){navigator.clipboard?.writeText(document.getElementById('depAddress').textContent);showToast('✅ Address copied!');}
+async function submitDepositConfirmation(){
+  const txHash=document.getElementById('txHashInput').value.trim(),amount=parseFloat(document.getElementById('txAmountInput').value);
+  if(!txHash){alert('Enter transaction hash.');return;}if(!amount||amount<=0){alert('Enter amount.');return;}
+  if(!userData.depositRequests)userData.depositRequests=[];
+  userData.depositRequests.push({id:Date.now().toString(),coin:currentDepositCoin,amount,txHash,address:depositInfo[currentDepositCoin].address,status:'pending',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),timestamp:new Date().toISOString()});
+  await saveUserData();renderMyDepositRequests();document.getElementById('txHashInput').value='';document.getElementById('txAmountInput').value='';showToast('✅ Deposit submitted! Admin will verify shortly.');
 }
-function renderDeps(){
-  if(!UD)return;
-  const reqs=(UD.depositRequests||[]).slice().reverse();
-  const el=document.getElementById('myDeps');
-  if(!reqs.length){el.innerHTML='<div class="empty" style="padding:20px 0;">No confirmations yet.</div>';return;}
-  el.innerHTML=reqs.map(r=>{const cls=r.status==='approved'?'completed':r.status==='rejected'?'rejected':'pending';return '<div class="hist-item"><div class="tr"><span class="ty">'+r.amount+' '+r.coin+'</span><span class="am pos">+'+r.amount+' '+r.coin+'</span></div><div class="mt">'+r.date+'</div><div class="tx-box">TX: '+r.txHash+'</div><span class="s-badge '+cls+'">'+r.status.toUpperCase()+'</span></div>';}).join('');
+function renderMyDepositRequests(){
+  if(!userData)return;const reqs=(userData.depositRequests||[]).slice().reverse();const el=document.getElementById('myDepositRequests');
+  if(!reqs.length){el.innerHTML='<div class="empty-state" style="padding:20px 0;">No deposit confirmations yet.</div>';return;}
+  el.innerHTML=reqs.map(r=>{const cls=r.status==='approved'?'completed':r.status==='rejected'?'rejected':'pending';return`<div class="history-item"><div class="top-row"><span class="type">${r.amount} ${r.coin}</span><span class="amt pos">+${r.amount} ${r.coin}</span></div><div class="meta">${r.date}</div><div class="tx-hash-box">TX: ${r.txHash}</div><span class="status-badge ${cls}">${r.status.toUpperCase()}</span></div>`;}).join('');
 }
-
 // WITHDRAW
-function updateWd(){if(!UD)return;const c=document.getElementById('wdCoin').value;document.getElementById('wdAvail').textContent=(UD.balances[c]||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:6});document.getElementById('wdCoinLbl').textContent=c;}
-function updateWdReceive(){const v=parseFloat(document.getElementById('wdAmt').value)||0;document.getElementById('wdReceive').textContent=Math.max(v-1,0).toFixed(4)+' '+document.getElementById('wdCoin').value;}
-function setMax(){const c=document.getElementById('wdCoin').value;document.getElementById('wdAmt').value=(UD?.balances[c]||0).toFixed(6);updateWdReceive();}
-async function submitWd(){
-  const addr=document.getElementById('wdAddr').value.trim(),amt=parseFloat(document.getElementById('wdAmt').value),coin=document.getElementById('wdCoin').value,bal=UD.balances[coin]||0;
-  if(!addr){alert('Enter address.');return;}if(!amt||amt<=0){alert('Enter amount.');return;}if(amt>bal){alert('Insufficient balance.');return;}
-  if(!confirm('Withdraw '+amt+' '+coin+' to '+addr+'?'))return;
-  UD.balances[coin]-=amt;
-  if(!UD.withdrawalRequests)UD.withdrawalRequests=[];
-  UD.withdrawalRequests.push({id:Date.now().toString(),coin,amount:amt,address:addr,status:'pending',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),timestamp:new Date().toISOString()});
-  await addTxn('Withdrawal — '+coin,coin,-amt,'Pending');await saveUD();renderAssets();renderWds();
-  document.getElementById('wdAddr').value='';document.getElementById('wdAmt').value='';
-  toast('✅ Withdrawal submitted!');
+function updateWdBalance(){if(!userData)return;const coin=document.getElementById('wdCoin').value;document.getElementById('wdAvailable').textContent=(userData.balances[coin]||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:6});document.getElementById('wdCoinLabel').textContent=coin;}
+function updateWdReceive(){const val=parseFloat(document.getElementById('wdAmount').value)||0;document.getElementById('wdReceive').textContent=Math.max(val-1,0).toFixed(4)+' '+document.getElementById('wdCoin').value;}
+function setMax(){const coin=document.getElementById('wdCoin').value;document.getElementById('wdAmount').value=(userData?.balances[coin]||0).toFixed(6);updateWdReceive();}
+async function submitWithdrawal(){
+  const addr=document.getElementById('wdAddress').value.trim(),amount=parseFloat(document.getElementById('wdAmount').value),coin=document.getElementById('wdCoin').value,bal=userData.balances[coin]||0;
+  if(!addr){alert('Enter address.');return;}if(!amount||amount<=0){alert('Enter amount.');return;}if(amount>bal){alert('Insufficient balance.');return;}
+  if(!confirm('Withdraw '+amount+' '+coin+' to:\n'+addr+'?'))return;
+  userData.balances[coin]-=amount;if(!userData.withdrawalRequests)userData.withdrawalRequests=[];
+  userData.withdrawalRequests.push({id:Date.now().toString(),coin,amount,address:addr,status:'pending',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),timestamp:new Date().toISOString()});
+  await addTransaction('Withdrawal Request — '+coin,coin,-amount,'Pending');await saveUserData();renderAssets();renderMyWithdrawals();
+  document.getElementById('wdAddress').value='';document.getElementById('wdAmount').value='';showToast('✅ Withdrawal request submitted!');
 }
-function renderWds(){
-  if(!UD)return;
-  const reqs=(UD.withdrawalRequests||[]).slice().reverse();
-  const el=document.getElementById('myWds');
-  if(!reqs.length){el.innerHTML='<div class="empty">No requests yet.</div>';return;}
-  el.innerHTML=reqs.map(r=>{const cls=r.status==='approved'?'completed':r.status==='rejected'?'rejected':'pending';return '<div class="hist-item"><div class="tr"><span class="ty">'+r.amount+' '+r.coin+'</span><span class="am neg">-'+r.amount+' '+r.coin+'</span></div><div class="mt">'+r.date+' · '+r.address.slice(0,16)+'…</div><span class="s-badge '+cls+'">'+r.status.toUpperCase()+'</span></div>';}).join('');
+function renderMyWithdrawals(){
+  if(!userData)return;const reqs=(userData.withdrawalRequests||[]).slice().reverse();const el=document.getElementById('myWithdrawals');
+  if(!reqs.length){el.innerHTML='<div class="empty-state">No withdrawal requests yet.</div>';return;}
+  el.innerHTML=reqs.map(r=>{const cls=r.status==='approved'?'completed':r.status==='rejected'?'rejected':'pending';return`<div class="history-item"><div class="top-row"><span class="type">${r.amount} ${r.coin}</span><span class="amt neg">-${r.amount} ${r.coin}</span></div><div class="meta">${r.date} · ${r.address.slice(0,16)}…</div><span class="status-badge ${cls}">${r.status.toUpperCase()}</span></div>`;}).join('');
 }
-
 // KYC
-function renderKyc(){
-  const kyc=UD?.kyc||{};
-  const el=document.getElementById('kycStatusMsg');
-  if(kyc.status==='verified')el.innerHTML='<div style="color:var(--green);font-weight:700;">✅ Identity verified.</div>';
+function renderKycPage(){
+  const kyc=userData?.kyc||{};const el=document.getElementById('kycStatus');
+  if(kyc.status==='verified')el.innerHTML='<div style="color:var(--green);font-weight:700;">✅ Your identity is verified.</div>';
   else if(kyc.status==='pending')el.innerHTML='<div style="color:var(--accent);font-weight:700;">🔄 Under review.</div>';
-  else el.innerHTML='<div style="color:var(--ink-dim);">Submit details to verify identity.</div>';
-  document.getElementById('kycName').value=kyc.name||'';
-  document.getElementById('kycCountry').value=kyc.country||'';
-  document.getElementById('kycId').value=kyc.idNumber||'';
-  document.getElementById('kycDob').value=kyc.dob||'';
-  const dis=kyc.status==='verified';
-  ['kycName','kycCountry','kycId','kycDob'].forEach(id=>document.getElementById(id).disabled=dis);
-  document.getElementById('kycBtn').disabled=dis;
+  else el.innerHTML='<div style="color:var(--ink-dim);">Submit your details to verify identity.</div>';
+  document.getElementById('kycName').value=kyc.name||'';document.getElementById('kycCountry').value=kyc.country||'';document.getElementById('kycId').value=kyc.idNumber||'';document.getElementById('kycDob').value=kyc.dob||'';
+  const disabled=kyc.status==='verified';['kycName','kycCountry','kycId','kycDob'].forEach(id=>document.getElementById(id).disabled=disabled);document.getElementById('kycSubmitBtn').disabled=disabled;
 }
 async function submitKyc(){
-  const name=document.getElementById('kycName').value.trim(),country=document.getElementById('kycCountry').value.trim(),id=document.getElementById('kycId').value.trim(),dob=document.getElementById('kycDob').value;
-  if(!name||!country||!id||!dob){alert('Fill all fields.');return;}
-  UD.kyc={status:'pending',name,country,idNumber:id,dob,submittedAt:new Date().toISOString()};
-  await saveUD();renderKyc();renderProfile();toast('✅ KYC submitted!');
+  const name=document.getElementById('kycName').value.trim(),country=document.getElementById('kycCountry').value.trim(),idNum=document.getElementById('kycId').value.trim(),dob=document.getElementById('kycDob').value;
+  if(!name||!country||!idNum||!dob){alert('Fill all fields.');return;}
+  userData.kyc={status:'pending',name,country,idNumber:idNum,dob,submittedAt:new Date().toISOString()};
+  await saveUserData();renderKycPage();renderProfile();showToast('✅ KYC submitted! Under review.');
 }
-
 // BANNER
 async function loadBanner(){
-  try{
-    const doc=await db.collection('appConfig').doc('main').get();
-    if(doc.exists&&doc.data().banner){
-      const b=doc.data().banner;
-      if(b.active&&b.text){
-        document.getElementById('annBanner').classList.remove('hidden');
-        document.getElementById('bannerText').textContent=b.text;
-        const l=document.getElementById('bannerLink');
-        if(b.link){l.href=b.link;l.style.display='inline';}else l.style.display='none';
-      } else document.getElementById('annBanner').classList.add('hidden');
-    }
-  }catch(e){}
+  try{const doc=await db.collection('appConfig').doc('main').get();if(doc.exists&&doc.data().banner){const b=doc.data().banner;if(b.active&&b.text){document.getElementById('announcementBanner').classList.remove('hidden');document.getElementById('bannerText').textContent=b.text;const l=document.getElementById('bannerLink');if(b.link){l.href=b.link;l.style.display='inline';}else l.style.display='none';}else document.getElementById('announcementBanner').classList.add('hidden');}}catch(e){}
 }
-
 // ADMIN
-function toggleAdmin(){const p=document.getElementById('adminPanel');p.classList.toggle('open');if(p.classList.contains('open'))loadAdmin();}
-function adminTab(tab,el){
+function toggleAdmin(){const p=document.getElementById('adminPanel');p.classList.toggle('open');if(p.classList.contains('open'))loadAdminData();}
+function switchAdminTab(tab,el){
   document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
   ['adminOverview','adminWithdrawals','adminDeposits','adminKyc','adminP2P','adminUsers','adminBanner'].forEach(id=>{const d=document.getElementById(id);if(d)d.style.display='none';});
   const map={overview:'adminOverview',withdrawals:'adminWithdrawals',deposits:'adminDeposits',kyc:'adminKyc',p2p:'adminP2P',users:'adminUsers',banner:'adminBanner'};
   if(map[tab])document.getElementById(map[tab]).style.display='block';
-  if(tab==='overview')renderStats();if(tab==='withdrawals')renderAdminWds();if(tab==='deposits')renderAdminDeps();if(tab==='kyc')renderAdminKyc();if(tab==='p2p')renderAdminP2P();if(tab==='users')renderAdminUsers();
+  if(tab==='overview')renderAdminStats();if(tab==='withdrawals')renderAdminWithdrawals();if(tab==='deposits')renderAdminDeposits();if(tab==='kyc')renderAdminKyc();if(tab==='p2p')renderAdminP2P();if(tab==='users')renderAdminUsers();
 }
-async function loadAdmin(){await loadUsers();renderStats();}
-async function loadUsers(){try{const s=await db.collection('users').get();allUsers=s.docs.map(d=>({id:d.id,...d.data()}));}catch(e){}}
-function renderStats(){
-  const tot=allUsers.length,pWd=allUsers.reduce((s,u)=>s+(u.withdrawalRequests||[]).filter(r=>r.status==='pending').length,0),pDep=allUsers.reduce((s,u)=>s+(u.depositRequests||[]).filter(r=>r.status==='pending').length,0),pKyc=allUsers.filter(u=>u.kyc?.status==='pending').length,tUsdt=allUsers.reduce((s,u)=>s+(u.balances?.USDT||0),0);
-  document.getElementById('adminOverview').innerHTML='<div class="admin-stat"><div class="lbl">Users</div><div class="val">'+tot+'</div></div><div class="admin-stat"><div class="lbl">Pending Wd</div><div class="val" style="color:var(--gold);">'+pWd+'</div></div><div class="admin-stat"><div class="lbl">Pending Dep</div><div class="val" style="color:var(--gold);">'+pDep+'</div></div><div class="admin-stat"><div class="lbl">KYC Pending</div><div class="val" style="color:var(--gold);">'+pKyc+'</div></div><div class="admin-stat"><div class="lbl">Total USDT</div><div class="val" style="color:var(--green);">'+tUsdt.toFixed(2)+'</div></div>';
+async function loadAdminData(){await loadAllUsers();renderAdminStats();}
+async function loadAllUsers(){try{const snap=await db.collection('users').get();allUsers=snap.docs.map(d=>({id:d.id,...d.data()}));}catch(e){console.error(e);}}
+function renderAdminStats(){
+  const total=allUsers.length,pendingWd=allUsers.reduce((s,u)=>s+(u.withdrawalRequests||[]).filter(r=>r.status==='pending').length,0),pendingDep=allUsers.reduce((s,u)=>s+(u.depositRequests||[]).filter(r=>r.status==='pending').length,0),pendingKyc=allUsers.filter(u=>u.kyc?.status==='pending').length,totalUsdt=allUsers.reduce((s,u)=>s+(u.balances?.USDT||0),0);
+  document.getElementById('adminOverview').innerHTML=`<div class="admin-stat"><div class="label">Users</div><div class="value">${total}</div></div><div class="admin-stat"><div class="label">Pending Wd</div><div class="value" style="color:var(--gold);">${pendingWd}</div></div><div class="admin-stat"><div class="label">Pending Dep</div><div class="value" style="color:var(--gold);">${pendingDep}</div></div><div class="admin-stat"><div class="label">KYC Pending</div><div class="value" style="color:var(--gold);">${pendingKyc}</div></div><div class="admin-stat"><div class="label">Total USDT</div><div class="value" style="color:var(--green);">${totalUsdt.toFixed(2)}</div></div>`;
 }
-function sendEmail(tmpl,params){try{emailjs.send(EJS_SVC,tmpl,params);}catch(e){}}
-
-function renderAdminWds(){
+function sendEmail(tmpl,params){if(EMAILJS_PUBLIC_KEY==='YOUR_EMAILJS_PUBLIC_KEY')return;emailjs.send(EMAILJS_SERVICE_ID,tmpl,params).catch(e=>console.warn(e));}
+function renderAdminWithdrawals(){
   const pending=[];allUsers.forEach(u=>(u.withdrawalRequests||[]).forEach(r=>{if(r.status==='pending')pending.push({...r,userEmail:u.email,userId:u.id});}));
-  const el=document.getElementById('adminWithdrawals');
-  if(!pending.length){el.innerHTML='<div class="empty">No pending withdrawals ✅</div>';return;}
-  el.innerHTML=pending.map(r=>'<div class="req-card"><div class="usr">'+r.userEmail+'</div><div class="top"><div class="amt neg">-'+r.amount+' '+r.coin+'</div><span class="badge pending">PENDING</span></div><div style="font-size:12px;color:var(--ink-dim);margin:4px 0;word-break:break-all;">To: '+r.address+'</div><div style="display:flex;gap:8px;margin-top:8px;"><button class="btn-approve" onclick="approveWd(''+r.userId+'',''+r.id+'')">✅ Approve</button><button class="btn-reject" onclick="rejectWd(''+r.userId+'',''+r.id+'')">❌ Reject</button></div></div>').join('');
+  pending.sort((a,b)=>(b.timestamp||'').localeCompare(a.timestamp||''));const el=document.getElementById('adminWithdrawals');
+  if(!pending.length){el.innerHTML='<div class="empty-state">No pending withdrawals ✅</div>';return;}
+  el.innerHTML=pending.map(r=>`<div class="admin-request-card"><div class="user">${r.userEmail}</div><div class="top"><div class="amount neg">-${r.amount} ${r.coin}</div><span class="badge pending">PENDING</span></div><div style="font-size:12px;color:var(--ink-dim);margin-top:4px;word-break:break-all;">To: ${r.address}</div><div style="display:flex;gap:8px;margin-top:10px;"><button class="btn-approve" onclick="adminApproveWd('${r.userId}','${r.id}')">✅ Approve</button><button class="btn-reject" onclick="adminRejectWd('${r.userId}','${r.id}')">❌ Reject</button></div></div>`).join('');
 }
-async function approveWd(uid,rid){
-  if(!confirm('Approve?'))return;const u=allUsers.find(x=>x.id===uid);if(!u)return;
-  const reqs=u.withdrawalRequests||[],req=reqs.find(r=>r.id===rid);if(!req)return;
+async function adminApproveWd(uid,reqId){
+  if(!confirm('Approve this withdrawal?'))return;const user=allUsers.find(u=>u.id===uid);if(!user)return;
+  const reqs=user.withdrawalRequests||[],req=reqs.find(r=>r.id===reqId);if(!req)return;
   req.status='approved';req.approvedAt=new Date().toISOString();
-  const txns=u.transactions||[];txns.push({type:'Withdrawal Approved — '+req.coin,coin:req.coin,amount:-req.amount,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+  const txns=user.transactions||[];txns.push({type:'Withdrawal Approved — '+req.coin,coin:req.coin,amount:-req.amount,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
   await db.collection('users').doc(uid).update({withdrawalRequests:reqs,transactions:txns});
-  sendEmail(EJS_WD,{to_email:u.email,status:'Approved',coin:req.coin,amount:req.amount,message:'Your withdrawal has been processed.'});
-  toast('✅ Approved!');await loadUsers();renderAdminWds();renderStats();
+  sendEmail(TEMPLATE_WITHDRAWAL,{to_email:user.email,status:'Approved',coin:req.coin,amount:req.amount,message:'Your withdrawal has been approved and processed.'});
+  showToast('✅ Withdrawal approved!');await loadAllUsers();renderAdminWithdrawals();renderAdminStats();
 }
-async function rejectWd(uid,rid){
-  if(!confirm('Reject? Balance restored.'))return;const u=allUsers.find(x=>x.id===uid);if(!u)return;
-  const reqs=u.withdrawalRequests||[],req=reqs.find(r=>r.id===rid);if(!req)return;
-  req.status='rejected';const bals=u.balances||{};bals[req.coin]=(bals[req.coin]||0)+req.amount;
-  const txns=u.transactions||[];txns.push({type:'Withdrawal Rejected — '+req.coin+' (Refunded)',coin:req.coin,amount:req.amount,status:'Rejected',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
-  await db.collection('users').doc(uid).update({withdrawalRequests:reqs,balances:bals,transactions:txns});
-  sendEmail(EJS_WD,{to_email:u.email,status:'Rejected',coin:req.coin,amount:req.amount,message:'Balance restored.'});
-  toast('❌ Rejected.');await loadUsers();renderAdminWds();renderStats();
+async function adminRejectWd(uid,reqId){
+  if(!confirm('Reject this withdrawal? Balance will be restored.'))return;const user=allUsers.find(u=>u.id===uid);if(!user)return;
+  const reqs=user.withdrawalRequests||[],req=reqs.find(r=>r.id===reqId);if(!req)return;
+  req.status='rejected';const balances=user.balances||{};balances[req.coin]=(balances[req.coin]||0)+req.amount;
+  const txns=user.transactions||[];txns.push({type:'Withdrawal Rejected — '+req.coin+' (Refunded)',coin:req.coin,amount:req.amount,status:'Rejected',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+  await db.collection('users').doc(uid).update({withdrawalRequests:reqs,balances,transactions:txns});
+  sendEmail(TEMPLATE_WITHDRAWAL,{to_email:user.email,status:'Rejected',coin:req.coin,amount:req.amount,message:'Your withdrawal was rejected. Balance has been restored.'});
+  showToast('❌ Rejected — balance restored.');await loadAllUsers();renderAdminWithdrawals();renderAdminStats();
 }
-
-function renderAdminDeps(){
+function renderAdminDeposits(){
   const pending=[];allUsers.forEach(u=>(u.depositRequests||[]).forEach(r=>{if(r.status==='pending')pending.push({...r,userEmail:u.email,userId:u.id});}));
-  const el=document.getElementById('adminDeposits');
-  if(!pending.length){el.innerHTML='<div class="empty">No pending deposits ✅</div>';return;}
-  el.innerHTML=pending.map(r=>'<div class="req-card"><div class="usr">'+r.userEmail+'</div><div class="top"><div class="amt pos">+'+r.amount+' '+r.coin+'</div><span class="badge pending">PENDING</span></div><div class="tx-box" style="margin-top:6px;">TX: '+r.txHash+'</div><div style="display:flex;gap:8px;margin-top:8px;"><button class="btn-approve" onclick="approveDep(''+r.userId+'',''+r.id+'')">✅ Credit</button><button class="btn-reject" onclick="rejectDep(''+r.userId+'',''+r.id+'')">❌ Reject</button></div></div>').join('');
+  const el=document.getElementById('adminDeposits');if(!pending.length){el.innerHTML='<div class="empty-state">No pending deposits ✅</div>';return;}
+  el.innerHTML=pending.map(r=>`<div class="admin-request-card"><div class="user">${r.userEmail}</div><div class="top"><div class="amount pos">+${r.amount} ${r.coin}</div><span class="badge pending">PENDING</span></div><div class="tx-hash-box" style="margin-top:6px;">TX: ${r.txHash}</div><div style="display:flex;gap:8px;margin-top:8px;"><button class="btn-approve" onclick="adminApproveDep('${r.userId}','${r.id}')">✅ Verify & Credit</button><button class="btn-reject" onclick="adminRejectDep('${r.userId}','${r.id}')">❌ Reject</button></div></div>`).join('');
 }
-async function approveDep(uid,rid){
-  if(!confirm('Credit?'))return;const u=allUsers.find(x=>x.id===uid);if(!u)return;
-  const reqs=u.depositRequests||[],req=reqs.find(r=>r.id===rid);if(!req)return;
-  req.status='approved';const bals=u.balances||{};bals[req.coin]=(bals[req.coin]||0)+req.amount;
-  const txns=u.transactions||[];txns.push({type:'Deposit Confirmed — '+req.coin,coin:req.coin,amount:req.amount,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
-  await db.collection('users').doc(uid).update({depositRequests:reqs,balances:bals,transactions:txns});
-  sendEmail(EJS_DEP,{to_email:u.email,coin:req.coin,amount:req.amount,status:'Approved'});
-  toast('✅ '+req.amount+' '+req.coin+' credited!');await loadUsers();renderAdminDeps();renderStats();
+async function adminApproveDep(uid,reqId){
+  if(!confirm('Credit this deposit?'))return;const user=allUsers.find(u=>u.id===uid);if(!user)return;
+  const reqs=user.depositRequests||[],req=reqs.find(r=>r.id===reqId);if(!req)return;
+  req.status='approved';const balances=user.balances||{};balances[req.coin]=(balances[req.coin]||0)+req.amount;
+  const txns=user.transactions||[];txns.push({type:'Deposit Confirmed — '+req.coin,coin:req.coin,amount:req.amount,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+  await db.collection('users').doc(uid).update({depositRequests:reqs,balances,transactions:txns});
+  sendEmail(TEMPLATE_DEPOSIT,{to_email:user.email,coin:req.coin,amount:req.amount,status:'Approved'});
+  showToast('✅ '+req.amount+' '+req.coin+' credited!');await loadAllUsers();renderAdminDeposits();renderAdminStats();
 }
-async function rejectDep(uid,rid){
-  if(!confirm('Reject?'))return;const u=allUsers.find(x=>x.id===uid);if(!u)return;
-  const reqs=u.depositRequests||[],req=reqs.find(r=>r.id===rid);if(!req)return;req.status='rejected';
+async function adminRejectDep(uid,reqId){
+  if(!confirm('Reject this deposit?'))return;const user=allUsers.find(u=>u.id===uid);if(!user)return;
+  const reqs=user.depositRequests||[],req=reqs.find(r=>r.id===reqId);if(!req)return;req.status='rejected';
   await db.collection('users').doc(uid).update({depositRequests:reqs});
-  sendEmail(EJS_DEP,{to_email:u.email,coin:req.coin,amount:req.amount,status:'Rejected'});
-  toast('❌ Rejected.');await loadUsers();renderAdminDeps();renderStats();
+  sendEmail(TEMPLATE_DEPOSIT,{to_email:user.email,coin:req.coin,amount:req.amount,status:'Rejected'});
+  showToast('❌ Deposit rejected.');await loadAllUsers();renderAdminDeposits();renderAdminStats();
 }
-
 function renderAdminKyc(){
-  const pending=allUsers.filter(u=>u.kyc?.status==='pending');
-  const el=document.getElementById('adminKyc');
-  if(!pending.length){el.innerHTML='<div class="empty">No pending KYC ✅</div>';return;}
-  el.innerHTML=pending.map(u=>'<div class="req-card"><div class="usr">'+u.email+'</div><div style="font-size:12px;margin:4px 0;">Name: <b>'+(u.kyc?.name||'—')+'</b> · Country: <b>'+(u.kyc?.country||'—')+'</b></div><div style="font-size:12px;color:var(--ink-dim);">ID: '+(u.kyc?.idNumber||'—')+' · DOB: '+(u.kyc?.dob||'—')+'</div><div style="display:flex;gap:8px;margin-top:8px;"><button class="btn-approve" onclick="approveKyc(''+u.id+'')">✅ Approve</button><button class="btn-reject" onclick="rejectKyc(''+u.id+'')">❌ Reject</button></div></div>').join('');
+  const pending=allUsers.filter(u=>u.kyc?.status==='pending');const el=document.getElementById('adminKyc');
+  if(!pending.length){el.innerHTML='<div class="empty-state">No pending KYC ✅</div>';return;}
+  el.innerHTML=pending.map(u=>`<div class="admin-request-card"><div class="user">${u.email}</div><div style="font-size:12px;margin:4px 0;">Name: <b>${u.kyc?.name||'—'}</b> · Country: <b>${u.kyc?.country||'—'}</b></div><div style="font-size:12px;color:var(--ink-dim);">ID: ${u.kyc?.idNumber||'—'} · DOB: ${u.kyc?.dob||'—'}</div><div style="display:flex;gap:8px;margin-top:8px;"><button class="btn-approve" onclick="adminApproveKyc('${u.id}')">✅ Approve</button><button class="btn-reject" onclick="adminRejectKyc('${u.id}')">❌ Reject</button></div></div>`).join('');
 }
-async function approveKyc(uid){if(!confirm('Approve?'))return;const u=allUsers.find(x=>x.id===uid);await db.collection('users').doc(uid).update({'kyc.status':'verified'});sendEmail(EJS_KYC,{to_email:u?.email,status:'Verified',message:'Identity verified.'});toast('✅ KYC approved!');await loadUsers();renderAdminKyc();renderStats();}
-async function rejectKyc(uid){if(!confirm('Reject?'))return;const u=allUsers.find(x=>x.id===uid);await db.collection('users').doc(uid).update({'kyc.status':'rejected'});sendEmail(EJS_KYC,{to_email:u?.email,status:'Rejected',message:'Please resubmit.'});toast('KYC rejected.');await loadUsers();renderAdminKyc();renderStats();}
-
+async function adminApproveKyc(uid){if(!confirm('Approve KYC?'))return;const user=allUsers.find(u=>u.id===uid);await db.collection('users').doc(uid).update({'kyc.status':'verified'});sendEmail(TEMPLATE_KYC,{to_email:user?.email,status:'Verified',message:'Your identity has been verified. You can now create P2P offers and withdraw.'});showToast('✅ KYC approved!');await loadAllUsers();renderAdminKyc();renderAdminStats();}
+async function adminRejectKyc(uid){if(!confirm('Reject KYC?'))return;const user=allUsers.find(u=>u.id===uid);await db.collection('users').doc(uid).update({'kyc.status':'rejected'});sendEmail(TEMPLATE_KYC,{to_email:user?.email,status:'Rejected',message:'Your KYC was rejected. Please resubmit with correct documents.'});showToast('KYC rejected.');await loadAllUsers();renderAdminKyc();renderAdminStats();}
 function renderAdminP2P(){
-  const el=document.getElementById('adminP2P');el.innerHTML='<div class="empty">Loading…</div>';
+  const el=document.getElementById('adminP2P');el.innerHTML='<div style="text-align:center;padding:20px;color:var(--ink-dim);">Loading…</div>';
   db.collection('p2pOrders').orderBy('createdAt','desc').limit(30).get().then(snap=>{
     const orders=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(!orders.length){el.innerHTML='<div class="empty">No P2P orders yet.</div>';return;}
-    el.innerHTML=orders.map(o=>'<div class="req-card"><div class="top"><div><div style="font-weight:700;">'+(o.orderId||('#'+o.id.slice(-6).toUpperCase()))+'</div><div style="font-size:11px;color:var(--ink-dim);">Buyer: '+(o.buyerEmail||'—')+'</div><div style="font-size:11px;color:var(--ink-dim);">Seller: '+(o.sellerEmail||'—')+'</div></div><span class="badge '+(o.status==='completed'?'approved':o.status==='disputed'?'rejected':'pending')+'">'+(o.status||'').toUpperCase()+'</span></div><div style="font-size:13px;margin-top:6px;">'+o.amount+' '+o.coin+' · '+((o.total||0).toLocaleString())+' '+o.currency+'</div>'+(o.status==='disputed'?'<div style="display:flex;gap:8px;margin-top:8px;"><button class="btn-approve" onclick="resolveDispute(''+o.id+'','completed')">✅ Release</button><button class="btn-reject" onclick="resolveDispute(''+o.id+'','cancelled')">❌ Cancel</button></div>':'')+'</div>').join('');
-  }).catch(e=>el.innerHTML='<div class="empty" style="color:var(--red);">Error: '+e.message+'</div>');
+    if(!orders.length){el.innerHTML='<div class="empty-state">No P2P orders yet.</div>';return;}
+    el.innerHTML=orders.map(o=>`<div class="admin-request-card"><div class="top"><div><div style="font-weight:700;">${o.orderId||('#'+o.id.slice(-6).toUpperCase())}</div><div style="font-size:11px;color:var(--ink-dim);">Buyer: ${o.buyerEmail||'—'}</div><div style="font-size:11px;color:var(--ink-dim);">Seller: ${o.sellerEmail||'—'}</div></div><span class="badge ${o.status==='completed'?'approved':o.status==='disputed'?'rejected':'pending'}">${(o.status||'').toUpperCase()}</span></div><div style="font-size:13px;margin-top:6px;">${o.amount} ${o.coin} · ${(o.total||0).toLocaleString()} ${o.currency}</div>${o.status==='disputed'?`<div style="display:flex;gap:8px;margin-top:8px;"><button class="btn-approve" onclick="resolveDispute('${o.id}','completed')">✅ Release</button><button class="btn-reject" onclick="resolveDispute('${o.id}','cancelled')">❌ Cancel</button></div>`:''}</div>`).join('');
+  }).catch(e=>el.innerHTML='<div class="empty-state" style="color:var(--red);">Error: '+e.message+'</div>');
 }
-async function resolveDispute(id,res){if(!confirm('Resolve as "'+res+'"?'))return;await db.collection('p2pOrders').doc(id).update({status:res});toast('Resolved!');renderAdminP2P();}
-
+async function resolveDispute(orderId,resolution){if(!confirm('Resolve as "'+resolution+'"?'))return;await db.collection('p2pOrders').doc(orderId).update({status:resolution});await db.collection('p2pOrders').doc(orderId).collection('messages').add({text:'⚖️ Admin resolved dispute: order '+resolution+'.',type:'system',senderId:'admin',timestamp:firebase.firestore.FieldValue.serverTimestamp()});showToast('Dispute resolved!');renderAdminP2P();}
 function renderAdminUsers(){
-  const el=document.getElementById('adminUsers');
-  if(!allUsers.length){el.innerHTML='<div class="empty">No users.</div>';return;}
-  el.innerHTML=allUsers.map(u=>'<div class="req-card"><div class="usr"><b>'+u.email+'</b> '+(u.kyc?.status==='verified'?'✅':u.kyc?.status==='pending'?'🔄':'⚠️')+'</div><div style="font-size:12px;color:var(--ink-dim);margin:4px 0;">'+Object.keys(u.balances||{}).map(c=>c+': '+((u.balances[c]||0).toFixed(c==='BTC'?6:2))).join(' · ')+'</div><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;"><select id="aC-'+u.id+'" style="padding:6px;border-radius:6px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-size:12px;"><option>USDT</option><option>BTC</option><option>ETH</option><option>SOL</option><option>TRX</option></select><input type="number" id="aA-'+u.id+'" placeholder="Amount" style="width:90px;padding:6px;border-radius:6px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-size:12px;"><button onclick="creditUser(''+u.id+'')" style="padding:6px 12px;border-radius:6px;border:none;background:var(--green);color:#06241a;font-weight:700;font-size:12px;cursor:pointer;">+ Credit</button><button onclick="debitUser(''+u.id+'')" style="padding:6px 12px;border-radius:6px;border:none;background:var(--red);color:#fff;font-weight:700;font-size:12px;cursor:pointer;">− Debit</button></div></div>').join('');
+  const el=document.getElementById('adminUsers');if(!allUsers.length){el.innerHTML='<div class="empty-state">No users yet.</div>';return;}
+  el.innerHTML=allUsers.map(u=>`<div class="admin-request-card"><div class="user"><b>${u.email}</b> ${u.kyc?.status==='verified'?'✅':u.kyc?.status==='pending'?'🔄':'⚠️'} ${u.referredBy?'<span style="font-size:10px;background:rgba(59,130,246,.15);color:var(--accent);padding:1px 6px;border-radius:4px;margin-left:4px;">Referred</span>':''}</div><div style="font-size:12px;color:var(--ink-dim);margin:4px 0;">${Object.keys(u.balances||{}).map(c=>c+': '+(u.balances[c]||0).toFixed(c==='BTC'?6:2)).join(' · ')}</div><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;"><select id="aCoin-${u.id}" style="padding:6px 8px;border-radius:6px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-size:12px;"><option>USDT</option><option>BTC</option><option>ETH</option><option>SOL</option><option>TRX</option></select><input type="number" id="aAmt-${u.id}" placeholder="Amount" style="width:90px;padding:6px 8px;border-radius:6px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-size:12px;"><button onclick="adminCredit('${u.id}')" style="padding:6px 12px;border-radius:6px;border:none;background:var(--green);color:#06241a;font-weight:700;font-size:12px;cursor:pointer;">+ Credit</button><button onclick="adminDebit('${u.id}')" style="padding:6px 12px;border-radius:6px;border:none;background:var(--red);color:#fff;font-weight:700;font-size:12px;cursor:pointer;">− Debit</button></div></div>`).join('');
 }
-async function creditUser(uid){
-  const coin=document.getElementById('aC-'+uid).value,amt=parseFloat(document.getElementById('aA-'+uid).value);
-  if(!amt||amt<=0){alert('Enter amount.');return;}if(!confirm('Credit '+amt+' '+coin+'?'))return;
-  const u=allUsers.find(x=>x.id===uid);if(!u)return;
-  const bals=u.balances||{};bals[coin]=(bals[coin]||0)+amt;
-  const txns=u.transactions||[];txns.push({type:'Admin Credit — '+coin,coin,amount:amt,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
-  await db.collection('users').doc(uid).update({balances:bals,transactions:txns});toast('✅ Credited!');await loadUsers();renderAdminUsers();renderStats();
+async function adminCredit(uid){
+  const coin=document.getElementById('aCoin-'+uid).value,amount=parseFloat(document.getElementById('aAmt-'+uid).value);
+  if(!amount||amount<=0){alert('Enter valid amount.');return;}if(!confirm('Credit '+amount+' '+coin+'?'))return;
+  const user=allUsers.find(u=>u.id===uid);if(!user)return;const balances=user.balances||{};balances[coin]=(balances[coin]||0)+amount;
+  const txns=user.transactions||[];txns.push({type:'Admin Credit — '+coin,coin,amount,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+  await db.collection('users').doc(uid).update({balances,transactions:txns});showToast('✅ '+amount+' '+coin+' credited!');await loadAllUsers();renderAdminUsers();renderAdminStats();
 }
-async function debitUser(uid){
-  const coin=document.getElementById('aC-'+uid).value,amt=parseFloat(document.getElementById('aA-'+uid).value);
-  if(!amt||amt<=0){alert('Enter amount.');return;}
-  const u=allUsers.find(x=>x.id===uid);if(!u)return;
-  const bals=u.balances||{};if((bals[coin]||0)<amt){alert('Insufficient.');return;}
-  if(!confirm('Debit '+amt+' '+coin+'?'))return;
-  bals[coin]-=amt;
-  const txns=u.transactions||[];txns.push({type:'Admin Debit — '+coin,coin,amount:-amt,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
-  await db.collection('users').doc(uid).update({balances:bals,transactions:txns});toast('Debited.');await loadUsers();renderAdminUsers();renderStats();
+async function adminDebit(uid){
+  const coin=document.getElementById('aCoin-'+uid).value,amount=parseFloat(document.getElementById('aAmt-'+uid).value);
+  if(!amount||amount<=0){alert('Enter valid amount.');return;}const user=allUsers.find(u=>u.id===uid);if(!user)return;
+  const balances=user.balances||{};if((balances[coin]||0)<amount){alert('User only has '+(balances[coin]||0)+' '+coin+'.');return;}
+  if(!confirm('Debit '+amount+' '+coin+'?'))return;balances[coin]=(balances[coin]||0)-amount;
+  const txns=user.transactions||[];txns.push({type:'Admin Debit — '+coin,coin,amount:-amount,status:'Completed',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+  await db.collection('users').doc(uid).update({balances,transactions:txns});showToast('❌ '+amount+' '+coin+' debited.');await loadAllUsers();renderAdminUsers();renderAdminStats();
 }
-
-async function saveBanner(active){
-  const txt=document.getElementById('bannerTextInput').value.trim(),lnk=document.getElementById('bannerLinkInput').value.trim();
-  if(active&&!txt){alert('Enter text.');return;}
-  try{await db.collection('appConfig').doc('main').set({banner:{active,text:txt||'',link:lnk||''}},{merge:true});document.getElementById('bannerStatus').textContent=active?'✅ Banner live!':'❌ Hidden.';toast(active?'✅ Banner published!':'Banner hidden.');loadBanner();}
+async function updateBanner(active){
+  const text=document.getElementById('adminBannerText').value.trim(),link=document.getElementById('adminBannerLink').value.trim();
+  if(active&&!text){alert('Enter banner text.');return;}
+  try{await db.collection('appConfig').doc('main').set({banner:{active,text:text||'',link:link||''}},{merge:true});document.getElementById('adminBannerStatus').textContent=active?'✅ Banner is live!':'❌ Banner hidden.';showToast(active?'✅ Banner published!':'Banner hidden.');loadBanner();}
   catch(e){alert('Error: '+e.message);}
 }
 </script>
