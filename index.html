@@ -197,6 +197,7 @@
 </style>
 </head>
 <body>
+<div id="jsError" style="display:none;background:red;color:#fff;padding:16px;font-size:14px;font-weight:700;position:fixed;top:0;left:0;right:0;z-index:9999;"></div>
 <div class="topbar hidden" id="topbar">
   <div><div class="brand">Coin<span>Vexa</span></div><div class="user-email" id="userEmailDisplay"></div></div>
   <div class="topbar-icons">
@@ -571,10 +572,12 @@
 <div class="toast" id="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" onerror="document.body.innerHTML='<div style=padding:40px;color:red;font-size:18px;>Error: Firebase failed to load. Check internet connection and refresh.</div>'"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
+window.onerror=function(msg,src,line){document.getElementById('jsError').style.display='block';document.getElementById('jsError').textContent='JS Error: '+msg+' (line '+line+')';return false;};
+try{if(typeof firebase==='undefined')throw new Error('Firebase not loaded');}catch(e){document.getElementById('jsError').style.display='block';document.getElementById('jsError').textContent='Firebase failed to load. Please refresh.';}
 const EMAILJS_PUBLIC_KEY='G_sC5mh9IICBy0bIf';
 const EMAILJS_SERVICE_ID='service_vnmz4ya';
 const TEMPLATE_DEPOSIT='template_0jmwz5h';
