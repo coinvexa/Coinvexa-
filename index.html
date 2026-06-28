@@ -197,7 +197,7 @@
 </style>
 </head>
 <body>
-<div class="topbar" id="topbar">
+<div class="topbar hidden" id="topbar">
   <div><div class="brand">Coin<span>Vexa</span></div><div class="user-email" id="userEmailDisplay"></div></div>
   <div class="topbar-icons">
     <button onclick="toggleTheme()" id="themeToggle">🌙</button>
@@ -259,7 +259,7 @@
   </div>
 </div>
 <div id="appContent" class="hidden">
-  <div id="assetsPage" class="page active" style="padding-bottom:80px;">
+  <div id="assetsPage" class="page" style="padding-bottom:80px;">
     <div class="assets-hero">
       <div class="label">Total Balance</div>
       <div class="total" id="totalBalance">0.00 <small>USDT</small></div>
@@ -562,7 +562,7 @@
     </div>
   </div>
 </div>
-<div class="bottom-nav" id="bottomNav">
+<div class="bottom-nav hidden" id="bottomNav">
   <button class="nav-btn active" data-page="assetsPage" onclick="navigateTo('assetsPage')"><span class="nav-icon">💰</span>Assets</button>
   <button class="nav-btn" data-page="p2pPage" onclick="navigateTo('p2pPage')"><span class="nav-icon">🤝</span>P2P</button>
   <button class="nav-btn" data-page="marketsPage" onclick="navigateTo('marketsPage')"><span class="nav-icon">📊</span>Markets</button>
