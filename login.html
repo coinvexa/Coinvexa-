@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>CoinVexa — Log In</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{ --bg:#0d1117; --panel:#161b22; --panel-2:#1f2630; --line:#2b3340; --ink:#e6edf3; --ink-dim:#7d8b9c; --green:#1ec98b; --red:#ef5d5d; --accent:#3b82f6; --gold:#f0b90b; }
+  body{ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; min-height:100vh; display:flex; flex-direction:column; }
+  .topbar{ display:flex; align-items:center; justify-content:center; padding:14px 16px; background:var(--panel); border-bottom:1px solid var(--line); }
+  .brand{ font-size:18px; font-weight:800; letter-spacing:-.02em; }
+  .brand span{ color:var(--accent); }
+  .auth-wrap{ flex:1; display:flex; align-items:center; justify-content:center; padding:24px 16px; }
+  .auth-card{ width:100%; max-width:380px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:28px 24px; }
+  .auth-title{ font-size:22px; font-weight:800; margin-bottom:4px; }
+  .auth-sub{ font-size:13px; color:var(--ink-dim); margin-bottom:24px; }
+  .field-label{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-dim); margin-bottom:6px; display:block; }
+  .input{ width:100%; padding:13px 14px; margin-bottom:14px; border-radius:10px; border:1px solid var(--line); background:var(--panel-2); color:var(--ink); font-size:15px; }
+  .input:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  .input::placeholder{ color:var(--ink-dim); }
+  .btn-primary-full{ width:100%; padding:14px; border-radius:10px; border:none; background:var(--accent); color:#fff; font-weight:700; font-size:14px; cursor:pointer; margin-top:6px; transition:opacity .15s; }
+  .btn-primary-full:disabled{ opacity:.6; cursor:not-allowed; }
+  .btn-google{ width:100%; padding:13px; border-radius:10px; border:1px solid var(--line); background:var(--panel-2); color:var(--ink); font-weight:700; font-size:14px; cursor:pointer; margin-top:10px; display:flex; align-items:center; justify-content:center; gap:10px; }
+  .btn-google:hover{ border-color:var(--accent); }
+  .divider{ display:flex; align-items:center; gap:10px; margin:16px 0; color:var(--ink-dim); font-size:12px; }
+  .divider::before,.divider::after{ content:''; flex:1; height:1px; background:var(--line); }
+  .auth-error{ background:rgba(239,93,93,.1); border:1px solid rgba(239,93,93,.3); color:var(--red); border-radius:10px; padding:10px 12px; font-size:12px; margin-bottom:14px; display:none; line-height:1.4; }
+  .auth-error.visible{ display:block; }
+  .auth-status{ background:rgba(30,201,139,.1); border:1px solid rgba(30,201,139,.3); color:var(--green); border-radius:10px; padding:10px 12px; font-size:12px; margin-bottom:14px; display:none; line-height:1.4; }
+  .auth-status.visible{ display:block; }
+  .auth-footer{ text-align:center; font-size:13px; color:var(--ink-dim); margin-top:18px; }
+  .auth-footer a{ color:var(--accent); font-weight:700; text-decoration:none; }
+  .forgot-link{ display:block; text-align:right; font-size:12px; color:var(--accent); font-weight:600; text-decoration:none; margin:-6px 0 14px; }
+  .spinner{ display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:6px; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .hidden{ display:none !important; }
+</style>
+</head>
+<body>
+<div class="topbar"><div class="brand">Coin<span>Vexa</span></div></div>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-title">Welcome back</div>
+    <div class="auth-sub">Log in to your CoinVexa account</div>
+    <div class="auth-error" id="authError"></div>
+    <div class="auth-status" id="authStatus"></div>
+
+    <!-- Google Sign-In -->
+    <button class="btn-google" id="googleBtn">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.8 6C12.3 13 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 6.9-10 6.9-17z"/><path fill="#FBBC05" d="M10.4 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.6 10.7l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-6.3 0-11.6-4.2-13.5-10l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+
+    <div class="divider">or</div>
+
+    <form id="loginForm">
+      <label class="field-label">Email</label>
+      <input type="email" class="input" id="email" placeholder="you@example.com" autocomplete="email" required>
+      <label class="field-label">Password</label>
+      <input type="password" class="input" id="password" placeholder="••••••••" autocomplete="current-password" required>
+      <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
+      <button type="submit" class="btn-primary-full" id="loginBtn">
+        <span class="spinner hidden" id="loginSpinner"></span>Log In
+      </button>
+    </form>
+    <div class="auth-footer">Don't have an account? <a href="signup.html">Sign up</a></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyD9_oAbItp_PGiKJNnHKa_S90CMCC1y4JU",
+    authDomain: "coinvexa-f4c37.firebaseapp.com",
+    projectId: "coinvexa-f4c37",
+    storageBucket: "coinvexa-f4c37.firebasestorage.app",
+    messagingSenderId: "514004370275",
+    appId: "1:514004370275:web:9238feb6cb23c116780956"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  const errorBox = document.getElementById('authError');
+  const statusBox = document.getElementById('authStatus');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginSpinner = document.getElementById('loginSpinner');
+
+  function showError(msg){ errorBox.textContent=msg; errorBox.classList.add('visible'); statusBox.classList.remove('visible'); }
+  function showStatus(msg){ statusBox.textContent=msg; statusBox.classList.add('visible'); errorBox.classList.remove('visible'); }
+  function setLoading(v){ loginBtn.disabled=v; loginSpinner.classList.toggle('hidden',!v); }
+
+  function friendlyError(e){
+    switch(e.code){
+      case 'auth/invalid-email': return 'That email address looks invalid.';
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+      case 'auth/invalid-credential': return 'Incorrect email or password.';
+      case 'auth/too-many-requests': return 'Too many attempts. Please wait and try again.';
+      case 'auth/network-request-failed': return 'Network error — check your connection.';
+      default: return 'Something went wrong: '+e.message;
+    }
+  }
+
+  async function ensureUserDoc(user){
+    const ref = db.collection('users').doc(user.uid);
+    const snap = await ref.get();
+    if(!snap.exists){
+      await ref.set({
+        email: user.email,
+        displayName: user.displayName || '',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        emailVerified: user.emailVerified,
+        balances: { USDT:0, BTC:0, ETH:0, SOL:0, TRX:0 },
+        transactions: [],
+        kyc: { status:'unverified' }
+      });
+    }
+  }
+
+  auth.onAuthStateChanged((user)=>{ if(user) window.location.href='index.html'; });
+
+  // Google Sign-In
+  document.getElementById('googleBtn').addEventListener('click', async () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try{
+      const result = await auth.signInWithPopup(provider);
+      await ensureUserDoc(result.user);
+      window.location.href = 'index.html';
+    }catch(e){ showError(friendlyError(e)); }
+  });
+
+  // Email/Password Login
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorBox.classList.remove('visible');
+    statusBox.classList.remove('visible');
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    if(!email||!password){ showError('Please enter both email and password.'); return; }
+    setLoading(true);
+    try{
+      await auth.signInWithEmailAndPassword(email, password);
+      showStatus('Logged in! Redirecting…');
+      window.location.href = 'index.html';
+    }catch(e){ showError(friendlyError(e)); }
+    finally{ setLoading(false); }
+  });
+
+  // Forgot Password
+  document.getElementById('forgotLink').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    if(!email){ showError('Enter your email above first.'); return; }
+    try{
+      await auth.sendPasswordResetEmail(email);
+      showStatus(`Password reset email sent to ${email}.`);
+    }catch(e){ showError(friendlyError(e)); }
+  });
+</script>
+</body>
+</html>
