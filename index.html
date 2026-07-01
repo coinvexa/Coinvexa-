@@ -156,6 +156,55 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .trade-confirm-btn{width:100%;padding:15px;border-radius:12px;border:none;font-weight:700;font-size:15px;cursor:pointer;}
 .trade-confirm-btn.buy{background:var(--green);color:#06241a;}
 .trade-confirm-btn.sell{background:var(--red);color:#fff;}
+
+  /* PRO ORDER PAGE */
+  .order-steps{display:flex;align-items:center;padding:14px 16px;background:var(--panel);border-bottom:1px solid var(--line);gap:0;}
+  .step{display:flex;flex-direction:column;align-items:center;flex:1;}
+  .step-dot{width:24px;height:24px;border-radius:50%;background:var(--panel-2);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--ink-dim);margin-bottom:4px;}
+  .step-dot.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .step-dot.done{background:var(--green);border-color:var(--green);color:#fff;}
+  .step-line{flex:1;height:2px;background:var(--line);margin-bottom:14px;}
+  .step-line.done{background:var(--green);}
+  .step-label{font-size:9px;color:var(--ink-dim);font-weight:600;text-transform:uppercase;text-align:center;}
+  .step-label.active{color:var(--accent);}
+  .step-label.done{color:var(--green);}
+  .order-amount-hero{padding:16px;background:var(--panel);border-bottom:1px solid var(--line);}
+  .order-dir-label{font-size:11px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+  .order-amount-big{font-size:32px;font-weight:800;font-family:var(--mono);margin-bottom:12px;}
+  .order-amount-big.buying{color:var(--green);}
+  .order-amount-big.selling{color:var(--red);}
+  .order-details-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .order-detail-cell{background:var(--panel-2);border-radius:10px;padding:10px 12px;}
+  .order-detail-cell .lbl{font-size:10px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;}
+  .order-detail-cell .val{font-size:13px;font-weight:700;}
+  .order-timer-box{margin:12px 16px 0;border-radius:12px;background:rgba(240,185,11,.08);border:1px solid rgba(240,185,11,.25);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;}
+  .order-timer-box.hidden{display:none;}
+  .order-timer-left{font-size:12px;color:var(--gold);}
+  .order-timer-right{font-family:var(--mono);font-size:20px;font-weight:800;color:var(--gold);}
+  .order-timer-right.urgent{color:var(--red);}
+  .order-escrow-bar{margin:10px 16px 0;background:rgba(30,201,139,.08);border:1px solid rgba(30,201,139,.2);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--green);}
+  .pay-inst-card{margin:10px 16px 0;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:12px;padding:12px 14px;}
+  .pay-inst-title{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
+  .pay-inst-text{font-size:13px;color:var(--ink);line-height:1.6;white-space:pre-wrap;}
+  .chat-section{background:var(--bg);}
+  .chat-header{padding:10px 16px;font-size:11px;font-weight:700;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--line);background:var(--panel);}
+  .chat-messages{padding:12px 16px;display:flex;flex-direction:column;gap:12px;min-height:160px;padding-bottom:140px;}
+  .msg-wrap{display:flex;flex-direction:column;}
+  .msg-wrap.me{align-items:flex-end;}
+  .msg-wrap.them{align-items:flex-start;}
+  .msg-bubble{max-width:75%;padding:10px 13px;border-radius:16px;font-size:13px;line-height:1.5;}
+  .msg-bubble.me{background:var(--accent);color:#fff;border-bottom-right-radius:4px;}
+  .msg-bubble.them{background:var(--panel);color:var(--ink);border-bottom-left-radius:4px;border:1px solid var(--line);}
+  .msg-bubble.system-msg{background:transparent;color:var(--ink-dim);font-size:11px;text-align:center;border:none;max-width:100%;}
+  .msg-meta{font-size:10px;color:var(--ink-dim);margin-top:3px;display:flex;align-items:center;gap:4px;}
+  .msg-meta .sender{font-weight:700;}
+  .chat-bar{position:fixed;bottom:0;left:0;right:0;background:var(--panel);border-top:1px solid var(--line);padding:10px 16px;z-index:10;}
+  .chat-bar-inner{display:flex;gap:8px;align-items:center;margin-bottom:6px;}
+  .chat-bar-input{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:22px;padding:11px 16px;color:var(--ink);font-size:14px;outline:none;}
+  .chat-bar-input:focus{border-color:var(--accent);}
+  .chat-bar-send{width:40px;height:40px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .action-bar{display:flex;gap:10px;padding:0;}
+  .action-bar button{flex:1;padding:12px;border-radius:10px;border:none;font-weight:700;font-size:13px;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -254,49 +303,89 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     </div>
   </div>
 
-  <div id="orderPage" class="hidden page">
-    <div class="subheader">
+  <div id="orderPage" class="hidden page" style="padding-bottom:0;">
+    <!-- Header -->
+    <div style="background:var(--panel);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;gap:12px;">
       <div class="back-btn" onclick="goTo('p2pPage')">←</div>
-      <div class="title" id="orderTitle">Order</div>
-      <div id="orderIdDisplay" style="font-size:11px;color:var(--ink-dim);"></div>
-    </div>
-    <div class="order-summary">
-      <div class="top-row">
-        <div>
-          <div style="font-size:11px;color:var(--ink-dim);margin-bottom:4px;" id="orderDirection">You are buying</div>
-          <div class="amount" id="orderAmt">—</div>
-        </div>
-        <span class="order-status pending" id="orderStatus">Pending</span>
+      <div style="flex:1;">
+        <div style="font-size:15px;font-weight:800;" id="orderTitle">P2P Order</div>
+        <div style="font-size:11px;color:var(--ink-dim);" id="orderIdDisplay"></div>
       </div>
-      <div class="order-grid">
-        <div class="order-field"><div class="label">Price</div><div class="val" id="orderPrice">—</div></div>
-        <div class="order-field"><div class="label">Total</div><div class="val" id="orderTotal">—</div></div>
-        <div class="order-field"><div class="label">Merchant</div><div class="val" id="orderMerchant">—</div></div>
-        <div class="order-field"><div class="label">Payment</div><div class="val" id="orderPayment">—</div></div>
+      <span class="order-status pending" id="orderStatus">Pending</span>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="order-steps" id="orderSteps">
+      <div class="step">
+        <div class="step-dot active" id="step1dot">1</div>
+        <div class="step-label active" id="step1lbl">Created</div>
+      </div>
+      <div class="step-line" id="line1"></div>
+      <div class="step">
+        <div class="step-dot" id="step2dot">2</div>
+        <div class="step-label" id="step2lbl">Paid</div>
+      </div>
+      <div class="step-line" id="line2"></div>
+      <div class="step">
+        <div class="step-dot" id="step3dot">3</div>
+        <div class="step-label" id="step3lbl">Released</div>
+      </div>
+      <div class="step-line" id="line3"></div>
+      <div class="step">
+        <div class="step-dot" id="step4dot">✓</div>
+        <div class="step-label" id="step4lbl">Done</div>
       </div>
     </div>
-    <div class="countdown hidden" id="countdownBox"><span>Complete payment within</span><b id="countdownTimer">14:58</b></div>
-    <div class="escrow-box">
-      <div class="escrow-row"><span class="escrow-icon">🔒</span><div><div class="escrow-title" id="escrowTitle">Funds held in escrow</div><div class="escrow-sub" id="escrowSub">Will be released once payment is confirmed.</div></div></div>
+
+    <!-- Amount Hero -->
+    <div class="order-amount-hero">
+      <div class="order-dir-label" id="orderDirection">You are buying</div>
+      <div class="order-amount-big buying" id="orderAmt">—</div>
+      <div class="order-details-grid">
+        <div class="order-detail-cell"><div class="lbl">Price</div><div class="val" id="orderPrice">—</div></div>
+        <div class="order-detail-cell"><div class="lbl">Total</div><div class="val" id="orderTotal">—</div></div>
+        <div class="order-detail-cell"><div class="lbl">Merchant</div><div class="val" id="orderMerchant">—</div></div>
+        <div class="order-detail-cell"><div class="lbl">Payment</div><div class="val" id="orderPayment">—</div></div>
+      </div>
     </div>
-    <div class="form-card hidden" id="paymentInstructionsBox">
-      <div style="font-weight:700;font-size:13px;margin-bottom:8px;">💳 Payment Instructions</div>
-      <div id="paymentInstructionsText" style="font-size:13px;color:var(--ink-dim);line-height:1.6;white-space:pre-wrap;"></div>
+
+    <!-- Countdown Timer -->
+    <div class="order-timer-box hidden" id="countdownBox">
+      <div class="order-timer-left">⏱ Pay within</div>
+      <div class="order-timer-right" id="countdownTimer">15:00</div>
     </div>
-    <div style="padding:12px 16px 4px;font-size:12px;font-weight:700;color:var(--ink-dim);">💬 LIVE CHAT</div>
-    <div class="chat-area" id="chatArea"></div>
-    <div style="height:80px;"></div>
-    <div class="order-actions hidden" id="buyerActionsBar">
-      <button class="btn-cancel" onclick="cancelOrder()">Cancel</button>
-      <button class="btn-confirm" onclick="markPaid()">I've Paid</button>
+
+    <!-- Escrow notice -->
+    <div class="order-escrow-bar">
+      🔒 <span id="escrowTitle">Crypto secured in escrow</span>
     </div>
-    <div class="order-actions hidden" id="sellerActionsBar">
-      <button class="btn-dispute" onclick="disputeOrder()">Dispute</button>
-      <button class="btn-release" onclick="releaseFunds()">Release Funds</button>
+
+    <!-- Payment Instructions -->
+    <div class="pay-inst-card hidden" id="paymentInstructionsBox">
+      <div class="pay-inst-title">💳 Payment Instructions</div>
+      <div class="pay-inst-text" id="paymentInstructionsText"></div>
     </div>
-    <div class="chat-input-row">
-      <input type="text" placeholder="Type a message…" id="chatInput" onkeypress="if(event.key==='Enter')sendChat()">
-      <button class="chat-send" onclick="sendChat()">➤</button>
+
+    <!-- Chat -->
+    <div class="chat-section">
+      <div class="chat-header">💬 Order Chat</div>
+      <div class="chat-messages" id="chatArea"></div>
+    </div>
+
+    <!-- Fixed bottom chat + actions -->
+    <div class="chat-bar">
+      <div class="chat-bar-inner">
+        <input class="chat-bar-input" type="text" placeholder="Message your trading partner…" id="chatInput" onkeypress="if(event.key==='Enter')sendChat()">
+        <button class="chat-bar-send" onclick="sendChat()">➤</button>
+      </div>
+      <div class="action-bar hidden" id="buyerActionsBar">
+        <button class="btn-cancel" onclick="cancelOrder()">Cancel</button>
+        <button class="btn-confirm" onclick="markPaid()">✅ I've Paid</button>
+      </div>
+      <div class="action-bar hidden" id="sellerActionsBar">
+        <button class="btn-dispute" onclick="disputeOrder()">⚠️ Dispute</button>
+        <button class="btn-release" onclick="releaseFunds()">✅ Release Funds</button>
+      </div>
     </div>
   </div>
 
@@ -414,9 +503,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="bottom-nav">
   <div class="nav-btn active" data-page="assetsPage"><span class="nav-icon">💰</span>Assets</div>
   <div class="nav-btn" data-page="p2pPage"><span class="nav-icon">🤝</span>P2P</div>
+  <div class="nav-btn" data-page="myOrdersPage"><span class="nav-icon">💬</span>Orders</div>
   <div class="nav-btn" data-page="marketsPage"><span class="nav-icon">📊</span>Markets</div>
   <div class="nav-btn" data-page="profilePage"><span class="nav-icon">👤</span>Profile</div>
 </div>
+
+  <div id="myOrdersPage" class="hidden page">
+    <div style="background:var(--panel);border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:17px;font-weight:800;">My Orders</div>
+      <div style="display:flex;gap:8px;">
+        <div class="filter-chip active" onclick="filterOrders('active',this)" id="ordFilterActive">Active</div>
+        <div class="filter-chip" onclick="filterOrders('all',this)" id="ordFilterAll">All</div>
+      </div>
+    </div>
+    <div id="myOrdersList" style="padding:10px 0;"></div>
+  </div>
 
 <!-- TRADE AMOUNT MODAL -->
 <div class="modal-overlay" id="tradeOverlay">
@@ -522,7 +623,7 @@ function renderProfile(){
 
 async function addTransaction(type,coin,amount,status){const date=new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});if(!userData.transactions)userData.transactions=[];userData.transactions.push({type,coin,amount,status,date});await saveUserData();renderHistory();}
 
-const allPages=["assetsPage","p2pPage","createOfferPage","orderPage","historyPage","withdrawPage","depositPage","depositAddressPage","marketsPage","profilePage","myOffersPage","kycPage"];
+const allPages=["assetsPage","p2pPage","createOfferPage","orderPage","historyPage","withdrawPage","depositPage","depositAddressPage","marketsPage","profilePage","myOffersPage","kycPage","myOrdersPage"];
 function goTo(pageId){
   allPages.forEach(id=>document.getElementById(id).classList.add("hidden"));
   document.getElementById(pageId).classList.remove("hidden");
@@ -531,6 +632,7 @@ function goTo(pageId){
   else if(["p2pPage","orderPage","createOfferPage"].includes(pageId))document.querySelector(".nav-btn[data-page=\"p2pPage\"]").classList.add("active");
   else if(pageId==="marketsPage")document.querySelector(".nav-btn[data-page=\"marketsPage\"]").classList.add("active");
   else if(["profilePage","kycPage","myOffersPage"].includes(pageId))document.querySelector(".nav-btn[data-page=\"profilePage\"]").classList.add("active");
+  else if(pageId==="myOrdersPage")document.querySelector(".nav-btn[data-page=\"myOrdersPage\"]").classList.add("active");
   if(pageId==="p2pPage")loadP2POffers();
   if(pageId==="marketsPage"){renderMarkets();fetchLivePrices();}
   if(pageId==="profilePage")renderProfile();
@@ -540,6 +642,7 @@ function goTo(pageId){
   if(pageId==="depositAddressPage")renderMyDepositRequests();
   if(pageId==="createOfferPage")checkKycForOffer();
   if(pageId==="myOffersPage")loadMyOffers();
+  if(pageId==="myOrdersPage")loadMyOrders();
   if(chatListener&&pageId!=="orderPage"){chatListener();chatListener=null;}
   window.scrollTo(0,0);
 }
@@ -648,6 +751,12 @@ async function confirmTrade(){
   if(amount>offer.amount){errEl.textContent="Exceeds available "+offer.coin+" ("+offer.amount+").";errEl.classList.add("show");return;}
   const total=amount*offer.price;
   if(total<offer.minOrder||total>offer.maxOrder){errEl.textContent="Total must be "+offer.minOrder.toLocaleString()+" – "+offer.maxOrder.toLocaleString()+" "+offer.currency+".";errEl.classList.add("show");return;}
+  // Balance check for sell orders (when offer type is buy, I am the seller)
+  const isSeller=offer.type==="buy";
+  if(isSeller){
+    const myBal=userData?.balances[offer.coin]||0;
+    if(amount>myBal){errEl.textContent="Insufficient "+offer.coin+" balance. You have "+myBal.toFixed(4)+" "+offer.coin+".";errEl.classList.add("show");return;}
+  }
   closeTradeModal();
   try{
     const isBuyer=offer.type==="sell";
@@ -659,48 +768,91 @@ async function confirmTrade(){
 
 function openOrderChat(orderDocId,role,offerData,amount,total){
   currentOrderId=orderDocId;
-  document.getElementById("orderTitle").textContent="Order Chat";
-  document.getElementById("orderIdDisplay").textContent="#"+orderDocId.slice(-6).toUpperCase();
+  document.getElementById("orderTitle").textContent=role==="buyer"?"Buying "+offerData?.coin:"Selling "+offerData?.coin;
+  document.getElementById("orderIdDisplay").textContent="Order #"+orderDocId.slice(-6).toUpperCase();
   document.getElementById("orderDirection").textContent=role==="buyer"?"You are buying":"You are selling";
-  document.getElementById("orderAmt").textContent=(amount||0).toFixed(4)+" "+(offerData?.coin||"");
+  const amtEl=document.getElementById("orderAmt");
+  amtEl.textContent=(amount||0).toFixed(4)+" "+(offerData?.coin||"");
+  amtEl.className="order-amount-big "+(role==="buyer"?"buying":"selling");
   document.getElementById("orderPrice").textContent=(offerData?.price||0).toLocaleString()+" "+(offerData?.currency||"");
   document.getElementById("orderTotal").textContent=(total||0).toLocaleString()+" "+(offerData?.currency||"");
   document.getElementById("orderMerchant").textContent=role==="buyer"?(offerData?.merchantName||"Seller"):(offerData?.merchantName||"Buyer");
   document.getElementById("orderPayment").textContent=(offerData?.paymentMethods||[]).join(", ")||"—";
-  document.getElementById("orderStatus").textContent="Pending";
-  document.getElementById("orderStatus").className="order-status pending";
-  if(role==="buyer"){document.getElementById("countdownBox").classList.remove("hidden");startCountdown();document.getElementById("buyerActionsBar").classList.remove("hidden");document.getElementById("sellerActionsBar").classList.add("hidden");}
-  else{document.getElementById("countdownBox").classList.add("hidden");document.getElementById("sellerActionsBar").classList.remove("hidden");document.getElementById("buyerActionsBar").classList.add("hidden");}
-  if(offerData?.instructions&&role==="buyer"){document.getElementById("paymentInstructionsBox").classList.remove("hidden");document.getElementById("paymentInstructionsText").textContent=offerData.instructions;}
-  else document.getElementById("paymentInstructionsBox").classList.add("hidden");
-  document.getElementById("escrowTitle").textContent=amount+" "+(offerData?.coin||"")+" held in escrow";
-  document.getElementById("escrowSub").textContent=role==="buyer"?"Will be released once you confirm payment and seller approves.":"Release funds after confirming payment receipt.";
+  setOrderStatus("pending",role);
+  document.getElementById("escrowTitle").textContent=(amount||0).toFixed(4)+" "+(offerData?.coin||"")+" secured in escrow";
+  if(role==="buyer"){
+    document.getElementById("countdownBox").classList.remove("hidden");
+    startCountdown();
+    document.getElementById("buyerActionsBar").classList.remove("hidden");
+    document.getElementById("sellerActionsBar").classList.add("hidden");
+    if(offerData?.instructions){document.getElementById("paymentInstructionsBox").classList.remove("hidden");document.getElementById("paymentInstructionsText").textContent=offerData.instructions;}
+    else document.getElementById("paymentInstructionsBox").classList.add("hidden");
+  }else{
+    document.getElementById("countdownBox").classList.add("hidden");
+    document.getElementById("sellerActionsBar").classList.remove("hidden");
+    document.getElementById("buyerActionsBar").classList.add("hidden");
+    document.getElementById("paymentInstructionsBox").classList.add("hidden");
+  }
   goTo("orderPage");
   subscribeToChat(orderDocId);
+}
+
+function setOrderStatus(status,role){
+  const badge=document.getElementById("orderStatus");
+  const labels={pending:"Pending",paid:"Payment Sent",completed:"Completed",cancelled:"Cancelled",disputed:"Disputed"};
+  badge.textContent=labels[status]||status;
+  badge.className="order-status "+status;
+  // Update step indicators
+  const steps={pending:1,paid:2,completed:4,cancelled:1,disputed:2};
+  const current=steps[status]||1;
+  for(let i=1;i<=4;i++){
+    const dot=document.getElementById("step"+i+"dot");
+    const lbl=document.getElementById("step"+i+"lbl");
+    if(i<current){dot.className="step-dot done";lbl.className="step-label done";}
+    else if(i===current){dot.className="step-dot active";lbl.className="step-label active";}
+    else{dot.className="step-dot";lbl.className="step-label";}
+    if(i<4){const line=document.getElementById("line"+i);line.className="step-line"+(i<current?" done":"");}
+  }
 }
 
 function subscribeToChat(orderDocId){
   if(chatListener)chatListener();
   const area=document.getElementById("chatArea");
-  area.innerHTML="<div class=\"msg system\">Order started · Chat with your trading partner</div>";
+  area.innerHTML=`<div class="msg-wrap" style="align-items:center;"><div class="msg-bubble system-msg">🤝 Order started — chat with your partner below</div></div>`;
   chatListener=db.collection("p2pOrders").doc(orderDocId).collection("messages").orderBy("timestamp","asc").onSnapshot(snap=>{
     snap.docChanges().filter(c=>c.type==="added").map(c=>c.doc.data()).forEach(msg=>{
       const isMe=msg.senderId===currentUser.uid;
-      if(msg.type==="system")area.insertAdjacentHTML("beforeend",`<div class="msg system">${escapeHtml(msg.text)}</div>`);
-      else area.insertAdjacentHTML("beforeend",`<div class="msg ${isMe?"me":"them"}"><div class="msg-sender">${isMe?"You":escapeHtml(msg.senderName||"Partner")}</div>${escapeHtml(msg.text)}<div class="msg-time">${msg.timestamp?.toDate?msg.timestamp.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):""}</div></div>`);
+      const time=msg.timestamp?.toDate?msg.timestamp.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"";
+      if(msg.type==="system"){
+        area.insertAdjacentHTML("beforeend",`<div class="msg-wrap" style="align-items:center;"><div class="msg-bubble system-msg">${escapeHtml(msg.text)}</div><div class="msg-meta" style="justify-content:center;font-size:10px;color:var(--ink-dim);">${time}</div></div>`);
+      }else{
+        area.insertAdjacentHTML("beforeend",`<div class="msg-wrap ${isMe?"me":"them"}"><div class="msg-bubble ${isMe?"me":"them"}">${escapeHtml(msg.text)}</div><div class="msg-meta"><span class="sender">${isMe?"You":escapeHtml(msg.senderName||"Partner")}</span><span>·</span><span>${time}</span></div></div>`);
+      }
       area.scrollTop=area.scrollHeight;
     });
   });
 }
 
 async function sendChat(){const input=document.getElementById("chatInput"),text=input.value.trim();if(!text||!currentOrderId)return;const name=currentUser.displayName||currentUser.email.split("@")[0];try{await db.collection("p2pOrders").doc(currentOrderId).collection("messages").add({text,senderId:currentUser.uid,senderName:name,type:"chat",timestamp:firebase.firestore.FieldValue.serverTimestamp()});input.value="";}catch(e){alert(e.message);}}
-async function markPaid(){if(!currentOrderId||!confirm("Confirm you sent payment?"))return;await db.collection("p2pOrders").doc(currentOrderId).update({status:"paid"});await db.collection("p2pOrders").doc(currentOrderId).collection("messages").add({text:"✅ Buyer marked as paid. Seller please confirm.",type:"system",senderId:"system",timestamp:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById("orderStatus").textContent="Paid";document.getElementById("orderStatus").className="order-status paid";document.getElementById("buyerActionsBar").classList.add("hidden");}
-async function releaseFunds(){if(!currentOrderId||!confirm("Confirm payment received and release funds?"))return;await db.collection("p2pOrders").doc(currentOrderId).update({status:"completed"});await db.collection("p2pOrders").doc(currentOrderId).collection("messages").add({text:"✅ Seller confirmed. Funds released! Order completed.",type:"system",senderId:"system",timestamp:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById("orderStatus").textContent="Completed";document.getElementById("orderStatus").className="order-status completed";document.getElementById("sellerActionsBar").classList.add("hidden");alert("Order completed!");}
+async function markPaid(){if(!currentOrderId||!confirm("Confirm you sent payment?"))return;await db.collection("p2pOrders").doc(currentOrderId).update({status:"paid"});await db.collection("p2pOrders").doc(currentOrderId).collection("messages").add({text:"✅ Buyer has sent payment. Seller please confirm receipt.",type:"system",senderId:"system",timestamp:firebase.firestore.FieldValue.serverTimestamp()});setOrderStatus("paid","buyer");document.getElementById("buyerActionsBar").classList.add("hidden");document.getElementById("countdownBox").classList.add("hidden");}
+async function releaseFunds(){if(!currentOrderId||!confirm("Confirm payment received and release funds to buyer?"))return;await db.collection("p2pOrders").doc(currentOrderId).update({status:"completed"});await db.collection("p2pOrders").doc(currentOrderId).collection("messages").add({text:"🎉 Seller confirmed payment received. Funds released to buyer! Order complete.",type:"system",senderId:"system",timestamp:firebase.firestore.FieldValue.serverTimestamp()});setOrderStatus("completed","seller");document.getElementById("sellerActionsBar").classList.add("hidden");}
 async function disputeOrder(){if(!confirm("Open dispute? Admin will review."))return;await db.collection("p2pOrders").doc(currentOrderId).update({status:"disputed"});await db.collection("p2pOrders").doc(currentOrderId).collection("messages").add({text:"⚠️ Dispute opened. Admin notified.",type:"system",senderId:"system",timestamp:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById("orderStatus").textContent="Disputed";document.getElementById("orderStatus").className="order-status disputed";}
 async function cancelOrder(){if(!confirm("Cancel order?"))return;if(currentOrderId){await db.collection("p2pOrders").doc(currentOrderId).update({status:"cancelled"});await db.collection("p2pOrders").doc(currentOrderId).collection("messages").add({text:"❌ Order cancelled.",type:"system",senderId:"system",timestamp:firebase.firestore.FieldValue.serverTimestamp()});}document.getElementById("orderStatus").textContent="Cancelled";document.getElementById("orderStatus").className="order-status cancelled";document.getElementById("buyerActionsBar").classList.add("hidden");document.getElementById("sellerActionsBar").classList.add("hidden");}
 
 let countdownInterval;
-function startCountdown(){clearInterval(countdownInterval);let seconds=14*60+58;const el=document.getElementById("countdownTimer");countdownInterval=setInterval(()=>{seconds--;if(seconds<=0){clearInterval(countdownInterval);seconds=0;}el.textContent=Math.floor(seconds/60)+":"+(seconds%60).toString().padStart(2,"0");},1000);}
+function startCountdown(){
+  clearInterval(countdownInterval);
+  let seconds=15*60;
+  const el=document.getElementById("countdownTimer");
+  el.className="order-timer-right";
+  countdownInterval=setInterval(()=>{
+    seconds--;
+    if(seconds<=0){clearInterval(countdownInterval);seconds=0;}
+    const m=Math.floor(seconds/60),s=(seconds%60).toString().padStart(2,"0");
+    el.textContent=m+":"+s;
+    if(seconds<=300)el.className="order-timer-right urgent";
+  },1000);
+}
 
 function updateWdBalance(){if(!userData)return;const coin=document.getElementById("wdCoin").value;document.getElementById("wdAvailable").textContent=(userData.balances[coin]||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:6});document.getElementById("wdCoinLabel").textContent=coin;}
 function updateWdReceive(){const val=parseFloat(document.getElementById("wdAmount").value)||0;document.getElementById("wdReceive").textContent=Math.max(val-1,0).toFixed(4)+" "+document.getElementById("wdCoin").value;}
@@ -716,6 +868,75 @@ function renderMyDepositRequests(){if(!userData)return;const reqs=(userData.depo
 function renderKycPage(){const kyc=userData?.kyc||{};const el=document.getElementById("kycStatus");if(kyc.status==="verified")el.innerHTML="<div style=\"color:var(--green);font-weight:700\">✅ Your identity is verified.</div>";else if(kyc.status==="pending")el.innerHTML="<div style=\"color:var(--accent);font-weight:700\">🔄 Under review.</div>";else el.innerHTML="<div style=\"color:var(--ink-dim)\">Submit details to verify identity. Required for P2P & withdrawals.</div>";document.getElementById("kycName").value=kyc.name||"";document.getElementById("kycCountry").value=kyc.country||"";document.getElementById("kycId").value=kyc.idNumber||"";document.getElementById("kycDob").value=kyc.dob||"";const disabled=kyc.status==="verified";["kycName","kycCountry","kycId","kycDob"].forEach(id=>document.getElementById(id).disabled=disabled);document.getElementById("kycSubmitBtn").disabled=disabled;}
 async function submitKyc(){const name=document.getElementById("kycName").value.trim(),country=document.getElementById("kycCountry").value.trim(),idNum=document.getElementById("kycId").value.trim(),dob=document.getElementById("kycDob").value;if(!name||!country||!idNum||!dob){alert("Fill all fields.");return;}userData.kyc={status:"pending",name,country,idNumber:idNum,dob,submittedAt:new Date().toISOString()};await saveUserData();renderKycPage();renderProfile();alert("KYC submitted!");}
 function changePassword(){if(!confirm("Send reset link to "+currentUser.email+"?"))return;auth.sendPasswordResetEmail(currentUser.email).then(()=>alert("Reset email sent!")).catch(e=>alert(e.message));}
+let ordersFilter="active";
+function filterOrders(f,el){ordersFilter=f;document.querySelectorAll("#myOrdersPage .filter-chip").forEach(c=>c.classList.remove("active"));el.classList.add("active");loadMyOrders();}
+
+async function loadMyOrders(){
+  const el=document.getElementById("myOrdersList");
+  el.innerHTML="<div style=\"text-align:center;padding:30px;color:var(--ink-dim)\">Loading orders…</div>";
+  try{
+    let query=db.collection("p2pOrders").where("buyerId","==",currentUser.uid);
+    const snap1=await query.orderBy("createdAt","desc").limit(20).get();
+    let query2=db.collection("p2pOrders").where("sellerId","==",currentUser.uid);
+    const snap2=await query2.orderBy("createdAt","desc").limit(20).get();
+    let orders=[...snap1.docs,...snap2.docs].map(d=>({id:d.id,...d.data()}));
+    // dedupe
+    const seen=new Set();orders=orders.filter(o=>{if(seen.has(o.id))return false;seen.add(o.id);return true;});
+    orders.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    if(ordersFilter==="active")orders=orders.filter(o=>["pending","paid","disputed"].includes(o.status));
+    if(!orders.length){el.innerHTML="<div style=\"text-align:center;padding:40px;color:var(--ink-dim)\">"+(ordersFilter==="active"?"No active orders.\nGo to P2P to start trading!":"No orders yet.")+"</div>";return;}
+    el.innerHTML=orders.map(o=>{
+      const isBuyer=o.buyerId===currentUser.uid;
+      const role=isBuyer?"Buying":"Selling";
+      const clr=isBuyer?"var(--green)":"var(--red)";
+      const statusClr=o.status==="completed"?"var(--green)":o.status==="cancelled"?"var(--red)":o.status==="paid"?"var(--accent)":"var(--gold)";
+      const statusLabels={pending:"Pending Payment",paid:"Payment Sent",completed:"Completed",cancelled:"Cancelled",disputed:"Disputed"};
+      return `<div onclick="reopenOrder('${o.id}')" style="background:var(--panel);border-bottom:1px solid var(--line);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;">
+        <div style="width:42px;height:42px;border-radius:50%;background:${isBuyer?"rgba(30,201,139,.15)":"rgba(239,93,93,.15)"};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">${isBuyer?"📥":"📤"}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <div style="font-weight:700;font-size:14px;">${role} ${(o.amount||0).toFixed(4)} ${o.coin||""}</div>
+            <div style="font-size:11px;font-weight:700;color:${statusClr};">${statusLabels[o.status]||o.status}</div>
+          </div>
+          <div style="font-size:12px;color:var(--ink-dim);">Total: ${(o.total||0).toLocaleString()} ${o.currency||""} · ${isBuyer?o.sellerEmail||"Seller":o.buyerEmail||"Buyer"}</div>
+          <div style="font-size:11px;color:var(--ink-dim);margin-top:2px;">#${o.orderId||o.id.slice(-6).toUpperCase()}</div>
+        </div>
+        <div style="color:var(--ink-dim);font-size:18px;">💬›</div>
+      </div>`;
+    }).join("");
+  }catch(e){el.innerHTML="<div style=\"text-align:center;padding:30px;color:var(--red)\">Error: "+e.message+"</div>";}
+}
+
+async function reopenOrder(orderId){
+  try{
+    const snap=await db.collection("p2pOrders").doc(orderId).get();
+    if(!snap.exists){alert("Order not found.");return;}
+    const o={id:snap.id,...snap.data()};
+    const isBuyer=o.buyerId===currentUser.uid;
+    const fakeOffer={coin:o.coin,currency:o.currency,price:o.price,paymentMethods:o.paymentMethods,instructions:o.instructions||"",merchantName:isBuyer?(o.sellerEmail||"Seller"):(o.buyerEmail||"Buyer")};
+    currentOrderId=orderId;
+    document.getElementById("orderTitle").textContent=(isBuyer?"Buying ":"Selling ")+o.coin;
+    document.getElementById("orderIdDisplay").textContent="Order #"+(o.orderId||orderId.slice(-6).toUpperCase());
+    document.getElementById("orderDirection").textContent=isBuyer?"You are buying":"You are selling";
+    const amtEl=document.getElementById("orderAmt");
+    amtEl.textContent=(o.amount||0).toFixed(4)+" "+(o.coin||"");
+    amtEl.className="order-amount-big "+(isBuyer?"buying":"selling");
+    document.getElementById("orderPrice").textContent=(o.price||0).toLocaleString()+" "+(o.currency||"");
+    document.getElementById("orderTotal").textContent=(o.total||0).toLocaleString()+" "+(o.currency||"");
+    document.getElementById("orderMerchant").textContent=isBuyer?(o.sellerEmail||"Seller"):(o.buyerEmail||"Buyer");
+    document.getElementById("orderPayment").textContent=(o.paymentMethods||[]).join(", ")||"—";
+    document.getElementById("escrowTitle").textContent=(o.amount||0).toFixed(4)+" "+(o.coin||"")+" secured in escrow";
+    setOrderStatus(o.status,isBuyer?"buyer":"seller");
+    if(o.status==="pending"&&isBuyer){document.getElementById("countdownBox").classList.remove("hidden");startCountdown();document.getElementById("buyerActionsBar").classList.remove("hidden");document.getElementById("sellerActionsBar").classList.add("hidden");}
+    else if(o.status==="paid"&&!isBuyer){document.getElementById("sellerActionsBar").classList.remove("hidden");document.getElementById("buyerActionsBar").classList.add("hidden");document.getElementById("countdownBox").classList.add("hidden");}
+    else{document.getElementById("buyerActionsBar").classList.add("hidden");document.getElementById("sellerActionsBar").classList.add("hidden");document.getElementById("countdownBox").classList.add("hidden");}
+    if(o.instructions&&isBuyer){document.getElementById("paymentInstructionsBox").classList.remove("hidden");document.getElementById("paymentInstructionsText").textContent=o.instructions;}
+    else document.getElementById("paymentInstructionsBox").classList.add("hidden");
+    goTo("orderPage");
+    subscribeToChat(orderId);
+  }catch(e){alert("Error: "+e.message);}
+}
+
 function escapeHtml(str){const d=document.createElement("div");d.textContent=str;return d.innerHTML;}
 </script>
 </body>
