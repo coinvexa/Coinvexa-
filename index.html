@@ -3,16 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P2P Trade Dashboard</title>
+    <title>Upgraded P2P Dashboard</title>
     <style>
         :root {
-            --bg-color: #0f1015;
-            --card-bg: #1e2026;
-            --accent-color: #2dd4bf; /* Teal accent */
-            --text-main: #eaecef;
-            --text-muted: #848e9c;
-            --danger: #f6465d;
-            --warning: #f0b90b;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --primary: #007bff;
+            --text-main: #333333;
+            --text-muted: #6c757d;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --border: #dee2e6;
+            --gold-bg: #fff8e1;
+            --gold-text: #d39a00;
+            --gold-border: #ffe082;
+            --green-bg: #e8f5e9;
+            --green-text: #2e7d32;
+            --green-border: #a5d6a7;
         }
 
         * {
@@ -30,9 +38,32 @@
             padding: 20px;
         }
 
+        /* Role Toggle for Testing */
+        .role-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #000;
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            z-index: 100;
+            font-size: 12px;
+        }
+        .role-toggle button {
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            margin-left: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .role-toggle button.active { background: var(--primary); }
+
         .dashboard-container {
             display: grid;
-            grid-template-columns: 300px 1fr;
+            grid-template-columns: 280px 1fr;
             gap: 20px;
             width: 100%;
             max-width: 1000px;
@@ -41,14 +72,16 @@
         /* Sidebar */
         .sidebar {
             background-color: var(--card-bg);
+            border: 1px solid var(--border);
             border-radius: 12px;
             padding: 20px;
             height: fit-content;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
         .profile-section {
             text-align: center;
-            border-bottom: 1px solid #2b2f36;
+            border-bottom: 1px solid var(--border);
             padding-bottom: 20px;
             margin-bottom: 20px;
         }
@@ -56,7 +89,7 @@
         .avatar {
             width: 60px;
             height: 60px;
-            background-color: var(--accent-color);
+            background-color: var(--primary);
             border-radius: 50%;
             margin: 0 auto 10px;
             display: flex;
@@ -64,14 +97,14 @@
             justify-content: center;
             font-size: 24px;
             font-weight: bold;
-            color: #000;
+            color: #fff;
         }
 
         .trust-badge {
             background-color: var(--warning);
             color: #000;
-            padding: 2px 8px;
-            border-radius: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
             font-size: 12px;
             font-weight: bold;
             display: inline-block;
@@ -81,28 +114,31 @@
         .stats div {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-size: 14px;
         }
 
         .stats span:last-child {
             color: var(--text-muted);
+            font-weight: bold;
         }
 
         /* Main Trade Area */
         .trade-area {
             background-color: var(--card-bg);
+            border: 1px solid var(--border);
             border-radius: 12px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
-        /* Escrow Status Bar (Best Upgrade) */
+        /* Escrow Status Bar */
         .escrow-bar {
-            background-color: #181a20;
-            padding: 15px 20px;
-            border-bottom: 1px solid #2b2f36;
+            background-color: #f1f3f5;
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
         }
 
         .escrow-steps {
@@ -115,10 +151,10 @@
             content: '';
             position: absolute;
             top: 12px;
-            left: 0;
-            width: 100%;
+            left: 20px;
+            right: 20px;
             height: 2px;
-            background-color: #2b2f36;
+            background-color: var(--border);
             z-index: 0;
         }
 
@@ -130,22 +166,25 @@
         }
 
         .step-dot {
-            width: 24px;
-            height: 24px;
-            background-color: #2b2f36;
+            width: 26px;
+            height: 26px;
+            background-color: #fff;
+            border: 2px solid var(--border);
             border-radius: 50%;
-            margin: 0 auto 5px;
+            margin: 0 auto 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 12px;
+            font-weight: bold;
+            color: var(--text-muted);
             transition: all 0.3s ease;
         }
 
         .step.active .step-dot {
-            background-color: var(--accent-color);
-            color: #000;
-            box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.2);
+            background-color: var(--success);
+            border-color: var(--success);
+            color: #fff;
         }
 
         .step p {
@@ -159,22 +198,28 @@
         }
 
         /* Chat System */
+        .banner {
+            padding: 10px 15px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        .banner.locked { background: var(--gold-bg); color: var(--gold-text); border-bottom: 1px solid var(--gold-border); }
+        .banner.unlocked { background: var(--green-bg); color: var(--green-text); border-bottom: 1px solid var(--green-border); }
+
         .chat-header {
             padding: 15px 20px;
-            border-bottom: 1px solid #2b2f36;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background-color: #fff;
         }
 
-        .chat-header h3 {
-            font-size: 16px;
-        }
-
-        .chat-header span {
-            font-size: 12px;
-            color: var(--accent-color);
-        }
+        .chat-header h3 { font-size: 16px; }
+        .chat-header span { font-size: 12px; color: var(--success); font-weight: 500; }
 
         .chat-box {
             flex: 1;
@@ -184,6 +229,7 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            background-color: #eef2f5;
         }
 
         .message {
@@ -192,17 +238,18 @@
             border-radius: 12px;
             font-size: 14px;
             line-height: 1.4;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         .message.them {
-            background-color: #2b2f36;
+            background-color: #fff;
             align-self: flex-start;
             border-bottom-left-radius: 2px;
         }
 
         .message.me {
-            background-color: var(--accent-color);
-            color: #000;
+            background-color: var(--primary);
+            color: #fff;
             align-self: flex-end;
             border-bottom-right-radius: 2px;
         }
@@ -210,31 +257,56 @@
         .message img {
             max-width: 100%;
             border-radius: 8px;
-            margin-top: 5px;
+            margin-top: 8px;
             cursor: pointer;
+            display: block;
         }
 
-        .system-msg {
-            align-self: center;
-            background-color: rgba(240, 185, 11, 0.1);
-            color: var(--warning);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 12px;
+        .preview-tag {
+            font-size: 9px;
+            background: #ffcc00;
+            color: #000;
+            padding: 2px 5px;
+            border-radius: 4px;
+            margin-right: 5px;
+            vertical-align: middle;
+            font-weight: bold;
+        }
+
+        .read-receipt {
+            font-size: 10px;
+            text-align: right;
+            margin-top: 4px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .typing-indicator {
+            align-self: flex-start;
+            background: #fff;
+            color: var(--text-muted);
+            padding: 10px 14px;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            font-style: italic;
+            font-size: 13px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         /* Chat Input Area */
         .chat-input-area {
-            border-top: 1px solid #2b2f36;
+            border-top: 1px solid var(--border);
             padding: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
+            background-color: #fff;
         }
 
         .image-preview {
             position: relative;
-            margin-right: 10px;
+            margin-right: 5px;
+            display: flex;
+            align-items: center;
         }
 
         .image-preview img {
@@ -242,24 +314,25 @@
             height: 50px;
             object-fit: cover;
             border-radius: 8px;
-            border: 1px solid var(--accent-color);
+            border: 1px solid var(--border);
         }
 
         .image-preview .remove-btn {
             position: absolute;
-            top: -5px;
-            right: -5px;
+            top: -8px;
+            right: -8px;
             background-color: var(--danger);
             color: white;
             border: none;
             border-radius: 50%;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             font-size: 10px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: bold;
         }
 
         .attach-btn {
@@ -267,47 +340,48 @@
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            font-size: 20px;
+            font-size: 24px;
             padding: 5px;
+            transition: color 0.2s;
         }
 
-        .attach-btn:hover {
-            color: var(--accent-color);
-        }
+        .attach-btn:hover { color: var(--primary); }
+        .attach-btn.disabled { color: #ccc; cursor: not-allowed; }
 
         #chatInput {
             flex: 1;
-            background-color: #181a20;
-            border: 1px solid #2b2f36;
-            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid var(--border);
+            border-radius: 20px;
             padding: 10px 15px;
             color: var(--text-main);
             outline: none;
             font-size: 14px;
         }
+        #chatInput:disabled { cursor: not-allowed; }
 
-        .send-btn {
-            background-color: var(--accent-color);
-            color: #000;
+        .action-btn {
             border: none;
             padding: 10px 20px;
-            border-radius: 8px;
+            border-radius: 20px;
             font-weight: bold;
             cursor: pointer;
-            transition: opacity 0.2s;
+            color: white;
         }
+        .pay-btn { background: var(--success); }
+        .send-btn { background: var(--primary); }
 
-        .send-btn:hover {
-            opacity: 0.9;
-        }
-
-        /* Hide file input */
-        #fileInput {
-            display: none;
-        }
+        #fileInput { display: none; }
     </style>
 </head>
 <body>
+
+    <!-- Toggle to test Buyer vs Seller views -->
+    <div class="role-toggle">
+        View as: 
+        <button id="buyerBtn" class="active" onclick="switchRole('buyer')">Buyer</button>
+        <button id="sellerBtn" onclick="switchRole('seller')">Seller</button>
+    </div>
 
     <div class="dashboard-container">
         <!-- Sidebar Upgrades: Trust & Stats -->
@@ -315,23 +389,24 @@
             <div class="profile-section">
                 <div class="avatar">B</div>
                 <h3>Buyer_Name</h3>
-                <div class="trust-badge">Gold Merchant</div>
+                <div class="trust-badge">⭐ Gold Merchant</div>
             </div>
             <div class="stats">
-                <div><span>Trades:</span> <span>342</span></div>
+                <div><span>Total Trades:</span> <span>342</span></div>
                 <div><span>Completion:</span> <span>99.5%</span></div>
                 <div><span>Avg. Release:</span> <span>3.2 min</span></div>
+                <div><span>Disputes:</span> <span style="color: var(--success);">0</span></div>
             </div>
         </aside>
 
         <!-- Main Trade Area -->
         <main class="trade-area">
             
-            <!-- Upgrade: Visual Escrow Status -->
+            <!-- Upgrade 1: Visual Escrow Status -->
             <div class="escrow-bar">
                 <div class="escrow-steps">
                     <div class="step active" id="step1">
-                        <div class="step-dot">1</div>
+                        <div class="step-dot">✓</div>
                         <p>Order Created</p>
                     </div>
                     <div class="step active" id="step2">
@@ -344,23 +419,27 @@
                     </div>
                     <div class="step" id="step4">
                         <div class="step-dot">4</div>
-                        <p>Release Crypto</p>
+                        <p>Release Funds</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Upgrade: Real Chat System -->
+            <!-- Status Banner (Locked/Unlocked) -->
+            <div id="statusBanner" class="banner locked">
+                💬 Chat locked — preview mode
+            </div>
+
+            <!-- Upgrade 2: Real Chat System -->
             <div class="chat-header">
                 <h3>Chat with Seller (Alex_D)</h3>
                 <span>● Online</span>
             </div>
 
             <div class="chat-box" id="chatBox">
-                <div class="system-msg">Trade started. Please make payment within 15:00 mins.</div>
-                <div class="message them">Hi! I am ready to sell. Please send the payment to the bank details provided.</div>
+                <div class="message them">Hi! I am ready to sell. Please complete payment to unlock real-time chat.</div>
             </div>
 
-            <!-- Chat Input & Image Attachment -->
+            <!-- Chat Input & Upgrade 3: Image Attachment -->
             <div class="chat-input-area">
                 <input type="file" id="fileInput" accept="image/*">
                 
@@ -369,71 +448,128 @@
                     <button class="remove-btn" onclick="removeImage()">X</button>
                 </div>
 
-                <button class="attach-btn" onclick="document.getElementById('fileInput').click()">
-                    📎 <!-- Paperclip icon -->
-                </button>
+                <button id="attachBtn" class="attach-btn disabled" onclick="handleAttach()">📎</button>
                 
-                <input type="text" id="chatInput" placeholder="Type a message or attach proof of payment...">
-                <button class="send-btn" onclick="sendMessage()">Send</button>
+                <input type="text" id="chatInput" placeholder="Pay to unlock chat…" disabled onkeypress="handleKeyPress(event)">
+                
+                <!-- Dynamic Button: Changes between "I've Paid" and "Send" -->
+                <button id="actionBtn" class="action-btn pay-btn" onclick="handleActionClick()">I've Paid</button>
             </div>
         </main>
     </div>
 
     <script>
+        // --- STATE MANAGEMENT ---
+        let currentRole = "buyer"; // 'buyer' or 'seller'
+        let isPaid = false;
+
         const chatBox = document.getElementById('chatBox');
         const chatInput = document.getElementById('chatInput');
         const fileInput = document.getElementById('fileInput');
         const imagePreviewContainer = document.getElementById('imagePreviewContainer');
         const previewImg = document.getElementById('previewImg');
+        const attachBtn = document.getElementById('attachBtn');
+        const actionBtn = document.getElementById('actionBtn');
+        const statusBanner = document.getElementById('statusBanner');
         
         let attachedImageBase64 = null;
 
-        // Handle Enter key in input
-        chatInput.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                sendMessage();
-            }
-        });
-
-        // Handle Image Selection
-        fileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    attachedImageBase64 = e.target.result;
-                    previewImg.src = attachedImageBase64;
-                    imagePreviewContainer.style.display = 'block';
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Remove attached image
-        function removeImage() {
-            attachedImageBase64 = null;
-            fileInput.value = ''; // Reset file input
-            imagePreviewContainer.style.display = 'none';
+        // --- INITIALIZATION ---
+        function switchRole(role) {
+            currentRole = role;
+            document.getElementById('buyerBtn').classList.toggle('active', role === 'buyer');
+            document.getElementById('sellerBtn').classList.toggle('active', role === 'seller');
+            initChatState();
         }
 
-        // Send Message Function
+        function initChatState() {
+            // Seller is ALWAYS unlocked from the start. Buyer depends on isPaid state.
+            if (currentRole === "seller" || isPaid) {
+                unlockChat();
+            } else {
+                lockChat();
+            }
+        }
+
+        // --- LOGIC: LOCKED STATE (Preview Mode) ---
+        function lockChat() {
+            statusBanner.className = "banner locked";
+            statusBanner.innerText = "💬 Chat locked — preview mode";
+            
+            chatInput.disabled = true;
+            chatInput.placeholder = "Pay to unlock chat…";
+            chatInput.value = "";
+            attachBtn.classList.add("disabled");
+            
+            actionBtn.className = "action-btn pay-btn";
+            actionBtn.innerText = "I've Paid";
+        }
+
+        // --- LOGIC: UNLOCKED STATE (Real-time) ---
+        function unlockChat() {
+            statusBanner.className = "banner unlocked";
+            statusBanner.innerText = "✅ Chat unlocked — real-time messaging active";
+            
+            chatInput.disabled = false;
+            chatInput.placeholder = "Type a message...";
+            attachBtn.classList.remove("disabled");
+            
+            actionBtn.className = "action-btn send-btn";
+            actionBtn.innerText = "Send";
+        }
+
+        // --- LOGIC: BUTTON CLICK (Pay or Send) ---
+        function handleActionClick() {
+            if (!isPaid && currentRole === 'buyer') {
+                handlePayment();
+            } else {
+                sendMessage();
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === "Enter" && !chatInput.disabled) {
+                handleActionClick();
+            }
+        }
+
+        // --- LOGIC: BUYER CLICKS "I'VE PAID" ---
+        function handlePayment() {
+            // --- FIREBASE: Update Firestore order status to 'pending_verification' ---
+            
+            isPaid = true;
+            unlockChat();
+            addSystemMessage("✅ Payment initiated. Chat unlocked!");
+
+            // Upgrade Escrow Status Visuals
+            document.getElementById('step3').classList.add('active');
+            document.getElementById('step2').querySelector('.step-dot').innerText = '✓';
+        }
+
+        // --- LOGIC: SENDING MESSAGES ---
         function sendMessage() {
             const text = chatInput.value.trim();
-            
-            if (text === "" && !attachedImageBase64) return; // Don't send empty messages
+            if (text === "" && !attachedImageBase64) return;
 
-            // Create message bubble
             const msgDiv = document.createElement('div');
             msgDiv.className = 'message me';
+
+            let content = "";
             
-            if (text) {
-                msgDiv.innerHTML = text + "<br>";
+            if (!isPaid && currentRole === 'buyer') {
+                // PREVIEW MODE: Add preview tag locally
+                content += `<span class="preview-tag">PREVIEW</span> `;
+            } else {
+                // UNLOCKED MODE: Add Read Receipts
+                content += `<div class="read-receipt">✓✓</div>`;
             }
 
+            if (text) content = text + "<br>" + content;
             if (attachedImageBase64) {
-                msgDiv.innerHTML += `<img src="${attachedImageBase64}" alt="Proof of Payment" style="max-width: 200px; cursor: pointer;" onclick="window.open(this.src)">`;
+                content = `<img src="${attachedImageBase64}" alt="Payment Proof" style="max-width: 200px;" onclick="window.open(this.src)">` + content;
             }
 
+            msgDiv.innerHTML = content;
             chatBox.appendChild(msgDiv);
 
             // Clear inputs
@@ -443,31 +579,87 @@
             // Auto-scroll to bottom
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Simulate Seller Response & Escrow Upgrade
+            // Simulate Partner Response
+            simulatePartnerResponse(text);
+        }
+
+        // --- LOGIC: TYPING INDICATOR & RESPONSES ---
+        function simulatePartnerResponse(userText) {
             setTimeout(() => {
-                if (msgDiv.innerHTML.includes("img")) {
-                    // If image was sent, upgrade escrow and reply
-                    updateEscrow();
+                // Show Typing Indicator
+                const typing = document.createElement('div');
+                typing.className = 'typing-indicator';
+                typing.id = 'typingIndicator';
+                
+                typing.innerText = (currentRole === 'buyer' ? 'Seller' : 'Buyer') + ' is typing...';
+                chatBox.appendChild(typing);
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                setTimeout(() => {
+                    document.getElementById('typingIndicator').remove();
                     
                     const reply = document.createElement('div');
                     reply.className = 'message them';
-                    reply.innerText = "Received the proof of payment! Verifying with my bank now. Will release the crypto shortly.";
+
+                    if (!isPaid && currentRole === 'buyer') {
+                        // PARTNER REJECTS PREVIEW MESSAGE
+                        reply.innerText = "🔒 Pay first to receive real messages";
+                    } else {
+                        // UNLOCKED REAL RESPONSE
+                        reply.innerText = "Got it! Processing the trade now.";
+                    }
+
                     chatBox.appendChild(reply);
                     chatBox.scrollTop = chatBox.scrollHeight;
-                }
-            }, 1500);
+                }, 1500);
+            }, 500);
         }
 
-        // Upgrade Escrow Status Visuals
-        function updateEscrow() {
-            const systemMsg = document.createElement('div');
-            systemMsg.className = 'system-msg';
-            systemMsg.innerText = 'Proof of Payment Uploaded. Awaiting Seller Release.';
-            chatBox.appendChild(systemMsg);
+        // --- LOGIC: PHOTO ATTACHMENTS ---
+        function handleAttach() {
+            if (attachBtn.classList.contains('disabled')) return; // Do nothing if locked
+            fileInput.click();
+        }
 
-            document.getElementById('step3').classList.add('active');
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Enforce 5MB Limit
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Image exceeds 5MB limit!");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                attachedImageBase64 = e.target.result;
+                previewImg.src = attachedImageBase64;
+                imagePreviewContainer.style.display = 'flex';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Remove attached image
+        function removeImage() {
+            attachedImageBase64 = null;
+            fileInput.value = ''; 
+            imagePreviewContainer.style.display = 'none';
+        }
+
+        function addSystemMessage(text) {
+            const sysMsg = document.createElement('div');
+            sysMsg.style.textAlign = 'center';
+            sysMsg.style.fontSize = '12px';
+            sysMsg.style.color = '#65676b';
+            sysMsg.style.margin = '10px 0';
+            sysMsg.innerText = text;
+            chatBox.appendChild(sysMsg);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
+
+        // Initialize on load
+        initChatState();
     </script>
 </body>
 </html>
