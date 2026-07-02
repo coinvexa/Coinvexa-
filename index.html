@@ -689,7 +689,12 @@ async function loadP2POffers(){
   document.getElementById("offerList").innerHTML="<div style=\"text-align:center;padding:30px;color:var(--ink-dim)\">Loading…</div>";
   try{
     const snap=await db.collection("p2pOffers").where("coin","==",coin).where("currency","==",currency).where("type","==",activeSide==="buy"?"buy":"sell").where("active","==",true).orderBy("createdAt","desc").limit(20).get();
-    renderOfferList(snap.docs.map(d=>({id:d.id,...d.data()})),activeSide);
+    const offers=await Promise.all(snap.docs.map(async d=>{
+      const o={id:d.id,...d.data()};
+      try{const uSnap=await db.collection("users").doc(o.userId).get();const rate=uSnap.exists?(uSnap.data().exchangeRate||1):1;if(rate!==1)o.price=parseFloat((o.price*rate).toFixed(2));}catch(e){}
+      return o;
+    }));
+    renderOfferList(offers,activeSide);
   }catch(e){document.getElementById("offerList").innerHTML="<div style=\"text-align:center;padding:30px;color:var(--red)\">Error: "+e.message+"</div>";}
 }
 
