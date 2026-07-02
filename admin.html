@@ -526,6 +526,14 @@ function renderUsers(users){
           <button class="btn-credit" onclick="adjustBalance('${u.id}',1)">+ Credit</button>
           <button class="btn-debit" onclick="adjustBalance('${u.id}',-1)">- Debit</button>
         </div>
+        <div style="font-weight:700;font-size:12px;margin:12px 0 8px;color:var(--ink-dim);text-transform:uppercase;">💱 Custom Exchange Rate</div>
+        <div style="font-size:11px;color:var(--ink-dim);margin-bottom:8px;">Multiplier on merchant P2P prices. 1.02 = +2% markup · 0.98 = -2% discount · 1.00 = default</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="number" step="0.001" min="0.5" max="2" class="credit-input" id="rate-${u.id}" placeholder="1.00" value="${(u.exchangeRate||1).toFixed(3)}" style="flex:1;">
+          <button onclick="setExchangeRate('${u.id}')" style="padding:8px 14px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-weight:700;font-size:12px;cursor:pointer;">Set Rate</button>
+          <button onclick="resetExchangeRate('${u.id}')" style="padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink-dim);font-weight:700;font-size:12px;cursor:pointer;">Reset</button>
+        </div>
+        <div id="rate-status-${u.id}" style="font-size:11px;margin-top:6px;color:var(--green);display:none;">✅ Rate updated!</div>
       </div>
     </div>`;
   }).join('');
@@ -536,6 +544,32 @@ function toggleUser(uid){ document.getElementById('detail-'+uid).classList.toggl
 function filterUsers(){
   const q=document.getElementById('userSearch').value.toLowerCase();
   renderUsers(q?allUsers.filter(u=>(u.email||'').toLowerCase().includes(q)):allUsers);
+}
+
+async function setExchangeRate(uid){
+  const input=document.getElementById('rate-'+uid);
+  const rate=parseFloat(input.value);
+  if(!rate||rate<0.5||rate>2){alert('Rate must be between 0.50 and 2.00.');return;}
+  const user=allUsers.find(u=>u.id===uid);
+  if(!user)return;
+  await db.collection('users').doc(uid).update({exchangeRate:rate});
+  user.exchangeRate=rate;
+  const status=document.getElementById('rate-status-'+uid);
+  status.textContent='✅ Rate set to '+rate.toFixed(3)+' for '+user.email;
+  status.style.display='block';
+  setTimeout(()=>status.style.display='none',3000);
+}
+
+async function resetExchangeRate(uid){
+  if(!confirm('Reset exchange rate to default (1.00)?'))return;
+  await db.collection('users').doc(uid).update({exchangeRate:1});
+  const user=allUsers.find(u=>u.id===uid);
+  if(user)user.exchangeRate=1;
+  document.getElementById('rate-'+uid).value='1.000';
+  const status=document.getElementById('rate-status-'+uid);
+  status.textContent='✅ Rate reset to default (1.00)';
+  status.style.display='block';
+  setTimeout(()=>status.style.display='none',3000);
 }
 
 async function adjustBalance(uid, sign){
