@@ -241,6 +241,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   .pro-stat-card .lbl{font-size:9px;color:var(--ink-dim);text-transform:uppercase;margin-bottom:3px;}
   .pro-stat-card .val{font-size:13px;font-weight:800;font-family:var(--mono);}
   .asset-row.dust-hidden{display:none;}
+
+  .id-type-select{display:flex;gap:8px;margin-bottom:14px;}
+  .id-type-opt{flex:1;text-align:center;padding:12px 8px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);font-size:12px;font-weight:700;color:var(--ink-dim);cursor:pointer;}
+  .id-type-opt.active{border-color:var(--accent);color:var(--accent);background:rgba(59,130,246,.1);}
+  .id-photo-upload{border:2px dashed var(--line);border-radius:12px;padding:20px;text-align:center;cursor:pointer;margin-bottom:14px;background:var(--panel-2);}
+  .id-photo-upload:hover{border-color:var(--accent);}
+  .id-photo-upload .icon{font-size:28px;margin-bottom:6px;}
+  .id-photo-upload .txt{font-size:12px;color:var(--ink-dim);}
+  .id-photo-preview{width:100%;max-height:200px;object-fit:contain;border-radius:10px;margin-bottom:10px;display:none;}
+  .id-photo-preview.show{display:block;}
 </style>
 </head>
 <body>
@@ -550,10 +560,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="subheader"><div class="back-btn" onclick="goTo('profilePage')">←</div><div class="title">Identity Verification</div></div>
     <div class="form-card">
       <div id="kycStatus" style="margin-bottom:14px;font-size:13px;color:var(--ink-dim);"></div>
+      <label class="field-label">Document Type</label>
+      <div class="id-type-select">
+        <div class="id-type-opt active" id="idTypePassport" onclick="selectIdType('Passport')">🛂 Passport</div>
+        <div class="id-type-opt" id="idTypeNational" onclick="selectIdType('National ID')">🪪 National ID</div>
+      </div>
       <label class="field-label">Full Name</label><input type="text" class="input" id="kycName" placeholder="As on your ID">
       <label class="field-label">Country</label><input type="text" class="input" id="kycCountry" placeholder="e.g. Ethiopia">
-      <label class="field-label">ID Number</label><input type="text" class="input" id="kycId" placeholder="Passport or National ID">
+      <label class="field-label">ID Number</label><input type="text" class="input" id="kycId" placeholder="Passport or National ID number">
       <label class="field-label">Date of Birth</label><input type="date" class="input" id="kycDob">
+      <label class="field-label">Upload ID Photo (front side)</label>
+      <div class="id-photo-upload" id="idPhotoUploadBox" onclick="document.getElementById('idPhotoInput').click()">
+        <div class="icon">📷</div>
+        <div class="txt" id="idPhotoUploadTxt">Tap to upload a clear photo of your ID</div>
+      </div>
+      <input type="file" id="idPhotoInput" accept="image/*" style="display:none;" onchange="handleIdPhotoSelect(event)">
+      <img id="idPhotoPreview" class="id-photo-preview">
       <button class="btn-primary-full" id="kycSubmitBtn" onclick="submitKyc()">Submit for Verification</button>
     </div>
   </div>
@@ -1176,8 +1198,63 @@ window.copyDepAddress=()=>{navigator.clipboard?.writeText(document.getElementByI
 async function submitDepositConfirmation(){const txHash=document.getElementById("txHashInput").value.trim(),amount=parseFloat(document.getElementById("txAmountInput").value);if(!txHash){alert("Enter TX hash.");return;}if(!amount||amount<=0){alert("Enter amount.");return;}if(!userData.depositRequests)userData.depositRequests=[];userData.depositRequests.push({id:Date.now().toString(),coin:currentDepositCoin,amount,txHash,address:depositInfo[currentDepositCoin].address,status:"pending",date:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}),timestamp:new Date().toISOString()});await saveUserData();renderMyDepositRequests();document.getElementById("txHashInput").value="";document.getElementById("txAmountInput").value="";alert("✅ Deposit submitted for verification!");}
 function renderMyDepositRequests(){if(!userData)return;const reqs=(userData.depositRequests||[]).slice().reverse();const el=document.getElementById("myDepositRequests");if(!reqs.length){el.innerHTML="<div class=\"empty-history\" style=\"padding:20px 0\">No deposit confirmations yet.</div>";return;}el.innerHTML=reqs.map(r=>{const cls=r.status==="approved"?"completed":r.status==="rejected"?"rejected":"pending";return `<div class="history-item"><div class="top-row"><span class="type">${r.amount} ${r.coin}</span><span class="amt pos">+${r.amount} ${r.coin}</span></div><div class="meta">${r.date}</div><div class="tx-hash-box">TX: ${r.txHash}</div><span class="status-badge ${cls}">${r.status.toUpperCase()}</span></div>`;}).join("");}
 
-function renderKycPage(){const kyc=userData?.kyc||{};const el=document.getElementById("kycStatus");if(kyc.status==="verified")el.innerHTML="<div style=\"color:var(--green);font-weight:700\">✅ Your identity is verified.</div>";else if(kyc.status==="pending")el.innerHTML="<div style=\"color:var(--accent);font-weight:700\">🔄 Under review.</div>";else el.innerHTML="<div style=\"color:var(--ink-dim)\">Submit details to verify identity. Required for P2P & withdrawals.</div>";document.getElementById("kycName").value=kyc.name||"";document.getElementById("kycCountry").value=kyc.country||"";document.getElementById("kycId").value=kyc.idNumber||"";document.getElementById("kycDob").value=kyc.dob||"";const disabled=kyc.status==="verified";["kycName","kycCountry","kycId","kycDob"].forEach(id=>document.getElementById(id).disabled=disabled);document.getElementById("kycSubmitBtn").disabled=disabled;}
-async function submitKyc(){const name=document.getElementById("kycName").value.trim(),country=document.getElementById("kycCountry").value.trim(),idNum=document.getElementById("kycId").value.trim(),dob=document.getElementById("kycDob").value;if(!name||!country||!idNum||!dob){alert("Fill all fields.");return;}userData.kyc={status:"pending",name,country,idNumber:idNum,dob,submittedAt:new Date().toISOString()};await saveUserData();renderKycPage();renderProfile();alert("KYC submitted!");}
+let selectedIdType="Passport",selectedIdPhoto=null;
+
+function selectIdType(type){
+  selectedIdType=type;
+  document.getElementById("idTypePassport").classList.toggle("active",type==="Passport");
+  document.getElementById("idTypeNational").classList.toggle("active",type==="National ID");
+  document.getElementById("kycId").placeholder=type+" number";
+}
+
+function handleIdPhotoSelect(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  if(file.size>5*1024*1024){alert("Image too large. Max 5MB.");return;}
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    selectedIdPhoto=e.target.result;
+    const preview=document.getElementById("idPhotoPreview");
+    preview.src=selectedIdPhoto;
+    preview.classList.add("show");
+    document.getElementById("idPhotoUploadTxt").textContent="✅ Photo selected — tap to change";
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderKycPage(){
+  const kyc=userData?.kyc||{};
+  const el=document.getElementById("kycStatus");
+  if(kyc.status==="verified")el.innerHTML="<div style=\"color:var(--green);font-weight:700\">✅ Your identity is verified.</div>";
+  else if(kyc.status==="pending")el.innerHTML="<div style=\"color:var(--accent);font-weight:700\">🔄 Under review.</div>";
+  else el.innerHTML="<div style=\"color:var(--ink-dim)\">Submit details to verify identity. Required for P2P & withdrawals.</div>";
+  document.getElementById("kycName").value=kyc.name||"";
+  document.getElementById("kycCountry").value=kyc.country||"";
+  document.getElementById("kycId").value=kyc.idNumber||"";
+  document.getElementById("kycDob").value=kyc.dob||"";
+  selectedIdType=kyc.idType||"Passport";
+  selectIdType(selectedIdType);
+  if(kyc.idPhoto){
+    selectedIdPhoto=kyc.idPhoto;
+    const preview=document.getElementById("idPhotoPreview");
+    preview.src=kyc.idPhoto;
+    preview.classList.add("show");
+    document.getElementById("idPhotoUploadTxt").textContent="✅ Photo on file — tap to change";
+  }
+  const disabled=kyc.status==="verified";
+  ["kycName","kycCountry","kycId","kycDob"].forEach(id=>document.getElementById(id).disabled=disabled);
+  document.getElementById("kycSubmitBtn").disabled=disabled;
+  document.getElementById("idPhotoUploadBox").style.pointerEvents=disabled?"none":"auto";
+  document.getElementById("idPhotoUploadBox").style.opacity=disabled?"0.6":"1";
+}
+
+async function submitKyc(){
+  const name=document.getElementById("kycName").value.trim(),country=document.getElementById("kycCountry").value.trim(),idNum=document.getElementById("kycId").value.trim(),dob=document.getElementById("kycDob").value;
+  if(!name||!country||!idNum||!dob){alert("Fill all fields.");return;}
+  if(!selectedIdPhoto){alert("Please upload a photo of your "+selectedIdType+".");return;}
+  userData.kyc={status:"pending",name,country,idNumber:idNum,dob,idType:selectedIdType,idPhoto:selectedIdPhoto,submittedAt:new Date().toISOString()};
+  await saveUserData();renderKycPage();renderProfile();alert("✅ KYC submitted with ID photo! Under review.");
+}
 function changePassword(){if(!confirm("Send reset link to "+currentUser.email+"?"))return;auth.sendPasswordResetEmail(currentUser.email).then(()=>alert("Reset email sent!")).catch(e=>alert(e.message));}
 let ordersFilter="active";
 function filterOrders(f,el){ordersFilter=f;document.querySelectorAll("#myOrdersPage .filter-chip").forEach(c=>c.classList.remove("active"));el.classList.add("active");loadMyOrders();}
