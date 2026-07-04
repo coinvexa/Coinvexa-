@@ -894,12 +894,13 @@ async function loadP2POffers(){
   if(activeSide==="myoffers"){loadMyOffers();return;}
   document.getElementById("offerList").innerHTML="<div style=\"text-align:center;padding:30px;color:var(--ink-dim)\">Loading…</div>";
   try{
-    const snap=await db.collection("p2pOffers").where("coin","==",coin).where("currency","==",currency).where("type","==",activeSide==="buy"?"buy":"sell").where("active","==",true).orderBy("createdAt","desc").limit(20).get();
+    const snap=await db.collection("p2pOffers").where("coin","==",coin).where("currency","==",currency).where("type","==",activeSide==="buy"?"buy":"sell").where("active","==",true).limit(20).get();
     const offers=await Promise.all(snap.docs.map(async d=>{
       const o={id:d.id,...d.data()};
       try{const uSnap=await db.collection("users").doc(o.userId).get();const rate=uSnap.exists?(uSnap.data().exchangeRate||1):1;if(rate!==1)o.price=parseFloat((o.price*rate).toFixed(2));}catch(e){}
       return o;
     }));
+    offers.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
     renderOfferList(offers,activeSide);
   }catch(e){document.getElementById("offerList").innerHTML="<div style=\"text-align:center;padding:30px;color:var(--red)\">Error: "+e.message+"</div>";}
 }
