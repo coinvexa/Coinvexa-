@@ -533,6 +533,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="profile-menu">
       <div class="profile-menu-item" onclick="goTo('kycPage')"><div class="left"><span class="icon">🪪</span><div><div class="label">Identity Verification (KYC)</div><div class="sub">Required for P2P offers & withdrawals</div></div></div><span>›</span></div>
       <div class="profile-menu-item" onclick="goTo('myOffersPage')"><div class="left"><span class="icon">🤝</span><div><div class="label">My P2P Offers</div><div class="sub">Manage your buy/sell offers</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="requestNotifPermission()"><div class="left"><span class="icon">🔔</span><div><div class="label">Push Notifications</div><div class="sub" id="notifStatusText">Tap to enable</div></div></div><span>›</span></div>
       <div class="profile-menu-item" onclick="changePassword()"><div class="left"><span class="icon">🔑</span><div><div class="label">Change Password</div><div class="sub">Send reset link to email</div></div></div><span>›</span></div>
       <div class="profile-menu-item" onclick="goTo('historyPage')"><div class="left"><span class="icon">📋</span><div><div class="label">Transaction History</div></div></div><span>›</span></div>
       <div class="profile-menu-item" onclick="toggleTheme()"><div class="left"><span class="icon" id="themeIcon">🌙</span><div><div class="label">Dark / Light Mode</div><div class="sub" id="themeSub">Currently Dark</div></div></div><span>›</span></div>
@@ -614,6 +615,36 @@ const coinMeta={USDT:{full:"Tether",cls:"usdt",letter:"T"},BTC:{full:"Bitcoin",c
 const depositInfo={"USDT":{network:"TRON (TRC20)",address:"TBBnZdhgwfkKj1zNS9GEpjj58N6kLmEBip",min:"0.005 USDT",arrival:"~20 confirmations"},"BTC":{network:"Bitcoin (BTC)",address:"1BoZAfu4s8VonCfYY81SmALHV3JVUVtNcJ",min:"0.00001 BTC",arrival:"~1 confirmation"},"SOL":{network:"Solana (SOL)",address:"4eMjgQ8LjSo4gbrBPdxGeEgmhbpo7HJSXa2PWJADX9Dc",min:"0.001 SOL",arrival:"~200 confirmations"},"ETH":{network:"Ethereum (ERC20)",address:"0xc4338f9e5b6f290af6f4653d946308cef7625279",min:"0.00005 ETH",arrival:"~6 confirmations"},"TRX":{network:"TRON (TRC20)",address:"TBBnZdhgwfkKj1zNS9GEpjj58N6kLmEBip",min:"1 TRX",arrival:"~20 confirmations"}};
 
 function toggleTheme(){isDark=!isDark;document.documentElement.setAttribute("data-theme",isDark?"dark":"light");document.querySelectorAll(".theme-toggle").forEach(b=>b.textContent=isDark?"🌙":"☀️");document.getElementById("themeIcon").textContent=isDark?"🌙":"☀️";document.getElementById("themeSub").textContent=isDark?"Currently Dark":"Currently Light";localStorage.setItem("cvTheme",isDark?"dark":"light");}
+
+// ===== PUSH NOTIFICATIONS =====
+let notifPermission=Notification&&Notification.permission||"default";
+
+function requestNotifPermission(){
+  if(!("Notification" in window)){alert("This browser does not support notifications.");return;}
+  Notification.requestPermission().then(perm=>{
+    notifPermission=perm;
+    updateNotifToggleUI();
+    if(perm==="granted"){sendNotif("🔔 Notifications enabled!","You will now get alerts for messages and updates.");}
+  });
+}
+
+function updateNotifToggleUI(){
+  const el=document.getElementById("notifStatusText");
+  if(!el)return;
+  if(notifPermission==="granted")el.textContent="✅ Enabled";
+  else if(notifPermission==="denied")el.textContent="🚫 Blocked (check browser settings)";
+  else el.textContent="Tap to enable";
+}
+
+function sendNotif(title,body,tag){
+  if(!("Notification" in window)||Notification.permission!=="granted")return;
+  // Don\'t notify if the tab is currently visible and focused
+  if(document.visibilityState==="visible"&&document.hasFocus())return;
+  try{
+    const n=new Notification(title,{body:body||"",icon:"https://coinvexa.github.io/Coinvexa-/favicon.ico",tag:tag||"cv-notif",badge:"",silent:false});
+    n.onclick=()=>{window.focus();n.close();};
+  }catch(e){}
+}
 const savedTheme=localStorage.getItem("cvTheme");if(savedTheme==="light"){isDark=false;document.documentElement.setAttribute("data-theme","light");}
 
 auth.onAuthStateChanged(async(user)=>{
@@ -624,6 +655,7 @@ auth.onAuthStateChanged(async(user)=>{
     document.getElementById("proViewToggle").classList.toggle("active",proViewOn);
     document.getElementById("proViewLabel").textContent=proViewOn?"📊 Simple View":"📊 Pro View";
     document.getElementById("proStatsRow").classList.toggle("hidden",!proViewOn);
+    updateNotifToggleUI();
     document.getElementById("userEmailDisplay").textContent=user.email;
     if(!user.emailVerified&&user.providerData[0]?.providerId==="password")document.getElementById("verifyBanner").classList.remove("hidden");
     document.getElementById("authLoading").classList.add("hidden");
@@ -632,10 +664,51 @@ auth.onAuthStateChanged(async(user)=>{
   }else{window.location.href="login.html";}
 });
 
+let lastKnownKycStatus=null,lastKnownWdCount=0,lastKnownDepCount=0,userDocListener=null;
+
 async function loadUserData(){
   const ref=db.collection("users").doc(currentUser.uid),snap=await ref.get();
   if(snap.exists){userData=snap.data();if(!userData.balances.SOL)userData.balances.SOL=0;if(!userData.kyc)userData.kyc={status:"unverified"};if(!userData.withdrawalRequests)userData.withdrawalRequests=[];if(!userData.depositRequests)userData.depositRequests=[];}
   else{userData={email:currentUser.email,displayName:currentUser.displayName||"",createdAt:firebase.firestore.FieldValue.serverTimestamp(),balances:{USDT:0,BTC:0,ETH:0,SOL:0,TRX:0},transactions:[],withdrawalRequests:[],depositRequests:[],kyc:{status:"unverified"}};await ref.set(userData);}
+  lastKnownKycStatus=userData.kyc?.status||"unverified";
+  lastKnownWdCount=(userData.withdrawalRequests||[]).filter(r=>r.status!=="pending").length;
+  lastKnownDepCount=(userData.depositRequests||[]).filter(r=>r.status!=="pending").length;
+  startUserDocListener();
+}
+
+function startUserDocListener(){
+  if(userDocListener)userDocListener();
+  userDocListener=db.collection("users").doc(currentUser.uid).onSnapshot(snap=>{
+    if(!snap.exists)return;
+    const data=snap.data();
+    // KYC status change
+    const newKyc=data.kyc?.status||"unverified";
+    if(newKyc!==lastKnownKycStatus&&lastKnownKycStatus!==null){
+      if(newKyc==="verified")sendNotif("✅ KYC Verified!","Your identity has been verified. You can now trade P2P.","kyc");
+      else if(newKyc==="rejected")sendNotif("❌ KYC Rejected","Please review and resubmit your verification details.","kyc");
+    }
+    lastKnownKycStatus=newKyc;
+    // Withdrawal status change
+    const wdDone=(data.withdrawalRequests||[]).filter(r=>r.status!=="pending").length;
+    if(wdDone>lastKnownWdCount){
+      const latest=(data.withdrawalRequests||[]).filter(r=>r.status!=="pending").slice(-1)[0];
+      if(latest){
+        if(latest.status==="approved")sendNotif("✅ Withdrawal Approved",latest.amount+" "+latest.coin+" has been sent.","wd");
+        else sendNotif("❌ Withdrawal Rejected",latest.amount+" "+latest.coin+" was returned to your balance.","wd");
+      }
+    }
+    lastKnownWdCount=wdDone;
+    // Deposit status change
+    const depDone=(data.depositRequests||[]).filter(r=>r.status!=="pending").length;
+    if(depDone>lastKnownDepCount){
+      const latest=(data.depositRequests||[]).filter(r=>r.status!=="pending").slice(-1)[0];
+      if(latest){
+        if(latest.status==="approved")sendNotif("✅ Deposit Confirmed",latest.amount+" "+latest.coin+" credited to your account.","dep");
+        else sendNotif("❌ Deposit Rejected","Your "+latest.coin+" deposit could not be verified.","dep");
+      }
+    }
+    lastKnownDepCount=depDone;
+  });
 }
 async function saveUserData(){await db.collection("users").doc(currentUser.uid).update({balances:userData.balances,transactions:userData.transactions,kyc:userData.kyc,withdrawalRequests:userData.withdrawalRequests,depositRequests:userData.depositRequests});}
 
@@ -952,7 +1025,10 @@ function subscribeToChat(orderDocId){
     const added=snap.docChanges().filter(c=>c.type==="added");
     added.map(c=>c.doc.data()).forEach(msg=>{
       const isMe=msg.senderId===currentUser.uid;
-      if(!isMe&&!chatFirstLoad&&(msg.type==="chat"||msg.type==="photo"))playNotifySound();
+      if(!isMe&&!chatFirstLoad&&(msg.type==="chat"||msg.type==="photo")){
+        playNotifySound();
+        sendNotif("💬 "+(msg.senderName||"Trading partner"),msg.type==="photo"?"📷 Sent a photo":msg.text,"chat-"+currentOrderId);
+      }
       const time=msg.timestamp?.toDate?msg.timestamp.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"";
       if(msg.type==="system"){
         area.insertAdjacentHTML("beforeend",`<div class="msg-wrap" style="align-items:center;"><div class="msg-bubble system-msg">${escapeHtml(msg.text)}</div><div class="msg-meta" style="justify-content:center;">${time}</div></div>`);
