@@ -617,15 +617,15 @@ const depositInfo={"USDT":{network:"TRON (TRC20)",address:"TBBnZdhgwfkKj1zNS9GEp
 function toggleTheme(){isDark=!isDark;document.documentElement.setAttribute("data-theme",isDark?"dark":"light");document.querySelectorAll(".theme-toggle").forEach(b=>b.textContent=isDark?"🌙":"☀️");document.getElementById("themeIcon").textContent=isDark?"🌙":"☀️";document.getElementById("themeSub").textContent=isDark?"Currently Dark":"Currently Light";localStorage.setItem("cvTheme",isDark?"dark":"light");}
 
 // ===== PUSH NOTIFICATIONS =====
-let notifPermission=Notification&&Notification.permission||"default";
+let notifPermission=(typeof Notification!=="undefined"&&Notification.permission)||"default";
 
 function requestNotifPermission(){
-  if(!("Notification" in window)){alert("This browser does not support notifications.");return;}
+  if(typeof Notification==="undefined"){alert("This browser does not support notifications.");return;}
   Notification.requestPermission().then(perm=>{
     notifPermission=perm;
     updateNotifToggleUI();
     if(perm==="granted"){sendNotif("🔔 Notifications enabled!","You will now get alerts for messages and updates.");}
-  });
+  }).catch(()=>{});
 }
 
 function updateNotifToggleUI(){
@@ -637,11 +637,10 @@ function updateNotifToggleUI(){
 }
 
 function sendNotif(title,body,tag){
-  if(!("Notification" in window)||Notification.permission!=="granted")return;
-  // Don\'t notify if the tab is currently visible and focused
+  if(typeof Notification==="undefined"||Notification.permission!=="granted")return;
   if(document.visibilityState==="visible"&&document.hasFocus())return;
   try{
-    const n=new Notification(title,{body:body||"",icon:"https://coinvexa.github.io/Coinvexa-/favicon.ico",tag:tag||"cv-notif",badge:"",silent:false});
+    const n=new Notification(title,{body:body||"",tag:tag||"cv-notif"});
     n.onclick=()=>{window.focus();n.close();};
   }catch(e){}
 }
