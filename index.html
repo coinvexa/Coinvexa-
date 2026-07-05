@@ -877,7 +877,7 @@ function goTo(pageId){
   if(pageId==="withdrawPage"){renderMyWithdrawals();updateWdBalance();}
   if(pageId==="depositAddressPage")renderMyDepositRequests();
   if(pageId==="createOfferPage")checkKycForOffer();
-  if(pageId==="myOffersPage")loadMyOffers();
+  if(pageId==="myOffersPage")loadMyOffers("myOffersList");
   if(pageId==="myOrdersPage")loadMyOrders();
   if(chatListener&&pageId!=="orderPage"){chatListener();chatListener=null;}
   window.scrollTo(0,0);
@@ -891,7 +891,7 @@ async function loadP2POffers(){
   updateKycNudge();
   const coin=document.getElementById("p2pCoinFilter").value,currency=document.getElementById("p2pCurrencyFilter").value;
   const activeSide=document.querySelector(".p2p-tab-b.active")?.dataset.side||"buy";
-  if(activeSide==="myoffers"){loadMyOffers();return;}
+  if(activeSide==="myoffers"){loadMyOffers("offerList");return;}
   document.getElementById("offerList").innerHTML="<div style=\"text-align:center;padding:30px;color:var(--ink-dim)\">Loading…</div>";
   try{
     const snap=await db.collection("p2pOffers").where("coin","==",coin).where("currency","==",currency).where("type","==",activeSide==="buy"?"buy":"sell").where("active","==",true).limit(20).get();
@@ -938,7 +938,7 @@ function renderOfferList(offers,side){
   }).join("");
 }
 
-document.querySelectorAll(".p2p-tab-b").forEach(tab=>{tab.onclick=()=>{document.querySelectorAll(".p2p-tab-b").forEach(t=>t.classList.remove("active"));tab.classList.add("active");if(tab.dataset.side==="myoffers")loadMyOffers();else loadP2POffers();};});
+document.querySelectorAll(".p2p-tab-b").forEach(tab=>{tab.onclick=()=>{document.querySelectorAll(".p2p-tab-b").forEach(t=>t.classList.remove("active"));tab.classList.add("active");if(tab.dataset.side==="myoffers")loadMyOffers("offerList");else loadP2POffers();};});
 
 function selectOfferType(type){currentOfferType=type;document.getElementById("offerTypeBuy").classList.toggle("active",type==="buy");document.getElementById("offerTypeSell").classList.toggle("active",type==="sell");}
 function checkKycForOffer(){const kyc=userData?.kyc||{};const msg=document.getElementById("kycRequiredMsg"),form=document.getElementById("createOfferForm");if(kyc.status!=="verified"){msg.classList.remove("hidden");form.classList.add("hidden");}else{msg.classList.add("hidden");form.classList.remove("hidden");}}
@@ -961,17 +961,23 @@ ${amount} ${coin} at ${price} ${currency} each`))return;
   }catch(e){alert("Error: "+e.message);}
 }
 
-async function loadMyOffers(){
-  const el=document.getElementById("myOffersList")||document.getElementById("offerList");if(!el)return;
+async function loadMyOffers(targetId){
+  const el=document.getElementById(targetId||"offerList");if(!el)return;
+  el.innerHTML="<div style=\"text-align:center;padding:30px;color:var(--ink-dim)\">Loading…</div>";
   try{
-    const snap=await db.collection("p2pOffers").where("userId","==",currentUser.uid).orderBy("createdAt","desc").get();
+    const snap=await db.collection("p2pOffers").where("userId","==",currentUser.uid).get();
     const offers=snap.docs.map(d=>({id:d.id,...d.data()}));
+    offers.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
     if(!offers.length){el.innerHTML="<div class=\"empty-history\">No offers yet.</div>";return;}
     el.innerHTML=offers.map(o=>`<div class="my-offer-item"><div class="top"><div><span class="offer-type-badge ${o.type}">${o.type.toUpperCase()}</span> ${o.coin}/${o.currency}</div><span class="${o.active?"active-badge":"inactive-badge"}">${o.active?"ACTIVE":"PAUSED"}</span></div><div style="font-size:13px;margin:6px 0;">Price: <b>${(o.price||0).toLocaleString()} ${o.currency}</b> · Amount: <b>${o.amount} ${o.coin}</b></div><div style="font-size:12px;color:var(--ink-dim);">Limit: ${(o.minOrder||0).toLocaleString()}–${(o.maxOrder||0).toLocaleString()} ${o.currency}</div><div style="display:flex;gap:8px;margin-top:10px;"><button onclick="toggleOffer('${o.id}',${!o.active})" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-weight:700;font-size:12px;cursor:pointer;">${o.active?"⏸ Pause":"▶ Activate"}</button><button onclick="deleteOffer('${o.id}')" style="flex:1;padding:8px;border-radius:8px;border:none;background:rgba(239,93,93,.15);color:var(--red);font-weight:700;font-size:12px;cursor:pointer;">🗑 Delete</button></div></div>`).join("");
   }catch(e){el.innerHTML="<div class=\"empty-history\" style=\"color:var(--red)\">Error: "+e.message+"</div>";}
 }
-async function toggleOffer(id,active){try{await db.collection("p2pOffers").doc(id).update({active});loadMyOffers();}catch(e){alert(e.message);}}
-async function deleteOffer(id){if(!confirm("Delete?"))return;try{await db.collection("p2pOffers").doc(id).delete();loadMyOffers();}catch(e){alert(e.message);}}
+function refreshMyOffersView(){
+  if(!document.getElementById("myOffersPage").classList.contains("hidden"))loadMyOffers("myOffersList");
+  else loadMyOffers("offerList");
+}
+async function toggleOffer(id,active){try{await db.collection("p2pOffers").doc(id).update({active});refreshMyOffersView();}catch(e){alert(e.message);}}
+async function deleteOffer(id){if(!confirm("Delete?"))return;try{await db.collection("p2pOffers").doc(id).delete();refreshMyOffersView();}catch(e){alert(e.message);}}
 
 // ===== STYLED TRADE MODAL =====
 async function openTradeModal(offerId){
