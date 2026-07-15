@@ -894,21 +894,20 @@ async function loadP2POffers(){
   if(activeSide==="myoffers"){loadMyOffers("offerList");return;}
   document.getElementById("offerList").innerHTML="<div style=\"text-align:center;padding:30px;color:var(--ink-dim)\">Loading…</div>";
   try{
-    const snap=await db.collection("p2pOffers").where("active","==",true).where("type","==",activeSide==="buy"?"buy":"sell").limit(50).get();
+    // Fetch ALL active offers, filter everything client-side (avoids any index issues)
+    const snap=await db.collection("p2pOffers").get();
     let offers=snap.docs.map(d=>({id:d.id,...d.data()}));
-    offers=offers.filter(o=>o.coin===coin&&o.currency===currency);
+    offers=offers.filter(o=>o.active===true&&o.type===(activeSide==="buy"?"buy":"sell")&&o.coin===coin&&o.currency===currency);
     offers=await Promise.all(offers.map(async o=>{
       try{const uSnap=await db.collection("users").doc(o.userId).get();const rate=uSnap.exists?(uSnap.data().exchangeRate||1):1;if(rate!==1)o.price=parseFloat((o.price*rate).toFixed(2));}catch(e){}
       return o;
     }));
     offers.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
     renderOfferList(offers,activeSide);
-  }catch(e){document.getElementById("offerList").innerHTML="<div style=\"text-align:center;padding:30px;color:var(--red)\">Error: "+e.message+"</div>";}
+  }catch(e){document.getElementById("offerList").innerHTML="<div style=\"text-align:center;padding:30px;color:var(--red)\">Error: "+e.message+"</div>";console.error("P2P LOAD ERROR:",e);}
 }
 
 function renderOfferList(offers,side){
-  const label=document.getElementById("offerListLabel");
-  if(label)label.textContent=offers.length?"":"Offers";
   if(!offers.length){document.getElementById("offerList").innerHTML="<div style=\"text-align:center;padding:40px;color:var(--ink-dim)\">No offers available.<br>Be the first to post one!</div>";return;}
   const btnLabel=side==="buy"?"Sell":"Buy",btnCls=side==="buy"?"sell":"buy";
   document.getElementById("offerList").innerHTML=offers.map((o,idx)=>{
@@ -954,10 +953,9 @@ async function submitOffer(){
   if(!price||!amount||!minOrder||!maxOrder||!paymentMethods.length){alert("Fill in all fields.");return;}
   if(minOrder>maxOrder){alert("Min order cannot be greater than max order.");return;}
   if(currentOfferType==="sell"){const bal=userData.balances[coin]||0;if(amount>bal){alert(`Insufficient ${coin}. You have ${bal}.`);return;}}
-  if(!confirm(`Post this ${currentOfferType} offer?
-${amount} ${coin} at ${price} ${currency} each`))return;
+  if(!confirm(`Post this ${currentOfferType} offer?\n${amount} ${coin} at ${price} ${currency} each`))return;
   try{
-    await db.collection("p2pOffers").add({userId:currentUser.uid,merchantName:currentUser.displayName||currentUser.email.split("@")[0],kycVerified:kyc.status==="verified",type:currentOfferType,coin,currency,price,amount,minOrder,maxOrder,paymentMethods,instructions,active:true,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    await db.collection("p2pOffers").add({userId:currentUser.uid,merchantName:currentUser.displayName||currentUser.email.split("@")[0],kycVerified:kyc.status==="verified",type:currentOfferType,coin,currency,price:Number(price),amount:Number(amount),minOrder:Number(minOrder),maxOrder:Number(maxOrder),paymentMethods,instructions,active:true,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
     alert("✅ Offer posted!");goTo("p2pPage");
   }catch(e){alert("Error: "+e.message);}
 }
@@ -966,8 +964,8 @@ async function loadMyOffers(targetId){
   const el=document.getElementById(targetId||"offerList");if(!el)return;
   el.innerHTML="<div style=\"text-align:center;padding:30px;color:var(--ink-dim)\">Loading…</div>";
   try{
-    const snap=await db.collection("p2pOffers").where("userId","==",currentUser.uid).get();
-    const offers=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const snap=await db.collection("p2pOffers").get();
+    const offers=snap.docs.map(d=>({id:d.id,...d.data()})).filter(o=>o.userId===currentUser.uid);
     offers.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
     if(!offers.length){el.innerHTML="<div class=\"empty-history\">No offers yet.</div>";return;}
     el.innerHTML=offers.map(o=>`<div class="my-offer-item"><div class="top"><div><span class="offer-type-badge ${o.type}">${o.type.toUpperCase()}</span> ${o.coin}/${o.currency}</div><span class="${o.active?"active-badge":"inactive-badge"}">${o.active?"ACTIVE":"PAUSED"}</span></div><div style="font-size:13px;margin:6px 0;">Price: <b>${(o.price||0).toLocaleString()} ${o.currency}</b> · Amount: <b>${o.amount} ${o.coin}</b></div><div style="font-size:12px;color:var(--ink-dim);">Limit: ${(o.minOrder||0).toLocaleString()}–${(o.maxOrder||0).toLocaleString()} ${o.currency}</div><div style="display:flex;gap:8px;margin-top:10px;"><button onclick="toggleOffer('${o.id}',${!o.active})" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-weight:700;font-size:12px;cursor:pointer;">${o.active?"⏸ Pause":"▶ Activate"}</button><button onclick="deleteOffer('${o.id}')" style="flex:1;padding:8px;border-radius:8px;border:none;background:rgba(239,93,93,.15);color:var(--red);font-weight:700;font-size:12px;cursor:pointer;">🗑 Delete</button></div></div>`).join("");
