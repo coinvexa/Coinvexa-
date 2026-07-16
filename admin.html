@@ -131,6 +131,7 @@
       <div class="stat-card"><div class="stat-label">KYC Pending</div><div class="stat-value gold" id="statKyc">—</div></div>
       <div class="stat-card"><div class="stat-label">Total USDT</div><div class="stat-value green" id="statUsdt">—</div></div>
       <div class="stat-card"><div class="stat-label">Total BTC</div><div class="stat-value" style="color:var(--gold);" id="statBtc">—</div></div>
+      <div class="stat-card"><div class="stat-label">💰 Platform Revenue</div><div class="stat-value" style="color:var(--accent);" id="statRevenue">—</div></div>
     </div>
   </div>
 
@@ -261,6 +262,23 @@ function renderStats(){
   document.getElementById('statKyc').textContent=pendingKyc;
   document.getElementById('statUsdt').textContent=totalUsdt.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
   document.getElementById('statBtc').textContent=totalBtc.toFixed(6);
+  loadRevenue();
+}
+
+async function loadRevenue(){
+  try{
+    const snap=await db.collection('platformRevenue').get();
+    let totalFeeUsdtEquiv=0;
+    const byCoin={};
+    snap.docs.forEach(d=>{
+      const r=d.data();
+      byCoin[r.coin]=(byCoin[r.coin]||0)+(r.feeAmount||0);
+    });
+    // Simple display: show sum per coin, roughly weight USDT as primary
+    totalFeeUsdtEquiv=byCoin.USDT||0;
+    const parts=Object.keys(byCoin).map(c=>byCoin[c].toFixed(4)+' '+c);
+    document.getElementById('statRevenue').textContent=parts.length?parts.join(' + '):'0.00';
+  }catch(e){document.getElementById('statRevenue').textContent='—';}
 }
 
 // ===== WITHDRAWALS =====
