@@ -284,6 +284,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   .b-buy-btn{padding:9px 28px;border-radius:8px;border:none;font-weight:700;font-size:14px;cursor:pointer;}
   .b-buy-btn.buy{background:var(--green);color:#06241a;}
   .b-buy-btn.sell{background:var(--red);color:#fff;}
+
+  .asset-sparkline{width:56px;height:24px;flex-shrink:0;margin:0 10px;}
+  .asset-row{position:relative;}
 </style>
 </head>
 <body>
@@ -445,6 +448,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <div class="order-detail-cell"><div class="lbl">Total</div><div class="val" id="orderTotal">—</div></div>
         <div class="order-detail-cell"><div class="lbl">Merchant</div><div class="val" id="orderMerchant">—</div></div>
         <div class="order-detail-cell"><div class="lbl">Payment</div><div class="val" id="orderPayment">—</div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink-dim);margin-top:8px;padding-top:8px;border-top:1px solid var(--line);">
+        <span>Trading fee (1%)</span>
+        <span id="orderFeeDisplay">—</span>
       </div>
     </div>
 
@@ -671,6 +678,7 @@ firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(),db=firebase.firestore();
 let currentUser=null,userData=null,livePrices={USDT:1,BTC:64800,ETH:3375,SOL:148,TRX:0.135};
 let currentDepositCoin="USDT",isDark=true,currentOrderId=null,chatListener=null,currentOfferType="buy";
+let priceHistory={USDT:[],BTC:[],ETH:[],SOL:[],TRX:[]}; // rolling recent price points for sparklines
 let activeTradeOffer=null;
 const coinMeta={USDT:{full:"Tether",cls:"usdt",letter:"T"},BTC:{full:"Bitcoin",cls:"btc",letter:"B"},ETH:{full:"Ethereum",cls:"eth",letter:"E"},SOL:{full:"Solana",cls:"sol",letter:"S"},TRX:{full:"Tron",cls:"trx",letter:"X"}};
 const depositInfo={"USDT":{network:"TRON (TRC20)",address:"TBBnZdhgwfkKj1zNS9GEpjj58N6kLmEBip",min:"0.005 USDT",arrival:"~20 confirmations"},"BTC":{network:"Bitcoin (BTC)",address:"1BoZAfu4s8VonCfYY81SmALHV3JVUVtNcJ",min:"0.00001 BTC",arrival:"~1 confirmation"},"SOL":{network:"Solana (SOL)",address:"4eMjgQ8LjSo4gbrBPdxGeEgmhbpo7HJSXa2PWJADX9Dc",min:"0.001 SOL",arrival:"~200 confirmations"},"ETH":{network:"Ethereum (ERC20)",address:"0xc4338f9e5b6f290af6f4653d946308cef7625279",min:"0.00005 ETH",arrival:"~6 confirmations"},"TRX":{network:"TRON (TRC20)",address:"TBBnZdhgwfkKj1zNS9GEpjj58N6kLmEBip",min:"1 TRX",arrival:"~20 confirmations"}};
@@ -721,6 +729,7 @@ auth.onAuthStateChanged(async(user)=>{
     document.getElementById("authLoading").classList.add("hidden");
     document.getElementById("appContent").classList.remove("hidden");
     await loadUserData();renderAssets();renderHistory();renderProfile();fetchLivePrices();
+    if(!window._priceRefreshInterval){window._priceRefreshInterval=setInterval(fetchLivePrices,30000);}
   }else{window.location.href="login.html";}
 });
 
@@ -777,7 +786,25 @@ async function fetchLivePrices(){
   if(data&&data.data){data.data.forEach(a=>{const p=parseFloat(a.priceUsd);if(a.id==="bitcoin")livePrices.BTC=p;if(a.id==="ethereum")livePrices.ETH=p;if(a.id==="solana")livePrices.SOL=p;if(a.id==="tron")livePrices.TRX=p;if(a.id==="tether")livePrices.USDT=p||1;});}
   document.getElementById("priceUpdate").textContent="Live · "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});}
   catch(e){document.getElementById("priceUpdate").textContent="Cached prices";}
+  // Record price history for sparklines (keep last 20 points per coin)
+  Object.keys(livePrices).forEach(c=>{
+    if(!priceHistory[c])priceHistory[c]=[];
+    priceHistory[c].push(livePrices[c]);
+    if(priceHistory[c].length>20)priceHistory[c].shift();
+  });
+  await fetchMarket24hChange();
   renderAssets();renderMarkets();
+}
+
+function sparklineSVG(coin){
+  const pts=priceHistory[coin]||[];
+  if(pts.length<2)return \'<svg class="asset-sparkline" viewBox="0 0 56 24"><line x1="0" y1="12" x2="56" y2="12" stroke="var(--ink-dim)" stroke-width="1.5" opacity="0.3"/></svg>\';
+  const min=Math.min(...pts),max=Math.max(...pts),range=(max-min)||1;
+  const w=56,h=24,step=w/(pts.length-1);
+  const coords=pts.map((p,i)=>{const x=i*step;const y=h-((p-min)/range)*h;return x.toFixed(1)+","+y.toFixed(1);}).join(" ");
+  const trendUp=pts[pts.length-1]>=pts[0];
+  const color=trendUp?"var(--green)":"var(--red)";
+  return `<svg class="asset-sparkline" viewBox="0 0 ${w} ${h}"><polyline points="${coords}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 }
 
 let hideSmallBalances=localStorage.getItem("cvHideSmall")==="1";
@@ -813,7 +840,7 @@ function renderAssets(){
     if(hideSmallBalances&&isDust)return "";
     visibleCount++;
     if(usd>bestVal){bestVal=usd;bestCoin=coin;}
-    return `<div class="asset-row"><div class="coin-icon ${m.cls}">${m.letter}</div><div class="asset-info"><div class="name">${coin}</div><div class="full">${m.full} · $${(livePrices[coin]||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div><div class="asset-values"><div class="amt">${amt.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:coin==="BTC"?6:2})}</div><div class="usd">≈ $${usd.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div></div>`;
+    return `<div class="asset-row"><div class="coin-icon ${m.cls}">${m.letter}</div><div class="asset-info"><div class="name">${coin}</div><div class="full">${m.full} · $${(livePrices[coin]||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div>${sparklineSVG(coin)}<div class="asset-values"><div class="amt">${amt.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:coin==="BTC"?6:2})}</div><div class="usd">≈ $${usd.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div></div>`;
   }).join("");
 
   if(!document.getElementById("assetList").innerHTML.trim()){
@@ -828,10 +855,39 @@ function renderAssets(){
   updateWdBalance();
 }
 
+let market24hChange={BTC:0,ETH:0,SOL:0,TRX:0,USDT:0};
+
+async function fetchMarket24hChange(){
+  try{
+    const res=await fetch("https://api.coincap.io/v2/assets?ids=bitcoin,ethereum,solana,tron,tether&limit=5");
+    const data=await res.json();
+    if(data&&data.data){
+      data.data.forEach(a=>{
+        const chg=parseFloat(a.changePercent24Hr)||0;
+        if(a.id==="bitcoin")market24hChange.BTC=chg;
+        if(a.id==="ethereum")market24hChange.ETH=chg;
+        if(a.id==="solana")market24hChange.SOL=chg;
+        if(a.id==="tron")market24hChange.TRX=chg;
+        if(a.id==="tether")market24hChange.USDT=chg;
+      });
+    }
+  }catch(e){}
+}
+
 function renderMarkets(){
-  const coins=[{coin:"BTC",name:"Bitcoin",change:"+2.4%",pos:true},{coin:"ETH",name:"Ethereum",change:"+1.8%",pos:true},{coin:"SOL",name:"Solana",change:"+3.1%",pos:true},{coin:"TRX",name:"Tron",change:"-0.5%",pos:false},{coin:"USDT",name:"Tether",change:"0.00%",pos:true}];
-  document.getElementById("marketList").innerHTML=coins.map(c=>{const m=coinMeta[c.coin],price=livePrices[c.coin]||0;return `<div class="market-row"><div class="coin-icon ${m.cls}" style="flex-shrink:0;">${m.letter}</div><div class="market-info"><div class="name">${c.name}</div><div class="sym">${c.coin}</div></div><div class="market-price"><div class="price">$${price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:c.coin==="BTC"?0:2})}</div><div class="change ${c.pos?"pos":"neg"}">${c.change}</div></div></div>`;}).join("");
-  document.getElementById("marketLastUpdate").textContent="via CoinCap";
+  const coins=[{coin:"BTC",name:"Bitcoin"},{coin:"ETH",name:"Ethereum"},{coin:"SOL",name:"Solana"},{coin:"TRX",name:"Tron"},{coin:"USDT",name:"Tether"}];
+  document.getElementById("marketList").innerHTML=coins.map(c=>{
+    const m=coinMeta[c.coin],price=livePrices[c.coin]||0;
+    const chg=market24hChange[c.coin]||0,pos=chg>=0;
+    const chgStr=(pos?"+":"")+chg.toFixed(2)+"%";
+    return `<div class="market-row">
+      <div class="coin-icon ${m.cls}" style="flex-shrink:0;">${m.letter}</div>
+      <div class="market-info"><div class="name">${c.name}</div><div class="sym">${c.coin}</div></div>
+      ${sparklineSVG(c.coin)}
+      <div class="market-price"><div class="price">$${price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:c.coin==="BTC"?0:2})}</div><div class="change ${pos?"pos":"neg"}">${chgStr}</div></div>
+    </div>`;
+  }).join("");
+  document.getElementById("marketLastUpdate").textContent="Live via CoinCap · "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
 }
 
 let historyFilter="all";
@@ -911,7 +967,7 @@ async function loadP2POffers(){
 
 function renderOfferList(offers,side){
   if(!offers.length){document.getElementById("offerList").innerHTML="<div style=\"text-align:center;padding:40px;color:var(--ink-dim)\">No offers available.<br>Be the first to post one!</div>";return;}
-  const btnLabel=side==="buy"?"Sell":"Buy",btnCls=side==="buy"?"sell":"buy";
+  const btnLabel=side==="buy"?"Buy":"Sell",btnCls=side==="buy"?"buy":"sell";
   document.getElementById("offerList").innerHTML=offers.map((o,idx)=>{
     const isMe=o.userId===currentUser.uid,initial=(o.merchantName||"?")[0].toUpperCase();
     const trades=o.completedTrades||Math.floor(50+Math.random()*400);
@@ -1050,6 +1106,8 @@ function openOrderChat(orderDocId,role,offerData,amount,total){
   amtEl.className="order-amount-big "+(role==="buyer"?"buying":"selling");
   document.getElementById("orderPrice").textContent=(offerData?.price||0).toLocaleString()+" "+(offerData?.currency||"");
   document.getElementById("orderTotal").textContent=(total||0).toLocaleString()+" "+(offerData?.currency||"");
+  const feeAmt=(amount||0)*0.01;
+  document.getElementById("orderFeeDisplay").textContent=feeAmt.toFixed(4)+" "+(offerData?.coin||"")+" (you receive "+((amount||0)-feeAmt).toFixed(4)+" "+(offerData?.coin||"")+")";
   document.getElementById("orderMerchant").textContent=role==="buyer"?(offerData?.merchantName||"Seller"):(offerData?.merchantName||"Buyer");
   document.getElementById("orderPayment").textContent=(offerData?.paymentMethods||[]).join(", ")||"—";
   setOrderStatus("pending",role);
@@ -1240,7 +1298,44 @@ async function markPaid(){
   document.getElementById("countdownBox").classList.add("hidden");
   unlockChat(); // Unlock chat after payment
 }
-async function releaseFunds(){if(!currentOrderId||!confirm("Confirm payment received and release funds to buyer?"))return;await db.collection("p2pOrders").doc(currentOrderId).update({status:"completed"});await db.collection("p2pOrders").doc(currentOrderId).collection("messages").add({text:"🎉 Seller confirmed payment received. Funds released to buyer! Order complete.",type:"system",senderId:"system",timestamp:firebase.firestore.FieldValue.serverTimestamp()});setOrderStatus("completed","seller");document.getElementById("sellerActionsBar").classList.add("hidden");}
+const TRADING_FEE_RATE=0.01; // 1% fee on every completed P2P trade
+
+async function releaseFunds(){
+  if(!currentOrderId||!confirm("Confirm payment received and release funds to buyer?"))return;
+  try{
+    const orderSnap=await db.collection("p2pOrders").doc(currentOrderId).get();
+    if(!orderSnap.exists){alert("Order not found.");return;}
+    const order=orderSnap.data();
+    const fee=order.amount*TRADING_FEE_RATE;
+    const buyerReceives=order.amount-fee;
+
+    // Credit buyer (minus fee)
+    const buyerRef=db.collection("users").doc(order.buyerId);
+    const buyerSnap=await buyerRef.get();
+    if(buyerSnap.exists){
+      const bd=buyerSnap.data();
+      const bals=bd.balances||{};
+      bals[order.coin]=(bals[order.coin]||0)+buyerReceives;
+      const txns=bd.transactions||[];
+      txns.push({type:"P2P Buy — "+order.coin,coin:order.coin,amount:buyerReceives,status:"Completed",date:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})});
+      await buyerRef.update({balances:bals,transactions:txns});
+    }
+    // Seller transaction record (already deducted when offer was posted)
+    const sellerTxns=userData.transactions||[];
+    sellerTxns.push({type:"P2P Sell — "+order.coin+" (Fee: "+fee.toFixed(4)+")",coin:order.coin,amount:0,status:"Completed",date:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})});
+    userData.transactions=sellerTxns;
+    await saveUserData();
+
+    // Record fee in platform revenue collection
+    await db.collection("platformRevenue").add({orderId:currentOrderId,coin:order.coin,feeAmount:fee,tradeAmount:order.amount,buyerId:order.buyerId,sellerId:order.sellerId,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+
+    await db.collection("p2pOrders").doc(currentOrderId).update({status:"completed",feeCharged:fee,buyerReceived:buyerReceives});
+    await db.collection("p2pOrders").doc(currentOrderId).collection("messages").add({text:"🎉 Seller confirmed payment received. "+buyerReceives.toFixed(4)+" "+order.coin+" released to buyer (1% fee applied). Order complete.",type:"system",senderId:"system",timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+    setOrderStatus("completed","seller");
+    document.getElementById("sellerActionsBar").classList.add("hidden");
+    renderAssets();
+  }catch(e){alert("Error: "+e.message);}
+}
 async function disputeOrder(){if(!confirm("Open dispute? Admin will review."))return;await db.collection("p2pOrders").doc(currentOrderId).update({status:"disputed"});await db.collection("p2pOrders").doc(currentOrderId).collection("messages").add({text:"⚠️ Dispute opened. Admin notified.",type:"system",senderId:"system",timestamp:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById("orderStatus").textContent="Disputed";document.getElementById("orderStatus").className="order-status disputed";}
 async function cancelOrder(){if(!confirm("Cancel order?"))return;if(currentOrderId){await db.collection("p2pOrders").doc(currentOrderId).update({status:"cancelled"});await db.collection("p2pOrders").doc(currentOrderId).collection("messages").add({text:"❌ Order cancelled.",type:"system",senderId:"system",timestamp:firebase.firestore.FieldValue.serverTimestamp()});}document.getElementById("orderStatus").textContent="Cancelled";document.getElementById("orderStatus").className="order-status cancelled";document.getElementById("buyerActionsBar").classList.add("hidden");document.getElementById("sellerActionsBar").classList.add("hidden");}
 
@@ -1382,6 +1477,8 @@ async function reopenOrder(orderId){
     amtEl.className="order-amount-big "+(isBuyer?"buying":"selling");
     document.getElementById("orderPrice").textContent=(o.price||0).toLocaleString()+" "+(o.currency||"");
     document.getElementById("orderTotal").textContent=(o.total||0).toLocaleString()+" "+(o.currency||"");
+    const feeAmt2=(o.amount||0)*0.01;
+    document.getElementById("orderFeeDisplay").textContent=feeAmt2.toFixed(4)+" "+(o.coin||"")+" (receive "+((o.amount||0)-feeAmt2).toFixed(4)+" "+(o.coin||"")+")";
     document.getElementById("orderMerchant").textContent=isBuyer?(o.sellerEmail||"Seller"):(o.buyerEmail||"Buyer");
     document.getElementById("orderPayment").textContent=(o.paymentMethods||[]).join(", ")||"—";
     document.getElementById("escrowTitle").textContent=(o.amount||0).toFixed(4)+" "+(o.coin||"")+" secured in escrow";
