@@ -798,7 +798,7 @@ async function fetchLivePrices(){
 
 function sparklineSVG(coin){
   const pts=priceHistory[coin]||[];
-  if(pts.length<2)return \'<svg class="asset-sparkline" viewBox="0 0 56 24"><line x1="0" y1="12" x2="56" y2="12" stroke="var(--ink-dim)" stroke-width="1.5" opacity="0.3"/></svg>\';
+  if(pts.length<2)return "<svg class=\"asset-sparkline\" viewBox=\"0 0 56 24\"><line x1=\"0\" y1=\"12\" x2=\"56\" y2=\"12\" stroke=\"var(--ink-dim)\" stroke-width=\"1.5\" opacity=\"0.3\"/></svg>";
   const min=Math.min(...pts),max=Math.max(...pts),range=(max-min)||1;
   const w=56,h=24,step=w/(pts.length-1);
   const coords=pts.map((p,i)=>{const x=i*step;const y=h-((p-min)/range)*h;return x.toFixed(1)+","+y.toFixed(1);}).join(" ");
