@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>CoinVexa — Log In</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d1117">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   :root{ --bg:#0d1117; --panel:#161b22; --panel-2:#1f2630; --line:#2b3340; --ink:#e6edf3; --ink-dim:#7d8b9c; --green:#1ec98b; --red:#ef5d5d; --accent:#3b82f6; --gold:#f0b90b; }
@@ -35,9 +39,42 @@
   .spinner{ display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:6px; }
   @keyframes spin{ to{ transform:rotate(360deg); } }
   .hidden{ display:none !important; }
+  .splash{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,#0d1117 0%,#161b22 100%);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;}
+  .splash-logo{width:120px;height:120px;border-radius:28px;margin-bottom:20px;box-shadow:0 8px 32px rgba(59,130,246,.3);}
+  .splash-title{font-size:26px;font-weight:800;margin-bottom:6px;}
+  .splash-title span{color:var(--accent);}
+  .splash-sub{font-size:14px;color:var(--ink-dim);margin-bottom:36px;max-width:280px;line-height:1.5;}
+  .splash-download-btn{width:100%;max-width:320px;padding:16px;border-radius:14px;border:none;background:var(--accent);color:#fff;font-weight:700;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;}
+  .splash-continue-btn{width:100%;max-width:320px;padding:14px;border-radius:14px;border:1px solid var(--line);background:transparent;color:var(--ink-dim);font-weight:600;font-size:14px;cursor:pointer;}
+  .splash-badge{display:flex;align-items:center;gap:6px;background:rgba(30,201,139,.1);border:1px solid rgba(30,201,139,.25);color:var(--green);border-radius:20px;padding:6px 14px;font-size:11px;font-weight:700;margin-bottom:24px;}
+  .ios-sheet{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.65);z-index:600;align-items:flex-end;justify-content:center;}
+  .ios-sheet.open{display:flex;}
+  .ios-card{background:var(--panel);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:24px 20px 32px;}
+  .ios-step{display:flex;align-items:center;gap:12px;margin-bottom:16px;font-size:14px;text-align:left;}
+  .ios-step-num{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
 </style>
 </head>
 <body>
+
+<div class="splash" id="splashScreen">
+  <div class="splash-badge">🔒 Secure P2P Crypto Exchange</div>
+  <img src="icon-512.png" alt="CoinVexa" class="splash-logo">
+  <div class="splash-title">Coin<span>Vexa</span></div>
+  <div class="splash-sub">Buy, sell, and trade crypto safely with escrow-protected P2P trading.</div>
+  <button class="splash-download-btn" onclick="handleSplashInstall()">📲 Download App</button>
+  <button class="splash-continue-btn" onclick="closeSplash()">Continue in browser →</button>
+</div>
+
+<div class="ios-sheet" id="iosSheet">
+  <div class="ios-card">
+    <div style="font-size:17px;font-weight:800;margin-bottom:16px;">📲 Install CoinVexa</div>
+    <div class="ios-step"><div class="ios-step-num">1</div><div>Tap the <b>Share</b> button ⬆️ in Safari's toolbar</div></div>
+    <div class="ios-step"><div class="ios-step-num">2</div><div>Scroll down and tap <b>"Add to Home Screen"</b></div></div>
+    <div class="ios-step"><div class="ios-step-num">3</div><div>Tap <b>"Add"</b> — CoinVexa appears on your home screen!</div></div>
+    <button class="btn-primary-full" onclick="document.getElementById('iosSheet').classList.remove('open');closeSplash();">Got it</button>
+  </div>
+</div>
+
 <div class="topbar"><div class="brand">Coin<span>Vexa</span></div></div>
 <div class="auth-wrap">
   <div class="auth-card">
@@ -160,6 +197,33 @@
       showStatus(`Password reset email sent to ${email}.`);
     }catch(e){ showError(friendlyError(e)); }
   });
+
+  // ===== SPLASH / INSTALL LOGIC =====
+  let deferredPrompt=null;
+  const isStandalone=window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+
+  window.addEventListener("beforeinstallprompt",(e)=>{e.preventDefault();deferredPrompt=e;});
+
+  function closeSplash(){
+    document.getElementById("splashScreen").style.display="none";
+    sessionStorage.setItem("cvSplashSeen","1");
+  }
+
+  function handleSplashInstall(){
+    if(isIOS){document.getElementById("iosSheet").classList.add("open");return;}
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(()=>{deferredPrompt=null;closeSplash();});
+    } else {
+      closeSplash(); // Already installed or unsupported — just continue
+    }
+  }
+
+  // Skip splash if already installed or already seen this session
+  if(isStandalone||sessionStorage.getItem("cvSplashSeen")==="1"){
+    document.getElementById("splashScreen").style.display="none";
+  }
 </script>
 </body>
 </html>
