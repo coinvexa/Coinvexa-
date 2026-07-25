@@ -306,6 +306,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   .ios-install-card{background:var(--panel);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:24px 20px 32px;}
   .ios-step{display:flex;align-items:center;gap:12px;margin-bottom:16px;font-size:14px;}
   .ios-step-num{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+
+  /* SUPPORT CHAT */
+  .support-fab{position:fixed;bottom:76px;right:16px;width:52px;height:52px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;box-shadow:0 6px 20px rgba(59,130,246,.4);z-index:50;}
+  .support-fab.hidden{display:none;}
+  .support-badge{position:absolute;top:-2px;right:-2px;width:16px;height:16px;border-radius:50%;background:var(--red);color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;display:none;}
+  .support-badge.show{display:flex;}
+  .support-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:400;flex-direction:column;}
+  .support-overlay.open{display:flex;}
+  .support-header{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--panel);border-bottom:1px solid var(--line);}
+  .support-header .avatar{width:38px;height:38px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .support-header-text b{display:block;font-size:15px;}
+  .support-header-text span{font-size:11px;color:var(--green);}
+  .support-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;}
+  .support-welcome{text-align:center;padding:20px;color:var(--ink-dim);font-size:13px;}
+  .support-input-row{display:flex;gap:8px;padding:12px 16px;background:var(--panel);border-top:1px solid var(--line);align-items:center;}
+  .support-input-row input{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:22px;padding:11px 16px;color:var(--ink);font-size:14px;outline:none;}
+  .support-send-btn{width:40px;height:40px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 </style>
 </head>
 <body>
@@ -323,7 +340,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
   <div id="assetsPage" class="page">
     <div class="assets-hero">
-      <div class="label">Total Balance</div>
+      <div class="label" data-i18n="totalBalance">Total Balance</div>
       <div class="total" id="totalBalance">0.00 <small>USDT</small></div>
       <div class="sub">Your CoinVexa wallet</div>
       <div class="price-update" id="priceUpdate">Loading prices…</div>
@@ -343,25 +360,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="pro-stat-card"><div class="lbl">Best Coin</div><div class="val" id="proBestCoin">—</div></div>
     </div>
     <div class="action-row">
-      <div class="action-btn" onclick="goTo('depositPage')"><span class="icon">⬇️</span>Deposit</div>
-      <div class="action-btn" onclick="goTo('withdrawPage')"><span class="icon">⬆️</span>Withdraw</div>
-      <div class="action-btn" onclick="goTo('p2pPage')"><span class="icon">🤝</span>P2P</div>
-      <div class="action-btn" onclick="goTo('historyPage')"><span class="icon">📋</span>History</div>
+      <div class="action-btn" onclick="goTo('depositPage')"><span class="icon">⬇️</span><span data-i18n="deposit">Deposit</span></div>
+      <div class="action-btn" onclick="goTo('withdrawPage')"><span class="icon">⬆️</span><span data-i18n="withdraw">Withdraw</span></div>
+      <div class="action-btn" onclick="goTo('p2pPage')"><span class="icon">🤝</span><span data-i18n="p2p">P2P</span></div>
+      <div class="action-btn" onclick="goTo('historyPage')"><span class="icon">📋</span><span data-i18n="history">History</span></div>
     </div>
-    <div class="section-title"><span>Your Assets</span></div>
+    <div class="section-title"><span data-i18n="yourAssets">Your Assets</span></div>
     <div class="asset-list" id="assetList"></div>
   </div>
 
   <div id="p2pPage" class="hidden page">
     <div style="padding:12px 16px 0;">
       <div class="p2p-tabs-binance">
-        <div class="p2p-tab-b active" data-side="buy">Buy</div>
-        <div class="p2p-tab-b" data-side="sell">Sell</div>
-        <div class="p2p-tab-b" data-side="myoffers">My Ads</div>
+        <div class="p2p-tab-b active" data-side="buy" data-i18n="buy">Buy</div>
+        <div class="p2p-tab-b" data-side="sell" data-i18n="sell">Sell</div>
+        <div class="p2p-tab-b" data-side="myoffers" data-i18n="myAds">My Ads</div>
       </div>
     </div>
     <div class="kyc-nudge" id="kycNudge" onclick="goTo('kycPage')">
-      <div class="left"><span>⚠️</span><span>Complete KYC to make your first trade</span></div>
+      <div class="left"><span>⚠️</span><span data-i18n="completeKyc">Complete KYC to make your first trade</span></div>
       <span>›</span>
     </div>
     <div class="p2p-filter-row-b">
@@ -378,9 +395,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <option value="UGX">🇺🇬 UGX</option><option value="MAD">🇲🇦 MAD</option><option value="CNY">🇨🇳 CNY</option>
         <option value="RUB">🇷🇺 RUB</option><option value="BRL">🇧🇷 BRL</option>
       </select>
-      <div style="margin-left:auto;"><button class="create-offer-btn" onclick="goTo('createOfferPage')">+ Post Ad</button></div>
+      <div style="margin-left:auto;"><button class="create-offer-btn" onclick="goTo('createOfferPage')" data-i18n="postAd">+ Post Ad</button></div>
     </div>
-    <div class="promoted-label" id="offerListLabel">Offers</div>
+    <div class="promoted-label" id="offerListLabel" data-i18n="offers">Offers</div>
     <div id="offerList"></div>
   </div>
 
@@ -524,7 +541,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
 
   <div id="historyPage" class="hidden page">
-    <div class="subheader"><div class="back-btn" onclick="goTo('assetsPage')">←</div><div class="title">Transaction History</div></div>
+    <div class="subheader"><div class="back-btn" onclick="goTo('assetsPage')">←</div><div class="title" data-i18n="transactionHistory">Transaction History</div></div>
     <div style="display:flex;gap:8px;padding:12px 16px;overflow-x:auto;">
       <div class="filter-chip active" onclick="filterHistory('all',this)">All</div>
       <div class="filter-chip" onclick="filterHistory('P2P',this)">P2P</div>
@@ -535,7 +552,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
 
   <div id="withdrawPage" class="hidden page">
-    <div class="subheader"><div class="back-btn" onclick="goTo('assetsPage')">←</div><div class="title">Withdraw</div></div>
+    <div class="subheader"><div class="back-btn" onclick="goTo('assetsPage')">←</div><div class="title" data-i18n="withdraw">Withdraw</div></div>
     <div class="warning-note"><span>⚠️</span><span>Withdrawals require admin approval. Balance will be frozen until approved.</span></div>
     <div class="form-card">
       <label class="field-label">Coin</label>
@@ -556,7 +573,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
 
   <div id="depositPage" class="hidden page">
-    <div class="subheader"><div class="back-btn" onclick="goTo('assetsPage')">←</div><div class="title">Deposit</div></div>
+    <div class="subheader"><div class="back-btn" onclick="goTo('assetsPage')">←</div><div class="title" data-i18n="deposit">Deposit</div></div>
     <div class="shield-note"><span>🛡️</span><span>Only send the matching coin and network. Wrong network = permanent loss of funds.</span></div>
     <div class="section-title"><span>Select Coin</span></div>
     <div class="menu-list">
@@ -606,13 +623,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="kyc-badge unverified" id="kycBadge">⚠️ KYC Unverified</div>
     </div>
     <div class="profile-menu">
-      <div class="profile-menu-item" onclick="goTo('kycPage')"><div class="left"><span class="icon">🪪</span><div><div class="label">Identity Verification (KYC)</div><div class="sub">Required for P2P offers & withdrawals</div></div></div><span>›</span></div>
-      <div class="profile-menu-item" onclick="goTo('myOffersPage')"><div class="left"><span class="icon">🤝</span><div><div class="label">My P2P Offers</div><div class="sub">Manage your buy/sell offers</div></div></div><span>›</span></div>
-      <div class="profile-menu-item" onclick="requestNotifPermission()"><div class="left"><span class="icon">🔔</span><div><div class="label">Push Notifications</div><div class="sub" id="notifStatusText">Tap to enable</div></div></div><span>›</span></div>
-      <div class="profile-menu-item" onclick="changePassword()"><div class="left"><span class="icon">🔑</span><div><div class="label">Change Password</div><div class="sub">Send reset link to email</div></div></div><span>›</span></div>
-      <div class="profile-menu-item" onclick="goTo('historyPage')"><div class="left"><span class="icon">📋</span><div><div class="label">Transaction History</div></div></div><span>›</span></div>
-      <div class="profile-menu-item" onclick="toggleTheme()"><div class="left"><span class="icon" id="themeIcon">🌙</span><div><div class="label">Dark / Light Mode</div><div class="sub" id="themeSub">Currently Dark</div></div></div><span>›</span></div>
-      <button class="btn-danger-full" onclick="logoutConfirm()">🚪 Log Out</button>
+      <div class="profile-menu-item" onclick="goTo('kycPage')"><div class="left"><span class="icon">🪪</span><div><div class="label" data-i18n="identityVerification">Identity Verification (KYC)</div><div class="sub">Required for P2P offers & withdrawals</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="goTo('myOffersPage')"><div class="left"><span class="icon">🤝</span><div><div class="label" data-i18n="myP2POffers">My P2P Offers</div><div class="sub">Manage your buy/sell offers</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="requestNotifPermission()"><div class="left"><span class="icon">🔔</span><div><div class="label" data-i18n="pushNotifications">Push Notifications</div><div class="sub" id="notifStatusText">Tap to enable</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="changePassword()"><div class="left"><span class="icon">🔑</span><div><div class="label" data-i18n="changePassword">Change Password</div><div class="sub">Send reset link to email</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="goTo('historyPage')"><div class="left"><span class="icon">📋</span><div><div class="label" data-i18n="transactionHistory">Transaction History</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="toggleTheme()"><div class="left"><span class="icon" id="themeIcon">🌙</span><div><div class="label" data-i18n="darkLightMode">Dark / Light Mode</div><div class="sub" id="themeSub">Currently Dark</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="toggleLanguage()"><div class="left"><span class="icon">🌐</span><div><div class="label" data-i18n="language">Language</div><div class="sub" id="langSub">English</div></div></div><span>›</span></div>
+      <button class="btn-danger-full" onclick="logoutConfirm()"><span data-i18n="logOut">🚪 Log Out</span></button>
     </div>
   </div>
 
@@ -664,12 +682,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
 </div>
 
+<div class="support-fab hidden" id="supportFab" onclick="openSupportChat()">
+  💬<span class="support-badge" id="supportBadge">1</span>
+</div>
+
+<div class="support-overlay" id="supportOverlay">
+  <div class="support-header">
+    <div onclick="closeSupportChat()" style="width:32px;height:32px;border-radius:50%;background:var(--panel-2);display:flex;align-items:center;justify-content:center;cursor:pointer;">←</div>
+    <div class="avatar">🛟</div>
+    <div class="support-header-text"><b>CoinVexa Support</b><span>● Online</span></div>
+  </div>
+  <div class="support-msgs" id="supportMsgs">
+    <div class="support-welcome">👋 Hi! Ask us anything — deposits, withdrawals, KYC, or trading. We'll get back to you as soon as possible.</div>
+  </div>
+  <div class="support-input-row">
+    <input type="text" id="supportInput" placeholder="Type your message…" onkeypress="if(event.key==='Enter')sendSupportMsg()">
+    <button class="support-send-btn" onclick="sendSupportMsg()">➤</button>
+  </div>
+</div>
+
 <div class="bottom-nav">
-  <div class="nav-btn active" data-page="assetsPage"><span class="nav-icon">💰</span>Assets</div>
-  <div class="nav-btn" data-page="p2pPage"><span class="nav-icon">🤝</span>P2P</div>
+  <div class="nav-btn active" data-page="assetsPage"><span class="nav-icon">💰</span><span data-i18n="assets">Assets</span></div>
+  <div class="nav-btn" data-page="p2pPage"><span class="nav-icon">🤝</span><span data-i18n="p2p">P2P</span></div>
   <div class="nav-btn" data-page="myOrdersPage"><span class="nav-icon">💬</span>Orders</div>
-  <div class="nav-btn" data-page="marketsPage"><span class="nav-icon">📊</span>Markets</div>
-  <div class="nav-btn" data-page="profilePage"><span class="nav-icon">👤</span>Profile</div>
+  <div class="nav-btn" data-page="marketsPage"><span class="nav-icon">📊</span><span data-i18n="markets">Markets</span></div>
+  <div class="nav-btn" data-page="profilePage"><span class="nav-icon">👤</span><span data-i18n="profile">Profile</span></div>
 </div>
 
   <div id="myOrdersPage" class="hidden page">
@@ -722,6 +759,43 @@ const depositInfo={"USDT":{network:"TRON (TRC20)",address:"TBBnZdhgwfkKj1zNS9GEp
 function toggleTheme(){isDark=!isDark;document.documentElement.setAttribute("data-theme",isDark?"dark":"light");document.querySelectorAll(".theme-toggle").forEach(b=>b.textContent=isDark?"🌙":"☀️");document.getElementById("themeIcon").textContent=isDark?"🌙":"☀️";document.getElementById("themeSub").textContent=isDark?"Currently Dark":"Currently Light";localStorage.setItem("cvTheme",isDark?"dark":"light");}
 
 // ===== PUSH NOTIFICATIONS =====
+// ===== LANGUAGE / i18n =====
+const translations={
+  en:{
+    totalBalance:"Total Balance", yourAssets:"Your Assets", deposit:"Deposit", withdraw:"Withdraw", p2p:"P2P", history:"History",
+    assets:"Assets", markets:"Markets", profile:"Profile",
+    buy:"Buy", sell:"Sell", myAds:"My Ads", completeKyc:"Complete KYC to make your first trade", postAd:"+ Post Ad", offers:"Offers",
+    identityVerification:"Identity Verification (KYC)", myP2POffers:"My P2P Offers", pushNotifications:"Push Notifications",
+    changePassword:"Change Password", transactionHistory:"Transaction History", darkLightMode:"Dark / Light Mode", logOut:"🚪 Log Out",
+    language:"Language"
+  },
+  am:{
+    totalBalance:"አጠቃላይ ሂሳብ", yourAssets:"የእርስዎ ሀብቶች", deposit:"ገቢ", withdraw:"ወጪ", p2p:"P2P", history:"ታሪክ",
+    assets:"ሀብቶች", markets:"ገበያ", profile:"መገለጫ",
+    buy:"ግዛ", sell:"ሽጥ", myAds:"የኔ ማስታወቂያዎች", completeKyc:"የመጀመሪያ ንግድዎን ለማድረግ KYC ያጠናቅቁ", postAd:"+ ማስታወቂያ ለጥፍ", offers:"ማቅረቢያዎች",
+    identityVerification:"የማንነት ማረጋገጫ (KYC)", myP2POffers:"የኔ P2P ማቅረቢያዎች", pushNotifications:"ማሳወቂያዎች",
+    changePassword:"የይለፍ ቃል ቀይር", transactionHistory:"የግብይት ታሪክ", darkLightMode:"ጨለማ / ብርሃን ሁነታ", logOut:"🚪 ውጣ",
+    language:"ቋንቋ"
+  }
+};
+let currentLang=localStorage.getItem("cvLang")||"en";
+
+function applyTranslations(){
+  const dict=translations[currentLang]||translations.en;
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key=el.getAttribute("data-i18n");
+    if(dict[key])el.textContent=dict[key];
+  });
+  const sub=document.getElementById("langSub");
+  if(sub)sub.textContent=currentLang==="am"?"አማርኛ":"English";
+}
+
+function toggleLanguage(){
+  currentLang=currentLang==="en"?"am":"en";
+  localStorage.setItem("cvLang",currentLang);
+  applyTranslations();
+}
+
 let notifPermission=(typeof Notification!=="undefined"&&Notification.permission)||"default";
 
 // ===== PWA INSTALL PROMPT =====
@@ -796,12 +870,15 @@ auth.onAuthStateChanged(async(user)=>{
     document.getElementById("proViewLabel").textContent=proViewOn?"📊 Simple View":"📊 Pro View";
     document.getElementById("proStatsRow").classList.toggle("hidden",!proViewOn);
     updateNotifToggleUI();
+    applyTranslations();
     document.getElementById("userEmailDisplay").textContent=user.email;
     if(!user.emailVerified&&user.providerData[0]?.providerId==="password")document.getElementById("verifyBanner").classList.remove("hidden");
     document.getElementById("authLoading").classList.add("hidden");
     document.getElementById("appContent").classList.remove("hidden");
     await loadUserData();renderAssets();renderHistory();renderProfile();fetchLivePrices();
     if(!window._priceRefreshInterval){window._priceRefreshInterval=setInterval(fetchLivePrices,30000);}
+    document.getElementById("supportFab").classList.remove("hidden");
+    subscribeSupportChat();
   }else{window.location.href="login.html";}
 });
 
@@ -1569,6 +1646,66 @@ async function reopenOrder(orderId){
 }
 
 function escapeHtml(str){const d=document.createElement("div");d.textContent=str;return d.innerHTML;}
+
+// ===== SUPPORT CHAT =====
+let supportChatListener=null;
+let supportChatOpened=false;
+
+function openSupportChat(){
+  document.getElementById("supportOverlay").classList.add("open");
+  document.getElementById("supportBadge").classList.remove("show");
+  supportChatOpened=true;
+  if(!currentUser)return;
+  subscribeSupportChat();
+}
+
+function closeSupportChat(){
+  document.getElementById("supportOverlay").classList.remove("open");
+}
+
+function subscribeSupportChat(){
+  if(supportChatListener)return; // already subscribed
+  const msgsEl=document.getElementById("supportMsgs");
+  supportChatListener=db.collection("supportChats").doc(currentUser.uid).collection("messages").orderBy("timestamp","asc")
+    .onSnapshot(snap=>{
+      const changes=snap.docChanges().filter(c=>c.type==="added");
+      if(changes.length && msgsEl.querySelector(".support-welcome"))msgsEl.innerHTML="";
+      changes.forEach(c=>{
+        const m=c.doc.data();
+        const isMe=m.senderId===currentUser.uid;
+        const time=m.timestamp?.toDate?m.timestamp.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"";
+        msgsEl.insertAdjacentHTML("beforeend",`<div style="align-self:${isMe?'flex-end':'flex-start'};max-width:78%;">
+          <div style="padding:10px 13px;border-radius:16px;font-size:13px;line-height:1.4;${isMe?'background:var(--accent);color:#fff;border-bottom-right-radius:4px;':'background:var(--panel);border:1px solid var(--line);border-bottom-left-radius:4px;'}">${escapeHtml(m.text)}</div>
+          <div style="font-size:10px;color:var(--ink-dim);margin-top:3px;text-align:${isMe?'right':'left'};">${isMe?'You':'Support'} · ${time}</div>
+        </div>`);
+        msgsEl.scrollTop=msgsEl.scrollHeight;
+        // Notify if message from support and chat not currently open/focused
+        if(!isMe&&(!supportChatOpened||document.visibilityState!=="visible")){
+          if(typeof playNotifySound==="function")playNotifySound();
+          if(typeof sendNotif==="function")sendNotif("🛟 CoinVexa Support",m.text,"support");
+          document.getElementById("supportBadge").classList.add("show");
+        }
+      });
+      msgsEl.scrollTop=msgsEl.scrollHeight;
+    });
+}
+
+async function sendSupportMsg(){
+  const input=document.getElementById("supportInput");
+  const text=input.value.trim();
+  if(!text||!currentUser)return;
+  input.value="";
+  const name=currentUser.displayName||currentUser.email.split("@")[0];
+  try{
+    await db.collection("supportChats").doc(currentUser.uid).collection("messages").add({
+      text, senderId:currentUser.uid, senderName:name, timestamp:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    // Ensure a top-level record exists so admin can list all support chats
+    await db.collection("supportChats").doc(currentUser.uid).set({
+      userEmail:currentUser.email, userName:name, lastMessage:text, lastMessageAt:firebase.firestore.FieldValue.serverTimestamp(), lastSenderId:currentUser.uid
+    },{merge:true});
+  }catch(e){alert("Error sending message: "+e.message);}
+}
 </script>
 </body>
 </html>
