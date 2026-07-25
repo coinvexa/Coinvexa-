@@ -323,6 +323,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   .support-input-row{display:flex;gap:8px;padding:12px 16px;background:var(--panel);border-top:1px solid var(--line);align-items:center;}
   .support-input-row input{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:22px;padding:11px 16px;color:var(--ink);font-size:14px;outline:none;}
   .support-send-btn{width:40px;height:40px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .ann-banner{background:linear-gradient(135deg,rgba(240,185,11,.15),rgba(240,185,11,.05));border-bottom:1px solid rgba(240,185,11,.3);padding:10px 16px;display:flex;align-items:center;gap:12px;font-size:13px;color:var(--gold);}
+  .ann-banner a{color:var(--accent);font-weight:700;text-decoration:none;}
+  .ann-banner-close{cursor:pointer;color:var(--ink-dim);font-size:16px;margin-left:auto;}
+
+  .coin-select-row{display:flex;gap:10px;padding:14px 16px 10px;overflow-x:auto;}
+  .coin-select-card{flex-shrink:0;display:flex;align-items:center;gap:10px;background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:10px 16px;cursor:pointer;min-width:110px;}
+  .coin-select-card.active{border-color:var(--accent);background:rgba(59,130,246,.08);}
+  .coin-select-card .coin-select-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;}
+  .coin-select-card .coin-select-text b{display:block;font-size:14px;font-weight:800;}
+  .coin-select-card .coin-select-text span{font-size:10px;color:var(--ink-dim);}
+  .p2p-currency-row{display:flex;align-items:center;gap:8px;padding:0 16px 12px;}
 </style>
 </head>
 <body>
@@ -333,7 +344,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <span id="logoutBtn" style="cursor:pointer;">🚪</span>
   </div>
 </div>
-<div class="verify-banner hidden" id="verifyBanner">⚠️ Please verify your email <button onclick="resendVerification()">Resend</button></div>
+<div class="ann-banner hidden" id="annBanner">
+  <span id="annBannerText">🚀 Welcome!</span>
+  <a id="annBannerLink" href="#" target="_blank" style="display:none;">Learn more</a>
+  <span class="ann-banner-close" onclick="dismissAnnBanner()">✕</span>
+</div>
 <div id="authLoading" style="text-align:center;padding:60px 16px;color:var(--ink-dim);font-size:13px;">Loading your account…</div>
 
 <div class="content hidden" id="appContent">
@@ -381,11 +396,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="left"><span>⚠️</span><span data-i18n="completeKyc">Complete KYC to make your first trade</span></div>
       <span>›</span>
     </div>
-    <div class="p2p-filter-row-b">
-      <select id="p2pCoinFilter" class="filter-select-b" onchange="loadP2POffers()">
-        <option>USDT</option><option>BTC</option><option>ETH</option><option>SOL</option><option>TRX</option>
-      </select>
-      <span style="color:var(--ink-dim);">·</span>
+    <div class="coin-select-row" id="coinSelectRow">
+      <div class="coin-select-card active" data-coin="USDT" onclick="selectP2PCoin('USDT')"><div class="coin-select-icon usdt-bg" style="background:#1a4d3d;color:#1ec98b;">T</div><div class="coin-select-text"><b>USDT</b><span id="cnt-USDT">— offers</span></div></div>
+      <div class="coin-select-card" data-coin="BTC" onclick="selectP2PCoin('BTC')"><div class="coin-select-icon" style="background:#3a2c10;color:#f0b90b;">B</div><div class="coin-select-text"><b>BTC</b><span id="cnt-BTC">— offers</span></div></div>
+      <div class="coin-select-card" data-coin="ETH" onclick="selectP2PCoin('ETH')"><div class="coin-select-icon" style="background:#1c2840;color:#7fa8ff;">E</div><div class="coin-select-text"><b>ETH</b><span id="cnt-ETH">— offers</span></div></div>
+      <div class="coin-select-card" data-coin="SOL" onclick="selectP2PCoin('SOL')"><div class="coin-select-icon" style="background:#1a2a3a;color:#9945FF;">S</div><div class="coin-select-text"><b>SOL</b><span id="cnt-SOL">— offers</span></div></div>
+      <div class="coin-select-card" data-coin="TRX" onclick="selectP2PCoin('TRX')"><div class="coin-select-icon" style="background:#2c1a3a;color:#c98bf0;">X</div><div class="coin-select-text"><b>TRX</b><span id="cnt-TRX">— offers</span></div></div>
+    </div>
+    <div class="p2p-currency-row">
+      <select id="p2pCoinFilter" style="display:none;"><option>USDT</option><option>BTC</option><option>ETH</option><option>SOL</option><option>TRX</option></select>
       <select id="p2pCurrencyFilter" class="filter-select-b" onchange="loadP2POffers()">
         <option value="ETB">🇪🇹 ETB</option><option value="USD">🇺🇸 USD</option><option value="EUR">🇪🇺 EUR</option>
         <option value="GBP">🇬🇧 GBP</option><option value="AED">🇦🇪 AED</option><option value="SAR">🇸🇦 SAR</option>
@@ -872,15 +891,36 @@ auth.onAuthStateChanged(async(user)=>{
     updateNotifToggleUI();
     applyTranslations();
     document.getElementById("userEmailDisplay").textContent=user.email;
-    if(!user.emailVerified&&user.providerData[0]?.providerId==="password")document.getElementById("verifyBanner").classList.remove("hidden");
     document.getElementById("authLoading").classList.add("hidden");
     document.getElementById("appContent").classList.remove("hidden");
     await loadUserData();renderAssets();renderHistory();renderProfile();fetchLivePrices();
     if(!window._priceRefreshInterval){window._priceRefreshInterval=setInterval(fetchLivePrices,30000);}
     document.getElementById("supportFab").classList.remove("hidden");
     subscribeSupportChat();
+    loadAnnBanner();
   }else{window.location.href="login.html";}
 });
+
+async function loadAnnBanner(){
+  if(sessionStorage.getItem("cvAnnDismissed")==="1")return;
+  try{
+    const doc=await db.collection("appConfig").doc("main").get();
+    if(doc.exists&&doc.data().banner){
+      const b=doc.data().banner;
+      if(b.active&&b.text){
+        document.getElementById("annBanner").classList.remove("hidden");
+        document.getElementById("annBannerText").textContent=b.text;
+        const l=document.getElementById("annBannerLink");
+        if(b.link){l.href=b.link;l.style.display="inline";}else l.style.display="none";
+      }
+    }
+  }catch(e){}
+}
+
+function dismissAnnBanner(){
+  document.getElementById("annBanner").classList.add("hidden");
+  sessionStorage.setItem("cvAnnDismissed","1");
+}
 
 let lastKnownKycStatus=null,lastKnownWdCount=0,lastKnownDepCount=0,userDocListener=null;
 
@@ -1094,6 +1134,12 @@ async function resendVerification(){try{await currentUser.sendEmailVerification(
 
 function updateKycNudge(){const nudge=document.getElementById("kycNudge");if(!nudge)return;const kyc=userData?.kyc||{};nudge.style.display=kyc.status==="verified"?"none":"flex";}
 
+function selectP2PCoin(coin){
+  document.getElementById("p2pCoinFilter").value=coin;
+  document.querySelectorAll(".coin-select-card").forEach(c=>c.classList.toggle("active",c.dataset.coin===coin));
+  loadP2POffers();
+}
+
 async function loadP2POffers(){
   updateKycNudge();
   const coin=document.getElementById("p2pCoinFilter").value,currency=document.getElementById("p2pCurrencyFilter").value;
@@ -1103,8 +1149,14 @@ async function loadP2POffers(){
   try{
     // Fetch ALL active offers, filter everything client-side (avoids any index issues)
     const snap=await db.collection("p2pOffers").get();
-    let offers=snap.docs.map(d=>({id:d.id,...d.data()}));
-    offers=offers.filter(o=>o.active===true&&o.type===(activeSide==="buy"?"buy":"sell")&&o.coin===coin&&o.currency===currency);
+    let allActiveOffers=snap.docs.map(d=>({id:d.id,...d.data()})).filter(o=>o.active===true);
+    // Update coin card counts (matching current side + currency)
+    ["USDT","BTC","ETH","SOL","TRX"].forEach(c=>{
+      const cnt=allActiveOffers.filter(o=>o.coin===c&&o.currency===currency&&o.type===(activeSide==="buy"?"buy":"sell")).length;
+      const el=document.getElementById("cnt-"+c);
+      if(el)el.textContent=cnt+(cnt===1?" offer":" offers");
+    });
+    let offers=allActiveOffers.filter(o=>o.type===(activeSide==="buy"?"buy":"sell")&&o.coin===coin&&o.currency===currency);
     offers=await Promise.all(offers.map(async o=>{
       try{const uSnap=await db.collection("users").doc(o.userId).get();const rate=uSnap.exists?(uSnap.data().exchangeRate||1):1;if(rate!==1)o.price=parseFloat((o.price*rate).toFixed(2));}catch(e){}
       return o;
@@ -1489,18 +1541,52 @@ async function disputeOrder(){if(!confirm("Open dispute? Admin will review."))re
 async function cancelOrder(){if(!confirm("Cancel order?"))return;if(currentOrderId){await db.collection("p2pOrders").doc(currentOrderId).update({status:"cancelled"});await db.collection("p2pOrders").doc(currentOrderId).collection("messages").add({text:"❌ Order cancelled.",type:"system",senderId:"system",timestamp:firebase.firestore.FieldValue.serverTimestamp()});}document.getElementById("orderStatus").textContent="Cancelled";document.getElementById("orderStatus").className="order-status cancelled";document.getElementById("buyerActionsBar").classList.add("hidden");document.getElementById("sellerActionsBar").classList.add("hidden");}
 
 let countdownInterval;
-function startCountdown(){
+function startCountdown(orderCreatedAt){
   clearInterval(countdownInterval);
-  let seconds=15*60;
   const el=document.getElementById("countdownTimer");
-  el.className="order-timer-right";
-  countdownInterval=setInterval(()=>{
-    seconds--;
-    if(seconds<=0){clearInterval(countdownInterval);seconds=0;}
-    const m=Math.floor(seconds/60),s=(seconds%60).toString().padStart(2,"0");
+  const DURATION=15*60; // 15 minutes in seconds
+  const createdMs=orderCreatedAt?.toDate?orderCreatedAt.toDate().getTime():Date.now();
+  function tick(){
+    const elapsed=Math.floor((Date.now()-createdMs)/1000);
+    const remaining=Math.max(DURATION-elapsed,0);
+    const m=Math.floor(remaining/60),s=(remaining%60).toString().padStart(2,"0");
     el.textContent=m+":"+s;
-    if(seconds<=300)el.className="order-timer-right urgent";
-  },1000);
+    el.className="order-timer-right"+(remaining<=300?" urgent":"");
+    if(remaining<=0){
+      clearInterval(countdownInterval);
+      autoCancelExpiredOrder();
+    }
+  }
+  tick();
+  countdownInterval=setInterval(tick,1000);
+}
+
+async function autoCancelExpiredOrder(){
+  if(!currentOrderId)return;
+  try{
+    const orderSnap=await db.collection("p2pOrders").doc(currentOrderId).get();
+    if(!orderSnap.exists)return;
+    const o=orderSnap.data();
+    if(o.status!=="pending")return; // already progressed, don't touch it
+    // Return escrowed funds to seller
+    const sellerRef=db.collection("users").doc(o.sellerId);
+    const sellerSnap=await sellerRef.get();
+    if(sellerSnap.exists){
+      const sd=sellerSnap.data();
+      const bals=sd.balances||{};
+      bals[o.coin]=(bals[o.coin]||0)+o.amount;
+      await sellerRef.update({balances:bals});
+    }
+    await db.collection("p2pOrders").doc(currentOrderId).update({status:"cancelled",autoCancelled:true});
+    await db.collection("p2pOrders").doc(currentOrderId).collection("messages").add({
+      text:"⏱️ Order automatically cancelled — payment window expired. Funds returned to seller.",
+      type:"system", senderId:"system", timestamp:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    setOrderStatus("cancelled","buyer");
+    document.getElementById("buyerActionsBar").classList.add("hidden");
+    document.getElementById("countdownBox").classList.add("hidden");
+    alert("⏱️ This order expired and was automatically cancelled. Funds have been returned to the seller.");
+  }catch(e){console.error("Auto-cancel error:",e);}
 }
 
 function updateWdBalance(){if(!userData)return;const coin=document.getElementById("wdCoin").value;document.getElementById("wdAvailable").textContent=(userData.balances[coin]||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:6});document.getElementById("wdCoinLabel").textContent=coin;}
@@ -1575,6 +1661,34 @@ function changePassword(){if(!confirm("Send reset link to "+currentUser.email+"?
 let ordersFilter="active";
 function filterOrders(f,el){ordersFilter=f;document.querySelectorAll("#myOrdersPage .filter-chip").forEach(c=>c.classList.remove("active"));el.classList.add("active");loadMyOrders();}
 
+async function sweepExpiredOrders(orders){
+  const now=Date.now();
+  const DURATION_MS=15*60*1000;
+  for(const o of orders){
+    if(o.status!=="pending")continue;
+    const createdMs=o.createdAt?.toDate?o.createdAt.toDate().getTime():null;
+    if(!createdMs)continue;
+    if(now-createdMs>DURATION_MS){
+      // Expired — auto cancel and return funds to seller
+      try{
+        const sellerRef=db.collection("users").doc(o.sellerId);
+        const sellerSnap=await sellerRef.get();
+        if(sellerSnap.exists){
+          const sd=sellerSnap.data();
+          const bals=sd.balances||{};
+          bals[o.coin]=(bals[o.coin]||0)+o.amount;
+          await sellerRef.update({balances:bals});
+        }
+        await db.collection("p2pOrders").doc(o.id).update({status:"cancelled",autoCancelled:true});
+        await db.collection("p2pOrders").doc(o.id).collection("messages").add({
+          text:"⏱️ Order automatically cancelled — payment window expired. Funds returned to seller.",
+          type:"system", senderId:"system", timestamp:firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }catch(e){console.error("Sweep auto-cancel error:",e);}
+    }
+  }
+}
+
 async function loadMyOrders(){
   const el=document.getElementById("myOrdersList");
   el.innerHTML="<div style=\"text-align:center;padding:30px;color:var(--ink-dim)\">Loading orders…</div>";
@@ -1586,6 +1700,7 @@ async function loadMyOrders(){
     // dedupe
     const seen=new Set();orders=orders.filter(o=>{if(seen.has(o.id))return false;seen.add(o.id);return true;});
     orders.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    await sweepExpiredOrders(orders.filter(o=>o.buyerId===currentUser.uid)); // only sweep orders where I'm the buyer (avoid duplicate sweeps from both sides)
     if(ordersFilter==="active")orders=orders.filter(o=>["pending","paid","disputed"].includes(o.status));
     if(!orders.length){el.innerHTML="<div style=\"text-align:center;padding:40px;color:var(--ink-dim)\">"+(ordersFilter==="active"?"No active orders.\nGo to P2P to start trading!":"No orders yet.")+"</div>";return;}
     el.innerHTML=orders.map(o=>{
@@ -1633,7 +1748,7 @@ async function reopenOrder(orderId){
     document.getElementById("escrowTitle").textContent=(o.amount||0).toFixed(4)+" "+(o.coin||"")+" secured in escrow";
     setOrderStatus(o.status,isBuyer?"buyer":"seller");
     const isPaid=["paid","completed","disputed"].includes(o.status);
-    if(o.status==="pending"&&isBuyer){document.getElementById("countdownBox").classList.remove("hidden");startCountdown();document.getElementById("buyerActionsBar").classList.remove("hidden");document.getElementById("sellerActionsBar").classList.add("hidden");lockChat();}
+    if(o.status==="pending"&&isBuyer){document.getElementById("countdownBox").classList.remove("hidden");startCountdown(o.createdAt);document.getElementById("buyerActionsBar").classList.remove("hidden");document.getElementById("sellerActionsBar").classList.add("hidden");lockChat();}
     else if(o.status==="paid"&&!isBuyer){document.getElementById("sellerActionsBar").classList.remove("hidden");document.getElementById("buyerActionsBar").classList.add("hidden");document.getElementById("countdownBox").classList.add("hidden");unlockChat();}
     else{document.getElementById("buyerActionsBar").classList.add("hidden");document.getElementById("sellerActionsBar").classList.add("hidden");document.getElementById("countdownBox").classList.add("hidden");}
     // Unlock chat if already paid or seller
