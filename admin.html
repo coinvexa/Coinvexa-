@@ -119,6 +119,8 @@
     <div class="admin-tab" onclick="switchTab('deposits')">⬇️ Deposits</div>
     <div class="admin-tab" onclick="switchTab('kyc')">🪪 KYC</div>
     <div class="admin-tab" onclick="switchTab('p2p')">🤝 P2P</div>
+    <div class="admin-tab" onclick="switchTab('disputes')">⚠️ Disputes</div>
+    <div class="admin-tab" onclick="switchTab('support')">🛟 Support</div>
     <div class="admin-tab" onclick="switchTab('users')">👥 Users</div>
   </div>
 
@@ -171,6 +173,42 @@
     <div id="adminP2POrders"><div class="loading">Click a filter above to load orders.</div></div>
     <div class="section-label" style="margin-top:10px;">All P2P Offers</div>
     <div id="adminP2POffers"><div class="loading">Loading offers…</div></div>
+  </div>
+
+  <!-- DISPUTES TAB -->
+  <div id="tab-disputes" class="tab-content">
+    <div class="section-label">⚠️ Disputed Orders</div>
+    <div id="disputesList"><div class="loading">Loading disputes…</div></div>
+  </div>
+
+  <!-- DISPUTE DETAIL MODAL -->
+  <div id="disputeModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:500;overflow-y:auto;">
+    <div style="background:var(--bg);min-height:100vh;max-width:600px;margin:0 auto;">
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;">
+        <div onclick="closeDisputeModal()" style="width:32px;height:32px;border-radius:50%;background:var(--panel-2);display:flex;align-items:center;justify-content:center;cursor:pointer;">←</div>
+        <div style="font-weight:800;font-size:16px;">Dispute Details</div>
+      </div>
+      <div id="disputeDetailContent" style="padding:16px;"></div>
+    </div>
+  </div>
+
+  <!-- SUPPORT TAB -->
+  <div id="tab-support" class="tab-content">
+    <div class="section-label">🛟 Support Conversations</div>
+    <div id="supportChatsList"><div class="loading">Loading conversations…</div></div>
+  </div>
+
+  <!-- SUPPORT CHAT MODAL -->
+  <div id="supportChatModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:500;flex-direction:column;">
+    <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--panel);border-bottom:1px solid var(--line);">
+      <div onclick="closeSupportChatModal()" style="width:32px;height:32px;border-radius:50%;background:var(--panel-2);display:flex;align-items:center;justify-content:center;cursor:pointer;">←</div>
+      <div style="font-weight:800;font-size:15px;" id="supportChatUserEmail">User</div>
+    </div>
+    <div id="supportChatMsgs" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;"></div>
+    <div style="display:flex;gap:8px;padding:12px 16px;background:var(--panel);border-top:1px solid var(--line);">
+      <input type="text" id="supportReplyInput" placeholder="Type your reply…" style="flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:22px;padding:11px 16px;color:var(--ink);font-size:14px;outline:none;" onkeypress="if(event.key==='Enter')sendSupportReply()">
+      <button onclick="sendSupportReply()" style="width:40px;height:40px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:16px;cursor:pointer;">➤</button>
+    </div>
   </div>
 
   <!-- USERS TAB -->
@@ -248,6 +286,8 @@ function switchTab(name){
   event.target.classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
   if(name==='p2p') loadAdminP2POffers();
+  if(name==='disputes') loadDisputes();
+  if(name==='support') loadSupportChats();
 }
 
 function renderStats(){
@@ -523,6 +563,198 @@ async function deleteAdminOffer(id){
   if(!confirm('Delete this offer permanently?')) return;
   await db.collection('p2pOffers').doc(id).delete();
   loadAdminP2POffers();
+}
+
+// ===== DISPUTE RESOLUTION CENTER =====
+async function loadDisputes(){
+  const el=document.getElementById('disputesList');
+  el.innerHTML='<div class="loading">Loading disputes…</div>';
+  try{
+    // No orderBy combined with where, to avoid needing a composite index
+    const snap=await db.collection('p2pOrders').where('status','==','disputed').get();
+    const orders=snap.docs.map(d=>({id:d.id,...d.data()}));
+    orders.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    if(!orders.length){ el.innerHTML='<div class="empty-state">✅ No active disputes. All clear!</div>'; return; }
+    el.innerHTML=orders.map(o=>`
+      <div class="request-card" onclick="openDisputeDetail('${o.id}')" style="cursor:pointer;">
+        <div class="top">
+          <div><div style="font-weight:700;">${o.orderId||o.id.slice(-6).toUpperCase()}</div>
+          <div style="font-size:11px;color:var(--ink-dim);">Buyer: ${o.buyerEmail||'—'}</div>
+          <div style="font-size:11px;color:var(--ink-dim);">Seller: ${o.sellerEmail||'—'}</div></div>
+          <span class="request-badge rejected">DISPUTED</span>
+        </div>
+        <div class="request-detail">Amount: <b>${o.amount} ${o.coin}</b> · Total: <b>${(o.total||0).toLocaleString()} ${o.currency}</b></div>
+        <div style="font-size:12px;color:var(--accent);font-weight:700;margin-top:8px;">Tap to view full chat & resolve →</div>
+      </div>`).join('');
+  }catch(e){ el.innerHTML='<div class="empty-state" style="color:var(--red);">Error: '+e.message+'</div>'; }
+}
+
+let currentDisputeOrderId=null;
+
+async function openDisputeDetail(orderId){
+  currentDisputeOrderId=orderId;
+  const content=document.getElementById('disputeDetailContent');
+  content.innerHTML='<div class="loading">Loading order & chat history…</div>';
+  document.getElementById('disputeModal').style.display='block';
+  try{
+    const orderSnap=await db.collection('p2pOrders').doc(orderId).get();
+    if(!orderSnap.exists){content.innerHTML='<div class="empty-state">Order not found.</div>';return;}
+    const o=orderSnap.data();
+    const msgsSnap=await db.collection('p2pOrders').doc(orderId).collection('messages').orderBy('timestamp','asc').get();
+    const msgs=msgsSnap.docs.map(d=>d.data());
+
+    const chatHtml=msgs.length?msgs.map(m=>{
+      const isSystem=m.type==='system';
+      const time=m.timestamp?.toDate?m.timestamp.toDate().toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+      if(isSystem)return `<div style="text-align:center;font-size:11px;color:var(--ink-dim);padding:8px 0;">🔔 ${m.text} <span style="opacity:.6;">· ${time}</span></div>`;
+      const isBuyer=m.senderId===o.buyerId;
+      return `<div style="margin-bottom:10px;padding:10px 12px;border-radius:10px;background:${isBuyer?'rgba(30,201,139,.08)':'rgba(59,130,246,.08)'};border:1px solid ${isBuyer?'rgba(30,201,139,.2)':'rgba(59,130,246,.2)'};">
+        <div style="font-size:11px;font-weight:700;color:${isBuyer?'var(--green)':'var(--accent)'};margin-bottom:3px;">${isBuyer?'🟢 Buyer':'🔵 Seller'} — ${m.senderName||'Unknown'}</div>
+        <div style="font-size:13px;">${m.type==='photo'?'<img src="'+m.image+'" style="max-width:100%;border-radius:8px;">':escapeHtml(m.text||'')}</div>
+        <div style="font-size:10px;color:var(--ink-dim);margin-top:4px;">${time}</div>
+      </div>`;
+    }).join(''):'<div class="empty-state">No chat messages recorded for this order.</div>';
+
+    content.innerHTML=`
+      <div class="request-card" style="margin-bottom:16px;">
+        <div style="font-weight:800;font-size:16px;margin-bottom:10px;">${o.orderId||orderId.slice(-6).toUpperCase()}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px;">
+          <div><span style="color:var(--ink-dim);">Buyer</span><br><b>${o.buyerEmail||'—'}</b></div>
+          <div><span style="color:var(--ink-dim);">Seller</span><br><b>${o.sellerEmail||'—'}</b></div>
+          <div><span style="color:var(--ink-dim);">Amount</span><br><b>${o.amount} ${o.coin}</b></div>
+          <div><span style="color:var(--ink-dim);">Total</span><br><b>${(o.total||0).toLocaleString()} ${o.currency}</b></div>
+          <div><span style="color:var(--ink-dim);">Price</span><br><b>${(o.price||0).toLocaleString()} ${o.currency}</b></div>
+          <div><span style="color:var(--ink-dim);">Payment</span><br><b>${(o.paymentMethods||[]).join(', ')||'—'}</b></div>
+        </div>
+      </div>
+      <div class="section-label">💬 Full Chat History</div>
+      <div style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:16px;max-height:400px;overflow-y:auto;">
+        ${chatHtml}
+      </div>
+      <div class="section-label">⚖️ Resolve Dispute</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="btn-approve" onclick="resolveDisputeFromModal('${orderId}','completed')" style="padding:14px;">✅ Rule for Buyer — Release Funds</button>
+        <button class="btn-reject" onclick="resolveDisputeFromModal('${orderId}','cancelled')" style="padding:14px;">❌ Rule for Seller — Return Funds</button>
+      </div>`;
+  }catch(e){content.innerHTML='<div class="empty-state" style="color:var(--red);">Error: '+e.message+'</div>';}
+}
+
+function closeDisputeModal(){
+  document.getElementById('disputeModal').style.display='none';
+  currentDisputeOrderId=null;
+}
+
+async function resolveDisputeFromModal(orderId, resolution){
+  const label=resolution==='completed'?'release funds to the buyer':'return funds to the seller';
+  if(!confirm(`Are you sure you want to ${label}? This action is final.`))return;
+  try{
+    if(resolution==='cancelled'){
+      // Return escrowed funds to seller
+      const orderSnap=await db.collection('p2pOrders').doc(orderId).get();
+      const o=orderSnap.data();
+      const sellerRef=db.collection('users').doc(o.sellerId);
+      const sellerSnap=await sellerRef.get();
+      if(sellerSnap.exists){
+        const sd=sellerSnap.data();
+        const bals=sd.balances||{};
+        bals[o.coin]=(bals[o.coin]||0)+o.amount;
+        await sellerRef.update({balances:bals});
+      }
+    } else {
+      // Release to buyer
+      const orderSnap=await db.collection('p2pOrders').doc(orderId).get();
+      const o=orderSnap.data();
+      const buyerRef=db.collection('users').doc(o.buyerId);
+      const buyerSnap=await buyerRef.get();
+      if(buyerSnap.exists){
+        const bd=buyerSnap.data();
+        const bals=bd.balances||{};
+        bals[o.coin]=(bals[o.coin]||0)+o.amount;
+        await buyerRef.update({balances:bals});
+      }
+    }
+    await db.collection('p2pOrders').doc(orderId).update({status:resolution});
+    await db.collection('p2pOrders').doc(orderId).collection('messages').add({
+      text:`⚖️ Admin resolved this dispute: ${resolution==='completed'?'Funds released to buyer.':'Funds returned to seller.'}`,
+      type:'system', senderId:'admin', timestamp:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    alert('✅ Dispute resolved!');
+    closeDisputeModal();
+    loadDisputes();
+  }catch(e){alert('Error: '+e.message);}
+}
+
+function escapeHtml(str){const d=document.createElement('div');d.textContent=str;return d.innerHTML;}
+
+// ===== SUPPORT CHAT (ADMIN) =====
+let currentSupportUid=null;
+let supportChatModalListener=null;
+
+async function loadSupportChats(){
+  const el=document.getElementById('supportChatsList');
+  el.innerHTML='<div class="loading">Loading conversations…</div>';
+  try{
+    const snap=await db.collection('supportChats').get();
+    let chats=snap.docs.map(d=>({id:d.id,...d.data()}));
+    chats.sort((a,b)=>(b.lastMessageAt?.seconds||0)-(a.lastMessageAt?.seconds||0));
+    if(!chats.length){el.innerHTML='<div class="empty-state">No support conversations yet.</div>';return;}
+    el.innerHTML=chats.map(c=>{
+      const needsReply=c.lastSenderId===c.id; // last message was from user, not admin
+      const time=c.lastMessageAt?.toDate?c.lastMessageAt.toDate().toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+      return `<div class="request-card" onclick="openSupportChatModal('${c.id}','${(c.userEmail||'').replace(/'/g,"")}')" style="cursor:pointer;">
+        <div class="top">
+          <div><div style="font-weight:700;">${c.userEmail||c.id}</div><div style="font-size:11px;color:var(--ink-dim);">${time}</div></div>
+          ${needsReply?'<span class="request-badge pending">NEEDS REPLY</span>':'<span class="request-badge approved">REPLIED</span>'}
+        </div>
+        <div class="request-detail" style="color:var(--ink-dim);">${escapeHtml(c.lastMessage||'')}</div>
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML='<div class="empty-state" style="color:var(--red);">Error: '+e.message+'</div>';}
+}
+
+function openSupportChatModal(uid, email){
+  currentSupportUid=uid;
+  document.getElementById('supportChatUserEmail').textContent=email||uid;
+  document.getElementById('supportChatModal').style.display='flex';
+  const msgsEl=document.getElementById('supportChatMsgs');
+  msgsEl.innerHTML='<div class="loading">Loading messages…</div>';
+  if(supportChatModalListener)supportChatModalListener();
+  supportChatModalListener=db.collection('supportChats').doc(uid).collection('messages').orderBy('timestamp','asc')
+    .onSnapshot(snap=>{
+      if(msgsEl.querySelector('.loading'))msgsEl.innerHTML='';
+      const msgs=snap.docs.map(d=>d.data());
+      msgsEl.innerHTML=msgs.map(m=>{
+        const isAdmin=m.senderId==='admin';
+        const time=m.timestamp?.toDate?m.timestamp.toDate().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';
+        return `<div style="align-self:${isAdmin?'flex-end':'flex-start'};max-width:78%;">
+          <div style="padding:10px 13px;border-radius:16px;font-size:13px;line-height:1.4;${isAdmin?'background:var(--accent);color:#fff;border-bottom-right-radius:4px;':'background:var(--panel-2);border:1px solid var(--line);border-bottom-left-radius:4px;'}">${escapeHtml(m.text)}</div>
+          <div style="font-size:10px;color:var(--ink-dim);margin-top:3px;">${isAdmin?'You (Support)':'User'} · ${time}</div>
+        </div>`;
+      }).join('');
+      msgsEl.scrollTop=msgsEl.scrollHeight;
+    });
+}
+
+function closeSupportChatModal(){
+  document.getElementById('supportChatModal').style.display='none';
+  if(supportChatModalListener){supportChatModalListener();supportChatModalListener=null;}
+  currentSupportUid=null;
+  loadSupportChats();
+}
+
+async function sendSupportReply(){
+  const input=document.getElementById('supportReplyInput');
+  const text=input.value.trim();
+  if(!text||!currentSupportUid)return;
+  input.value='';
+  try{
+    await db.collection('supportChats').doc(currentSupportUid).collection('messages').add({
+      text, senderId:'admin', senderName:'CoinVexa Support', timestamp:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    await db.collection('supportChats').doc(currentSupportUid).set({
+      lastMessage:text, lastMessageAt:firebase.firestore.FieldValue.serverTimestamp(), lastSenderId:'admin'
+    },{merge:true});
+  }catch(e){alert('Error: '+e.message);}
 }
 
 function renderUsers(users){
