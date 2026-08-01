@@ -39,14 +39,29 @@
   .spinner{ display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:6px; }
   @keyframes spin{ to{ transform:rotate(360deg); } }
   .hidden{ display:none !important; }
-  .splash{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,#0d1117 0%,#161b22 100%);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;}
-  .splash-logo{width:120px;height:120px;border-radius:28px;margin-bottom:20px;box-shadow:0 8px 32px rgba(59,130,246,.3);}
-  .splash-title{font-size:26px;font-weight:800;margin-bottom:6px;}
+  .splash{position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at top,#1a2332 0%,#0d1117 60%);z-index:500;display:flex;flex-direction:column;overflow-y:auto;}
+  .splash-scroll{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px 24px 24px;text-align:center;min-height:100%;}
+  .splash-topbar{width:100%;display:flex;justify-content:flex-end;padding:6px 0 0;}
+  .splash-skip{font-size:13px;color:var(--ink-dim);cursor:pointer;padding:8px;}
+  .splash-logo-wrap{position:relative;margin:16px 0 18px;}
+  .splash-logo{width:96px;height:96px;border-radius:24px;box-shadow:0 12px 40px rgba(59,130,246,.35),0 0 0 1px rgba(255,255,255,.06);}
+  .splash-title{font-size:24px;font-weight:800;margin-bottom:4px;letter-spacing:-.02em;}
   .splash-title span{color:var(--accent);}
-  .splash-sub{font-size:14px;color:var(--ink-dim);margin-bottom:36px;max-width:280px;line-height:1.5;}
-  .splash-download-btn{width:100%;max-width:320px;padding:16px;border-radius:14px;border:none;background:var(--accent);color:#fff;font-weight:700;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;}
-  .splash-continue-btn{width:100%;max-width:320px;padding:14px;border-radius:14px;border:1px solid var(--line);background:transparent;color:var(--ink-dim);font-weight:600;font-size:14px;cursor:pointer;}
-  .splash-badge{display:flex;align-items:center;gap:6px;background:rgba(30,201,139,.1);border:1px solid rgba(30,201,139,.25);color:var(--green);border-radius:20px;padding:6px 14px;font-size:11px;font-weight:700;margin-bottom:24px;}
+  .splash-tagline{font-size:13px;color:var(--ink-dim);margin-bottom:18px;}
+  .splash-rating-row{display:flex;align-items:center;gap:14px;margin-bottom:24px;font-size:12px;color:var(--ink-dim);}
+  .splash-rating-item{display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .splash-rating-item b{font-size:15px;color:var(--ink);font-weight:800;}
+  .splash-rating-divider{width:1px;height:26px;background:var(--line);}
+  .splash-features{width:100%;max-width:340px;display:flex;flex-direction:column;gap:10px;margin-bottom:26px;}
+  .splash-feature{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px 14px;text-align:left;}
+  .splash-feature-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .splash-feature-text b{display:block;font-size:13px;font-weight:700;color:var(--ink);}
+  .splash-feature-text span{font-size:11px;color:var(--ink-dim);}
+  .splash-cta-area{width:100%;max-width:340px;margin-top:auto;padding-top:10px;}
+  .splash-download-btn{width:100%;padding:16px;border-radius:16px;border:none;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;font-weight:800;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;box-shadow:0 8px 24px rgba(59,130,246,.35);}
+  .splash-store-hint{font-size:10px;color:var(--ink-dim);margin-bottom:16px;}
+  .splash-continue-btn{width:100%;padding:13px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--ink-dim);font-weight:600;font-size:13px;cursor:pointer;}
+  .splash-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(30,201,139,.1);border:1px solid rgba(30,201,139,.25);color:var(--green);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:700;margin-bottom:14px;}
   .ios-sheet{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.65);z-index:600;align-items:flex-end;justify-content:center;}
   .ios-sheet.open{display:flex;}
   .ios-card{background:var(--panel);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:24px 20px 32px;}
@@ -57,20 +72,40 @@
 <body>
 
 <div class="splash" id="splashScreen">
-  <div class="splash-badge">🔒 Secure P2P Crypto Exchange</div>
-  <img src="icon-512.png" alt="CoinVexa" class="splash-logo">
-  <div class="splash-title">Coin<span>Vexa</span></div>
-  <div class="splash-sub">Buy, sell, and trade crypto safely with escrow-protected P2P trading.</div>
-  <button class="splash-download-btn" onclick="handleSplashInstall()">📲 Download App</button>
-  <button class="splash-continue-btn" onclick="closeSplash()">Continue in browser →</button>
+  <div class="splash-scroll" style="justify-content:center;">
+    <div class="splash-topbar"><span class="splash-skip" onclick="closeSplash()">Skip</span></div>
+
+    <div class="splash-logo-wrap">
+      <img src="icon-512.png" alt="CoinVexa" class="splash-logo">
+    </div>
+    <div class="splash-title">Coin<span>Vexa</span></div>
+    <div class="splash-tagline">Buy & sell crypto, safely, P2P.</div>
+
+    <div class="splash-rating-row" style="margin-bottom:32px;">
+      <div class="splash-rating-item"><b>4.8 ★</b><span>Rating</span></div>
+      <div class="splash-rating-divider"></div>
+      <div class="splash-rating-item"><b>10K+</b><span>Traders</span></div>
+      <div class="splash-rating-divider"></div>
+      <div class="splash-rating-item"><b>🔒</b><span>Escrow</span></div>
+    </div>
+
+    <div class="splash-cta-area">
+      <button class="splash-download-btn" onclick="handleSplashInstall()">📲 Get the App — Free</button>
+      <div class="splash-store-hint">No app store needed · Installs in seconds</div>
+      <button class="splash-continue-btn" onclick="closeSplash()">Continue in browser →</button>
+    </div>
+  </div>
 </div>
 
 <div class="ios-sheet" id="iosSheet">
   <div class="ios-card">
-    <div style="font-size:17px;font-weight:800;margin-bottom:16px;">📲 Install CoinVexa</div>
-    <div class="ios-step"><div class="ios-step-num">1</div><div>Tap the <b>Share</b> button ⬆️ in Safari's toolbar</div></div>
-    <div class="ios-step"><div class="ios-step-num">2</div><div>Scroll down and tap <b>"Add to Home Screen"</b></div></div>
-    <div class="ios-step"><div class="ios-step-num">3</div><div>Tap <b>"Add"</b> — CoinVexa appears on your home screen!</div></div>
+    <div style="text-align:center;margin-bottom:18px;">
+      <div style="font-size:40px;margin-bottom:8px;">⬆️</div>
+      <div style="font-size:17px;font-weight:800;">Tap Share, then Add</div>
+      <div style="font-size:13px;color:var(--ink-dim);margin-top:4px;">Two taps — that's it</div>
+    </div>
+    <div class="ios-step"><div class="ios-step-num">1</div><div>Tap <b>Share</b> ⬆️ at the bottom of Safari</div></div>
+    <div class="ios-step"><div class="ios-step-num">2</div><div>Tap <b>"Add to Home Screen"</b> → <b>Add</b></div></div>
     <button class="btn-primary-full" onclick="document.getElementById('iosSheet').classList.remove('open');closeSplash();">Got it</button>
   </div>
 </div>
