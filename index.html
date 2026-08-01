@@ -33,7 +33,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .asset-list{padding:0 16px;}
 .asset-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);}
 .asset-row:last-child{border-bottom:none;}
-.coin-icon{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+.coin-icon{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;overflow:hidden;}
+.coin-icon svg{width:100%;height:100%;display:block;}
 .coin-icon.usdt{background:#1a4d3d;color:#1ec98b;}.coin-icon.btc{background:#3a2c10;color:#f0b90b;}.coin-icon.eth{background:#1c2840;color:#7fa8ff;}.coin-icon.sol{background:#1a2a3a;color:#9945FF;}.coin-icon.trx{background:#2c1a3a;color:#c98bf0;}
 .asset-info{flex:1;min-width:0;}.asset-info .name{font-weight:700;font-size:14px;}.asset-info .full{font-size:11px;color:var(--ink-dim);}
 .asset-values{text-align:right;}.asset-values .amt{font-family:var(--mono);font-weight:700;font-size:14px;}.asset-values .usd{font-size:11px;color:var(--ink-dim);}
@@ -131,7 +132,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .profile-menu-item{display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;cursor:pointer;box-shadow:var(--shadow);}
 .profile-menu-item .left{display:flex;align-items:center;gap:12px;}.profile-menu-item .icon{font-size:20px;}
 .profile-menu-item .label{font-weight:600;font-size:14px;}.profile-menu-item .sub{font-size:11px;color:var(--ink-dim);}
-.theme-toggle{background:var(--panel-2);border:1px solid var(--line);border-radius:20px;padding:4px 10px;font-size:14px;cursor:pointer;color:var(--ink);}
+.theme-toggle{background:var(--panel-2);border:1px solid var(--line);border-radius:20px;padding:8px;font-size:14px;cursor:pointer;color:var(--ink);display:flex;align-items:center;justify-content:center;}
 .verify-banner{background:rgba(240,185,11,.1);border-bottom:1px solid rgba(240,185,11,.3);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--gold);}
 .verify-banner button{background:var(--gold);color:#000;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;}
 .empty-history{text-align:center;padding:40px 16px;color:var(--ink-dim);font-size:13px;}
@@ -332,7 +333,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   .coin-select-row{display:flex;gap:10px;padding:14px 16px 10px;overflow-x:auto;}
   .coin-select-card{flex-shrink:0;display:flex;align-items:center;gap:10px;background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:10px 16px;cursor:pointer;min-width:110px;}
   .coin-select-card.active{border-color:var(--accent);background:rgba(59,130,246,.08);}
-  .coin-select-card .coin-select-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;}
+  .coin-select-card .coin-select-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;overflow:hidden;}
+  .coin-select-card .coin-select-icon svg{width:100%;height:100%;}
   .coin-select-card .coin-select-text b{display:block;font-size:14px;font-weight:800;}
   .coin-select-card .coin-select-text span{font-size:10px;color:var(--ink-dim);}
   .p2p-currency-row{display:flex;align-items:center;gap:8px;padding:0 16px 12px;}
@@ -342,8 +344,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="topbar">
   <div><div class="brand">Coin<span>Vexa</span></div><div class="user-email" id="userEmailDisplay"></div></div>
   <div class="topbar-icons">
-    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
-    <span id="logoutBtn" style="cursor:pointer;">🚪</span>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeToggleBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    <span id="logoutBtn" style="cursor:pointer;display:flex;align-items:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
   </div>
 </div>
 <div class="ann-banner hidden" id="annBanner">
@@ -399,11 +401,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <span>›</span>
     </div>
     <div class="coin-select-row" id="coinSelectRow">
-      <div class="coin-select-card active" data-coin="USDT" onclick="selectP2PCoin('USDT')"><div class="coin-select-icon usdt-bg" style="background:#1a4d3d;color:#1ec98b;">T</div><div class="coin-select-text"><b>USDT</b><span id="cnt-USDT">— offers</span></div></div>
-      <div class="coin-select-card" data-coin="BTC" onclick="selectP2PCoin('BTC')"><div class="coin-select-icon" style="background:#3a2c10;color:#f0b90b;">B</div><div class="coin-select-text"><b>BTC</b><span id="cnt-BTC">— offers</span></div></div>
-      <div class="coin-select-card" data-coin="ETH" onclick="selectP2PCoin('ETH')"><div class="coin-select-icon" style="background:#1c2840;color:#7fa8ff;">E</div><div class="coin-select-text"><b>ETH</b><span id="cnt-ETH">— offers</span></div></div>
-      <div class="coin-select-card" data-coin="SOL" onclick="selectP2PCoin('SOL')"><div class="coin-select-icon" style="background:#1a2a3a;color:#9945FF;">S</div><div class="coin-select-text"><b>SOL</b><span id="cnt-SOL">— offers</span></div></div>
-      <div class="coin-select-card" data-coin="TRX" onclick="selectP2PCoin('TRX')"><div class="coin-select-icon" style="background:#2c1a3a;color:#c98bf0;">X</div><div class="coin-select-text"><b>TRX</b><span id="cnt-TRX">— offers</span></div></div>
+      <div class="coin-select-card active" data-coin="USDT" onclick="selectP2PCoin('USDT')"><div class="coin-select-icon" id="p2pIcon-USDT"></div><div class="coin-select-text"><b>USDT</b><span id="cnt-USDT">— offers</span></div></div>
+      <div class="coin-select-card" data-coin="BTC" onclick="selectP2PCoin('BTC')"><div class="coin-select-icon" id="p2pIcon-BTC"></div><div class="coin-select-text"><b>BTC</b><span id="cnt-BTC">— offers</span></div></div>
+      <div class="coin-select-card" data-coin="ETH" onclick="selectP2PCoin('ETH')"><div class="coin-select-icon" id="p2pIcon-ETH"></div><div class="coin-select-text"><b>ETH</b><span id="cnt-ETH">— offers</span></div></div>
+      <div class="coin-select-card" data-coin="SOL" onclick="selectP2PCoin('SOL')"><div class="coin-select-icon" id="p2pIcon-SOL"></div><div class="coin-select-text"><b>SOL</b><span id="cnt-SOL">— offers</span></div></div>
+      <div class="coin-select-card" data-coin="TRX" onclick="selectP2PCoin('TRX')"><div class="coin-select-icon" id="p2pIcon-TRX"></div><div class="coin-select-text"><b>TRX</b><span id="cnt-TRX">— offers</span></div></div>
     </div>
     <div class="p2p-currency-row">
       <select id="p2pCoinFilter" style="display:none;"><option>USDT</option><option>BTC</option><option>ETH</option><option>SOL</option><option>TRX</option></select>
@@ -598,11 +600,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="shield-note"><span>🛡️</span><span>Only send the matching coin and network. Wrong network = permanent loss of funds.</span></div>
     <div class="section-title"><span>Select Coin</span></div>
     <div class="menu-list">
-      <div class="menu-item" onclick="openDepositAddress('USDT')"><div class="coin-icon usdt">T</div><div class="menu-text"><div class="menu-title">USDT</div><div class="menu-sub">Tether · TRON (TRC20)</div></div><div class="menu-chevron">›</div></div>
-      <div class="menu-item" onclick="openDepositAddress('BTC')"><div class="coin-icon btc">B</div><div class="menu-text"><div class="menu-title">BTC</div><div class="menu-sub">Bitcoin · BTC Network</div></div><div class="menu-chevron">›</div></div>
-      <div class="menu-item" onclick="openDepositAddress('SOL')"><div class="coin-icon sol">S</div><div class="menu-text"><div class="menu-title">SOL</div><div class="menu-sub">Solana · SOL Network</div></div><div class="menu-chevron">›</div></div>
-      <div class="menu-item" onclick="openDepositAddress('ETH')"><div class="coin-icon eth">E</div><div class="menu-text"><div class="menu-title">ETH</div><div class="menu-sub">Ethereum · ERC20</div></div><div class="menu-chevron">›</div></div>
-      <div class="menu-item" onclick="openDepositAddress('TRX')"><div class="coin-icon trx">X</div><div class="menu-text"><div class="menu-title">TRX</div><div class="menu-sub">Tron · TRC20</div></div><div class="menu-chevron">›</div></div>
+      <div class="menu-item" onclick="openDepositAddress('USDT')"><div class="coin-icon" id="depIcon-USDT"></div><div class="menu-text"><div class="menu-title">USDT</div><div class="menu-sub">Tether · TRON (TRC20)</div></div><div class="menu-chevron">›</div></div>
+      <div class="menu-item" onclick="openDepositAddress('BTC')"><div class="coin-icon" id="depIcon-BTC"></div><div class="menu-text"><div class="menu-title">BTC</div><div class="menu-sub">Bitcoin · BTC Network</div></div><div class="menu-chevron">›</div></div>
+      <div class="menu-item" onclick="openDepositAddress('SOL')"><div class="coin-icon" id="depIcon-SOL"></div><div class="menu-text"><div class="menu-title">SOL</div><div class="menu-sub">Solana · SOL Network</div></div><div class="menu-chevron">›</div></div>
+      <div class="menu-item" onclick="openDepositAddress('ETH')"><div class="coin-icon" id="depIcon-ETH"></div><div class="menu-text"><div class="menu-title">ETH</div><div class="menu-sub">Ethereum · ERC20</div></div><div class="menu-chevron">›</div></div>
+      <div class="menu-item" onclick="openDepositAddress('TRX')"><div class="coin-icon" id="depIcon-TRX"></div><div class="menu-text"><div class="menu-title">TRX</div><div class="menu-sub">Tron · TRC20</div></div><div class="menu-chevron">›</div></div>
     </div>
   </div>
 
@@ -644,13 +646,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="kyc-badge unverified" id="kycBadge">⚠️ KYC Unverified</div>
     </div>
     <div class="profile-menu">
-      <div class="profile-menu-item" onclick="goTo('kycPage')"><div class="left"><span class="icon">🪪</span><div><div class="label" data-i18n="identityVerification">Identity Verification (KYC)</div><div class="sub">Required for P2P offers & withdrawals</div></div></div><span>›</span></div>
-      <div class="profile-menu-item" onclick="goTo('myOffersPage')"><div class="left"><span class="icon">🤝</span><div><div class="label" data-i18n="myP2POffers">My P2P Offers</div><div class="sub">Manage your buy/sell offers</div></div></div><span>›</span></div>
-      <div class="profile-menu-item" onclick="requestNotifPermission()"><div class="left"><span class="icon">🔔</span><div><div class="label" data-i18n="pushNotifications">Push Notifications</div><div class="sub" id="notifStatusText">Tap to enable</div></div></div><span>›</span></div>
-      <div class="profile-menu-item" onclick="changePassword()"><div class="left"><span class="icon">🔑</span><div><div class="label" data-i18n="changePassword">Change Password</div><div class="sub">Send reset link to email</div></div></div><span>›</span></div>
-      <div class="profile-menu-item" onclick="goTo('historyPage')"><div class="left"><span class="icon">📋</span><div><div class="label" data-i18n="transactionHistory">Transaction History</div></div></div><span>›</span></div>
-      <div class="profile-menu-item" onclick="toggleTheme()"><div class="left"><span class="icon" id="themeIcon">🌙</span><div><div class="label" data-i18n="darkLightMode">Dark / Light Mode</div><div class="sub" id="themeSub">Currently Dark</div></div></div><span>›</span></div>
-      <div class="profile-menu-item" onclick="toggleLanguage()"><div class="left"><span class="icon">🌐</span><div><div class="label" data-i18n="language">Language</div><div class="sub" id="langSub">English</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="goTo('kycPage')"><div class="left"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 8h4M15 12h4M6 16h12"/></svg></span><div><div class="label" data-i18n="identityVerification">Identity Verification (KYC)</div><div class="sub">Required for P2P offers & withdrawals</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="goTo('myOffersPage')"><div class="left"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 0 5.7A2.85 2.85 0 0 1 17 3z"/><path d="M7 3a2.85 2.85 0 1 0 0 5.7A2.85 2.85 0 0 0 7 3z"/><path d="M17 12.3a2.85 2.85 0 1 1 0 5.7 2.85 2.85 0 0 1 0-5.7z"/><path d="M7 12.3a2.85 2.85 0 1 0 0 5.7 2.85 2.85 0 0 0 0-5.7z"/></svg></span><div><div class="label" data-i18n="myP2POffers">My P2P Offers</div><div class="sub">Manage your buy/sell offers</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="requestNotifPermission()"><div class="left"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span><div><div class="label" data-i18n="pushNotifications">Push Notifications</div><div class="sub" id="notifStatusText">Tap to enable</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="changePassword()"><div class="left"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></svg></span><div><div class="label" data-i18n="changePassword">Change Password</div><div class="sub">Send reset link to email</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="goTo('historyPage')"><div class="left"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><div><div class="label" data-i18n="transactionHistory">Transaction History</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="toggleTheme()"><div class="left"><span class="icon" id="themeIcon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span><div><div class="label" data-i18n="darkLightMode">Dark / Light Mode</div><div class="sub" id="themeSub">Currently Dark</div></div></div><span>›</span></div>
+      <div class="profile-menu-item" onclick="toggleLanguage()"><div class="left"><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span><div><div class="label" data-i18n="language">Language</div><div class="sub" id="langSub">English</div></div></div><span>›</span></div>
       <button class="btn-danger-full" onclick="logoutConfirm()"><span data-i18n="logOut">🚪 Log Out</span></button>
     </div>
   </div>
@@ -790,9 +792,21 @@ let currentDepositCoin="USDT",isDark=true,currentOrderId=null,chatListener=null,
 let priceHistory={USDT:[],BTC:[],ETH:[],SOL:[],TRX:[]}; // rolling recent price points for sparklines
 let activeTradeOffer=null;
 const coinMeta={USDT:{full:"Tether",cls:"usdt",letter:"T"},BTC:{full:"Bitcoin",cls:"btc",letter:"B"},ETH:{full:"Ethereum",cls:"eth",letter:"E"},SOL:{full:"Solana",cls:"sol",letter:"S"},TRX:{full:"Tron",cls:"trx",letter:"X"}};
+
+// Real crypto logo SVGs
+const coinSVG={
+  USDT:'<svg viewBox="0 0 32 32" width="100%" height="100%"><circle cx="16" cy="16" r="16" fill="#26A17B"/><path fill="#fff" d="M17.9 17.4v-.01c-.11.01-.68.04-1.95.04-1.01 0-1.72-.03-1.97-.04v.01c-3.28-.14-5.73-.72-5.73-1.4s2.45-1.26 5.73-1.4v2.24c.25.02.98.06 1.99.06 1.21 0 1.82-.05 1.93-.06v-2.24c3.27.14 5.72.72 5.72 1.4s-2.45 1.26-5.72 1.4m0-3.02v-2h4.58V9.13H9.55v3.25h4.58v2c-3.72.17-6.53.9-6.53 1.77s2.81 1.6 6.53 1.77v6.32h1.95v-6.32c3.71-.17 6.52-.9 6.52-1.77s-2.81-1.6-6.52-1.77"/></svg>',
+  BTC:'<svg viewBox="0 0 32 32" width="100%" height="100%"><circle cx="16" cy="16" r="16" fill="#F7931A"/><path fill="#fff" d="M22.6 14c.3-2-1.2-3.1-3.3-3.8l.7-2.7-1.6-.4-.7 2.6c-.4-.1-.9-.2-1.3-.3l.7-2.7-1.6-.4-.7 2.7c-.4-.1-.7-.2-1-.2v-.01l-2.2-.6-.4 1.7s1.2.3 1.2.3c.6.2.7.6.7.9l-1.7 6.7c-.1.1-.3.4-.7.3 0 0-1.2-.3-1.2-.3l-.8 1.8 2.1.5c.4.1.8.2 1.1.3l-.7 2.8 1.6.4.7-2.7c.4.1.9.2 1.3.3l-.7 2.7 1.6.4.7-2.8c2.7.5 4.7.3 5.6-2.1.7-2-0-3.1-1.4-3.9 1-.2 1.8-.9 2-2.3m-3.6 5c-.5 2-4 .9-5.1.6l.9-3.6c1.1.3 4.7.8 4.2 3m.5-5.1c-.5 1.8-3.4.9-4.3.7l.8-3.3c.9.2 4 .6 3.5 2.6"/></svg>',
+  ETH:'<svg viewBox="0 0 32 32" width="100%" height="100%"><circle cx="16" cy="16" r="16" fill="#627EEA"/><path fill="#fff" fill-opacity=".6" d="M16.5 4v8.87l7.5 3.35z"/><path fill="#fff" d="M16.5 4 9 16.22l7.5-3.35z"/><path fill="#fff" fill-opacity=".6" d="M16.5 21.97v6.03L24 17.6z"/><path fill="#fff" d="M16.5 28v-6.03L9 17.6z"/><path fill="#fff" fill-opacity=".2" d="M16.5 20.57 24 16.22l-7.5-3.35z"/><path fill="#fff" fill-opacity=".6" d="M9 16.22l7.5 4.35v-7.7z"/></svg>',
+  SOL:'<svg viewBox="0 0 32 32" width="100%" height="100%"><circle cx="16" cy="16" r="16" fill="#000"/><defs><linearGradient id="solg" x1="8" y1="22" x2="24" y2="10"><stop offset="0" stop-color="#00FFA3"/><stop offset="1" stop-color="#DC1FFF"/></linearGradient></defs><path fill="url(#solg)" d="M9.3 19.9c.15-.15.35-.24.57-.24h13.6c.36 0 .54.44.28.7l-2.7 2.7c-.15.15-.35.24-.57.24H6.9c-.36 0-.54-.44-.28-.7zM9.3 8.9c.15-.15.36-.24.57-.24h13.6c.36 0 .54.44.28.7l-2.7 2.7c-.15.15-.35.24-.57.24H6.9c-.36 0-.54-.44-.28-.7zM20.7 14.36a.8.8 0 0 0-.57-.24H6.53c-.36 0-.54.44-.28.7l2.7 2.7c.15.15.35.24.57.24h13.6c.36 0 .54-.44.28-.7z"/></svg>',
+  TRX:'<svg viewBox="0 0 32 32" width="100%" height="100%"><circle cx="16" cy="16" r="16" fill="#FF060A"/><path fill="#fff" d="M21.7 10.6 8.9 8.3l6 15.3 9.6-11.7-2.8-1.3zm-.4 1.1 1.7.8-6.9 1.3 5.2-2.1zM15 22.1l-4.4-11.3L19.9 12l-4.9 10.1zm5.7-9.4-4.6 9.3 6.6-8-2-1.3z"/></svg>'
+};
+
 const depositInfo={"USDT":{network:"TRON (TRC20)",address:"TBBnZdhgwfkKj1zNS9GEpjj58N6kLmEBip",min:"0.005 USDT",arrival:"~20 confirmations"},"BTC":{network:"Bitcoin (BTC)",address:"1BoZAfu4s8VonCfYY81SmALHV3JVUVtNcJ",min:"0.00001 BTC",arrival:"~1 confirmation"},"SOL":{network:"Solana (SOL)",address:"4eMjgQ8LjSo4gbrBPdxGeEgmhbpo7HJSXa2PWJADX9Dc",min:"0.001 SOL",arrival:"~200 confirmations"},"ETH":{network:"Ethereum (ERC20)",address:"0xc4338f9e5b6f290af6f4653d946308cef7625279",min:"0.00005 ETH",arrival:"~6 confirmations"},"TRX":{network:"TRON (TRC20)",address:"TBBnZdhgwfkKj1zNS9GEpjj58N6kLmEBip",min:"1 TRX",arrival:"~20 confirmations"}};
 
-function toggleTheme(){isDark=!isDark;document.documentElement.setAttribute("data-theme",isDark?"dark":"light");document.querySelectorAll(".theme-toggle").forEach(b=>b.textContent=isDark?"🌙":"☀️");document.getElementById("themeIcon").textContent=isDark?"🌙":"☀️";document.getElementById("themeSub").textContent=isDark?"Currently Dark":"Currently Light";localStorage.setItem("cvTheme",isDark?"dark":"light");}
+const moonSVG='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+const sunSVG='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+function toggleTheme(){isDark=!isDark;document.documentElement.setAttribute("data-theme",isDark?"dark":"light");document.getElementById("themeToggleBtn").innerHTML=isDark?moonSVG:sunSVG;document.getElementById("themeIcon").innerHTML=isDark?moonSVG:sunSVG;document.getElementById("themeSub").textContent=isDark?"Currently Dark":"Currently Light";localStorage.setItem("cvTheme",isDark?"dark":"light");}
 
 // ===== PUSH NOTIFICATIONS =====
 // ===== LANGUAGE / i18n =====
@@ -913,6 +927,7 @@ auth.onAuthStateChanged(async(user)=>{
     await loadUserData();renderAssets();renderHistory();renderProfile();fetchLivePrices();
     if(!window._priceRefreshInterval){window._priceRefreshInterval=setInterval(fetchLivePrices,30000);}
     document.getElementById("supportFab").classList.remove("hidden");
+    populateDepositIcons();
     subscribeSupportChat();
     loadAnnBanner();
   }else{window.location.href="login.html";}
@@ -987,6 +1002,15 @@ function startUserDocListener(){
 }
 async function saveUserData(){await db.collection("users").doc(currentUser.uid).update({balances:userData.balances,transactions:userData.transactions,kyc:userData.kyc,withdrawalRequests:userData.withdrawalRequests,depositRequests:userData.depositRequests});}
 
+function populateDepositIcons(){
+  ["USDT","BTC","ETH","SOL","TRX"].forEach(c=>{
+    const el=document.getElementById("depIcon-"+c);
+    if(el)el.innerHTML=coinSVG[c];
+    const el2=document.getElementById("p2pIcon-"+c);
+    if(el2)el2.innerHTML=coinSVG[c];
+  });
+}
+
 async function fetchLivePrices(){
   try{const res=await fetch("https://api.coincap.io/v2/assets?ids=bitcoin,ethereum,solana,tron,tether&limit=5"),data=await res.json();
   if(data&&data.data){data.data.forEach(a=>{const p=parseFloat(a.priceUsd);if(a.id==="bitcoin")livePrices.BTC=p;if(a.id==="ethereum")livePrices.ETH=p;if(a.id==="solana")livePrices.SOL=p;if(a.id==="tron")livePrices.TRX=p;if(a.id==="tether")livePrices.USDT=p||1;});}
@@ -1046,7 +1070,7 @@ function renderAssets(){
     if(hideSmallBalances&&isDust)return "";
     visibleCount++;
     if(usd>bestVal){bestVal=usd;bestCoin=coin;}
-    return `<div class="asset-row"><div class="coin-icon ${m.cls}">${m.letter}</div><div class="asset-info"><div class="name">${coin}</div><div class="full">${m.full} · $${(livePrices[coin]||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div>${sparklineSVG(coin)}<div class="asset-values"><div class="amt">${amt.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:coin==="BTC"?6:2})}</div><div class="usd">≈ $${usd.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div></div>`;
+    return `<div class="asset-row"><div class="coin-icon ${m.cls}">${coinSVG[coin]}</div><div class="asset-info"><div class="name">${coin}</div><div class="full">${m.full} · $${(livePrices[coin]||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div>${sparklineSVG(coin)}<div class="asset-values"><div class="amt">${amt.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:coin==="BTC"?6:2})}</div><div class="usd">≈ $${usd.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div></div>`;
   }).join("");
 
   if(!document.getElementById("assetList").innerHTML.trim()){
@@ -1087,7 +1111,7 @@ function renderMarkets(){
     const chg=market24hChange[c.coin]||0,pos=chg>=0;
     const chgStr=(pos?"+":"")+chg.toFixed(2)+"%";
     return `<div class="market-row">
-      <div class="coin-icon ${m.cls}" style="flex-shrink:0;">${m.letter}</div>
+      <div class="coin-icon ${m.cls}" style="flex-shrink:0;">${coinSVG[c.coin]}</div>
       <div class="market-info"><div class="name">${c.name}</div><div class="sym">${c.coin}</div></div>
       ${sparklineSVG(c.coin)}
       <div class="market-price"><div class="price">$${price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:c.coin==="BTC"?0:2})}</div><div class="change ${pos?"pos":"neg"}">${chgStr}</div></div>
