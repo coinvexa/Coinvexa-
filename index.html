@@ -330,8 +330,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   .ann-banner a{color:var(--accent);font-weight:700;text-decoration:none;}
   .ann-banner-close{cursor:pointer;color:var(--ink-dim);font-size:16px;margin-left:auto;}
 
-  .coin-select-row{display:flex;gap:10px;padding:14px 16px 10px;overflow-x:auto;}
-  .coin-select-card{flex-shrink:0;display:flex;align-items:center;gap:10px;background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:10px 16px;cursor:pointer;min-width:110px;}
+  .coin-select-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px 16px 10px;}
+  .coin-select-card{display:flex;align-items:center;gap:10px;background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:10px 14px;cursor:pointer;}
   .coin-select-card.active{border-color:var(--accent);background:rgba(59,130,246,.08);}
   .coin-select-card .coin-select-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;overflow:hidden;}
   .coin-select-card .coin-select-icon svg{width:100%;height:100%;}
@@ -1012,17 +1012,26 @@ function populateDepositIcons(){
 }
 
 async function fetchLivePrices(){
-  try{const res=await fetch("https://api.coincap.io/v2/assets?ids=bitcoin,ethereum,solana,tron,tether&limit=5"),data=await res.json();
-  if(data&&data.data){data.data.forEach(a=>{const p=parseFloat(a.priceUsd);if(a.id==="bitcoin")livePrices.BTC=p;if(a.id==="ethereum")livePrices.ETH=p;if(a.id==="solana")livePrices.SOL=p;if(a.id==="tron")livePrices.TRX=p;if(a.id==="tether")livePrices.USDT=p||1;});}
-  document.getElementById("priceUpdate").textContent="Live · "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});}
-  catch(e){document.getElementById("priceUpdate").textContent="Cached prices";}
+  try{
+    const res=await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,tron,tether&vs_currencies=usd&include_24hr_change=true");
+    const data=await res.json();
+    if(data){
+      if(data.bitcoin){livePrices.BTC=data.bitcoin.usd;market24hChange.BTC=data.bitcoin.usd_24h_change||0;}
+      if(data.ethereum){livePrices.ETH=data.ethereum.usd;market24hChange.ETH=data.ethereum.usd_24h_change||0;}
+      if(data.solana){livePrices.SOL=data.solana.usd;market24hChange.SOL=data.solana.usd_24h_change||0;}
+      if(data.tron){livePrices.TRX=data.tron.usd;market24hChange.TRX=data.tron.usd_24h_change||0;}
+      if(data.tether){livePrices.USDT=data.tether.usd||1;market24hChange.USDT=data.tether.usd_24h_change||0;}
+    }
+    document.getElementById("priceUpdate").textContent="Live · "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+  }catch(e){
+    document.getElementById("priceUpdate").textContent="Cached prices";
+  }
   // Record price history for sparklines (keep last 20 points per coin)
   Object.keys(livePrices).forEach(c=>{
     if(!priceHistory[c])priceHistory[c]=[];
     priceHistory[c].push(livePrices[c]);
     if(priceHistory[c].length>20)priceHistory[c].shift();
   });
-  await fetchMarket24hChange();
   renderAssets();renderMarkets();
 }
 
@@ -1086,23 +1095,6 @@ function renderAssets(){
 }
 
 let market24hChange={BTC:0,ETH:0,SOL:0,TRX:0,USDT:0};
-
-async function fetchMarket24hChange(){
-  try{
-    const res=await fetch("https://api.coincap.io/v2/assets?ids=bitcoin,ethereum,solana,tron,tether&limit=5");
-    const data=await res.json();
-    if(data&&data.data){
-      data.data.forEach(a=>{
-        const chg=parseFloat(a.changePercent24Hr)||0;
-        if(a.id==="bitcoin")market24hChange.BTC=chg;
-        if(a.id==="ethereum")market24hChange.ETH=chg;
-        if(a.id==="solana")market24hChange.SOL=chg;
-        if(a.id==="tron")market24hChange.TRX=chg;
-        if(a.id==="tether")market24hChange.USDT=chg;
-      });
-    }
-  }catch(e){}
-}
 
 function renderMarkets(){
   const coins=[{coin:"BTC",name:"Bitcoin"},{coin:"ETH",name:"Ethereum"},{coin:"SOL",name:"Solana"},{coin:"TRX",name:"Tron"},{coin:"USDT",name:"Tether"}];
