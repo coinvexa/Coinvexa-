@@ -400,12 +400,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="left"><span>⚠️</span><span data-i18n="completeKyc">Complete KYC to make your first trade</span></div>
       <span>›</span>
     </div>
-    <div class="coin-select-row" id="coinSelectRow">
-      <div class="coin-select-card active" data-coin="USDT" onclick="selectP2PCoin('USDT')"><div class="coin-select-icon" id="p2pIcon-USDT"></div><div class="coin-select-text"><b>USDT</b><span id="cnt-USDT">— offers</span></div></div>
-      <div class="coin-select-card" data-coin="BTC" onclick="selectP2PCoin('BTC')"><div class="coin-select-icon" id="p2pIcon-BTC"></div><div class="coin-select-text"><b>BTC</b><span id="cnt-BTC">— offers</span></div></div>
-      <div class="coin-select-card" data-coin="ETH" onclick="selectP2PCoin('ETH')"><div class="coin-select-icon" id="p2pIcon-ETH"></div><div class="coin-select-text"><b>ETH</b><span id="cnt-ETH">— offers</span></div></div>
-      <div class="coin-select-card" data-coin="SOL" onclick="selectP2PCoin('SOL')"><div class="coin-select-icon" id="p2pIcon-SOL"></div><div class="coin-select-text"><b>SOL</b><span id="cnt-SOL">— offers</span></div></div>
-      <div class="coin-select-card" data-coin="TRX" onclick="selectP2PCoin('TRX')"><div class="coin-select-icon" id="p2pIcon-TRX"></div><div class="coin-select-text"><b>TRX</b><span id="cnt-TRX">— offers</span></div></div>
+    <div style="padding:14px 16px 4px;display:flex;align-items:center;gap:10px;">
+      <div class="coin-select-icon" id="p2pIcon-USDT" style="width:32px;height:32px;border-radius:50%;overflow:hidden;flex-shrink:0;"></div>
+      <div><b style="font-size:16px;">USDT</b><div style="font-size:11px;color:var(--ink-dim);" id="cnt-USDT">— offers</div></div>
     </div>
     <div class="p2p-currency-row">
       <select id="p2pCoinFilter" style="display:none;"><option>USDT</option><option>BTC</option><option>ETH</option><option>SOL</option><option>TRX</option></select>
@@ -434,7 +431,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <div class="network-opt" id="offerTypeSell" onclick="selectOfferType('sell')">I'm Selling</div>
       </div>
       <label class="field-label">Cryptocurrency</label>
-      <select class="input" id="offerCoin"><option>USDT</option><option>BTC</option><option>ETH</option><option>SOL</option><option>TRX</option></select>
+      <select class="input" id="offerCoin" disabled style="opacity:.7;"><option>USDT</option></select>
       <label class="field-label">Fiat Currency</label>
       <select class="input" id="offerCurrency">
         <option value="ETB">🇪🇹 Ethiopian Birr (ETB)</option><option value="USD">🇺🇸 US Dollar (USD)</option>
