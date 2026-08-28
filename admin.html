@@ -121,6 +121,7 @@
     <div class="admin-tab" onclick="switchTab('p2p')">🤝 P2P</div>
     <div class="admin-tab" onclick="switchTab('disputes')">⚠️ Disputes</div>
     <div class="admin-tab" onclick="switchTab('support')">🛟 Support</div>
+    <div class="admin-tab" onclick="switchTab('banner')">📢 Banner</div>
     <div class="admin-tab" onclick="switchTab('users')">👥 Users</div>
   </div>
 
@@ -211,6 +212,23 @@
     </div>
   </div>
 
+  <!-- BANNER TAB -->
+  <div id="tab-banner" class="tab-content">
+    <div class="section-label">📢 Site-wide Announcement Banner</div>
+    <div class="request-card">
+      <div style="font-size:12px;color:var(--ink-dim);margin-bottom:12px;">This banner appears at the top of the app for all logged-in users, right under the header. Users can dismiss it (dismissal resets each session).</div>
+      <label style="font-size:11px;text-transform:uppercase;color:var(--ink-dim);display:block;margin-bottom:6px;">Banner Text</label>
+      <input type="text" id="bannerTextInput" placeholder="e.g. 🚀 New feature: Live chat is here!" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);margin-bottom:12px;font-size:14px;">
+      <label style="font-size:11px;text-transform:uppercase;color:var(--ink-dim);display:block;margin-bottom:6px;">Link (optional)</label>
+      <input type="text" id="bannerLinkInput" placeholder="https://..." style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);margin-bottom:14px;font-size:14px;">
+      <div style="display:flex;gap:10px;">
+        <button class="btn-approve" onclick="saveBanner(true)" style="flex:1;">✅ Publish Banner</button>
+        <button class="btn-reject" onclick="saveBanner(false)" style="flex:1;">❌ Hide Banner</button>
+      </div>
+      <div id="bannerStatus" style="margin-top:10px;font-size:12px;color:var(--ink-dim);"></div>
+    </div>
+  </div>
+
   <!-- USERS TAB -->
   <div id="tab-users" class="tab-content">
     <div class="search-bar">
@@ -288,6 +306,7 @@ function switchTab(name){
   if(name==='p2p') loadAdminP2POffers();
   if(name==='disputes') loadDisputes();
   if(name==='support') loadSupportChats();
+  if(name==='banner') loadBannerStatus();
 }
 
 function renderStats(){
@@ -685,6 +704,31 @@ async function resolveDisputeFromModal(orderId, resolution){
 }
 
 function escapeHtml(str){const d=document.createElement('div');d.textContent=str;return d.innerHTML;}
+
+// ===== ANNOUNCEMENT BANNER =====
+async function loadBannerStatus(){
+  try{
+    const doc=await db.collection('appConfig').doc('main').get();
+    if(doc.exists&&doc.data().banner){
+      const b=doc.data().banner;
+      document.getElementById('bannerTextInput').value=b.text||'';
+      document.getElementById('bannerLinkInput').value=b.link||'';
+      document.getElementById('bannerStatus').textContent=b.active?'✅ Currently live for all users.':'⭕ Currently hidden.';
+    }else{
+      document.getElementById('bannerStatus').textContent='No banner set yet.';
+    }
+  }catch(e){document.getElementById('bannerStatus').textContent='Error loading: '+e.message;}
+}
+
+async function saveBanner(active){
+  const text=document.getElementById('bannerTextInput').value.trim();
+  const link=document.getElementById('bannerLinkInput').value.trim();
+  if(active&&!text){alert('Enter banner text first.');return;}
+  try{
+    await db.collection('appConfig').doc('main').set({banner:{active,text:text||'',link:link||''}},{merge:true});
+    document.getElementById('bannerStatus').textContent=active?'✅ Banner published! Live for all users.':'❌ Banner hidden.';
+  }catch(e){alert('Error: '+e.message);}
+}
 
 // ===== SUPPORT CHAT (ADMIN) =====
 let currentSupportUid=null;
